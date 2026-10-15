@@ -5,31 +5,48 @@ Gera a narração de um vídeo explicativo + o tempo de cada palavra (para a leg
 Uso:  npm run narrar -- 6x1            (lê videos/6x1/roteiro.json)
       npm run narrar -- 6x1 --kokoro   (força a voz local)
 
+Voz (campo "voz" do roteiro.json):
+  "principal": "masculina" | "feminina"   → qual voz narra o vídeo
+  "alternar":  "cenas"                    → as cenas se alternam entre as duas vozes (estilo dupla)
+  "velocidade": 1.05                      → 1.0 = normal
+  "masculina"/"feminina": "<voz do edge>" → troca a voz (lista: npm run vozes)
+  Cada cena também aceita "voz": "masculina" | "feminina".
+
 Motores:
-  edge   → vozes neurais da Microsoft (grátis, soam naturais; precisa de internet). pip: edge-tts
-  kokoro → voz local, roda offline (pip: kokoro-onnx soundfile; baixa o modelo do GitHub sozinho)
+  edge   → vozes neurais da Microsoft (grátis, naturais; precisa de internet). pip: edge-tts
+  kokoro → voz local, offline (pip: kokoro-onnx soundfile; baixa o modelo do GitHub sozinho)
+
+Naturalidade: a voz fala a FRASE inteira de uma vez (a entonação flui pelas vírgulas) e o tempo de
+cada palavra vem da própria voz (WordBoundary do edge), não de estimativa.
 
 Saídas: public/explicativo/<slug>/narracao.wav e public/explicativo/<slug>/tempos.json
 """
-import asyncio, io, json, os, re, subprocess, sys, tempfile, urllib.request
+import asyncio, io, json, os, re, subprocess, sys, urllib.request
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SR = 24000
-PAUSA = {",": 0.12, ";": 0.18, ":": 0.18, ".": 0.32, "!": 0.32, "?": 0.32, "": 0.1}
-FIM_CENA = 0.45
+PAUSA_FRASE = {".": 0.28, "!": 0.3, "?": 0.32, ":": 0.2, ";": 0.2, "": 0.16}
+FIM_CENA = 0.4
 KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
 KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 
+# Vozes padrão. Multilingual = geração mais nova da Microsoft, mais natural.
+EDGE = {
+    "feminina": ["pt-BR-ThalitaMultilingualNeural", "pt-BR-FranciscaNeural"],
+    "masculina": ["pt-BR-AntonioNeural"],
+}
+KOKORO = {"feminina": "pf_dora", "masculina": "pm_alex"}
+
 
 def frases(texto):
-    """Divide em frases curtas pela pontuação seguida de espaço (não quebra "26,8" nem "14.10").
-    Devolve [(frase, pontuação_final)]."""
+    """Divide a fala em FRASES (ponto, exclamação, interrogação). Vírgulas ficam dentro da frase,
+    para a voz fazer a entonação natural. Não quebra "26,8" nem "14.10"."""
     out = []
-    for s in re.split(r"(?<=[,.;:!?])\s+", texto.strip()):
+    for s in re.split(r"(?<=[.!?;:])\s+", texto.strip()):
         s = s.strip()
         if s:
-            out.append((s, s[-1] if s[-1] in ",.;:!?" else ""))
+            out.append((s, s[-1] if s[-1] in ".!?;:" else ""))
     return out
 
 
@@ -48,41 +65,68 @@ def decode(data_or_path):
 
 
 def aparar(a, limiar=0.012, folga=0.03):
-    """Tira silêncio do começo e do fim."""
+    """Tira silêncio do começo e do fim. Devolve (áudio, segundos cortados no começo)."""
     idx = np.where(np.abs(a) > limiar)[0]
     if len(idx) == 0:
-        return a
+        return a, 0.0
     i0 = max(0, idx[0] - int(folga * SR))
     i1 = min(len(a), idx[-1] + int(folga * SR))
-    return a[i0:i1]
+    return a[i0:i1], i0 / SR
 
 
 class Edge:
     nome = "edge"
 
-    def __init__(self, voz, vel):
+    def __init__(self, vel, pitch="+0Hz"):
         import edge_tts  # noqa
-        self.voz = voz
         pct = int(round((vel - 1) * 100))
         self.rate = f"{'+' if pct >= 0 else ''}{pct}%"
+        self.pitch = pitch
+        self.ok = {}
 
-    def falar(self, texto):
+    def _gerar(self, texto, voz):
         import edge_tts
 
         async def go():
-            buf = b""
-            async for ch in edge_tts.Communicate(texto, self.voz, rate=self.rate).stream():
+            buf, marcas = b"", []
+            com = edge_tts.Communicate(texto, voz, rate=self.rate, pitch=self.pitch, boundary="WordBoundary")
+            async for ch in com.stream():
                 if ch["type"] == "audio":
                     buf += ch["data"]
-            return buf
+                elif ch["type"] == "WordBoundary":
+                    marcas.append((ch["offset"] / 1e7, (ch["offset"] + ch["duration"]) / 1e7, ch["text"]))
+            return buf, marcas
 
-        return decode(asyncio.run(go()))
+        buf, marcas = asyncio.run(go())
+        if not buf:
+            raise RuntimeError("sem áudio")
+        return decode(buf), marcas
+
+    def voz_de(self, genero, preferida=None):
+        """Primeira voz da lista que funciona nesta máquina (guarda o resultado)."""
+        candidatas = ([preferida] if preferida else []) + EDGE[genero]
+        for v in candidatas:
+            if v in self.ok:
+                if self.ok[v]:
+                    return v
+                continue
+            try:
+                self._gerar("Oi.", v)
+                self.ok[v] = True
+                return v
+            except Exception:
+                self.ok[v] = False
+                print(f"  voz {v} indisponível, tentando outra…")
+        raise RuntimeError(f"nenhuma voz {genero} do edge funcionou")
+
+    def falar(self, texto, genero, preferida=None):
+        return self._gerar(texto, self.voz_de(genero, preferida))
 
 
 class Kokoro:
     nome = "kokoro"
 
-    def __init__(self, voz, vel):
+    def __init__(self, vel):
         from kokoro_onnx import Kokoro as K
         os.makedirs(KOKORO_DIR, exist_ok=True)
         for f in ["kokoro-v1.0.int8.onnx", "voices-v1.0.bin"]:
@@ -91,14 +135,14 @@ class Kokoro:
                 print(f"baixando {f}…")
                 urllib.request.urlretrieve(KOKORO_URL + f, p)
         self.k = K(os.path.join(KOKORO_DIR, "kokoro-v1.0.int8.onnx"), os.path.join(KOKORO_DIR, "voices-v1.0.bin"))
-        self.voz, self.vel = voz, vel
+        self.vel = vel
 
-    def falar(self, texto):
-        s, sr = self.k.create(texto, voice=self.voz, speed=self.vel, lang="pt-br")
+    def falar(self, texto, genero, preferida=None):
+        s, sr = self.k.create(texto, voice=preferida or KOKORO[genero], speed=self.vel, lang="pt-br")
         s = np.asarray(s, dtype=np.float32)
         if sr != SR:
             s = decode(_wav_bytes(s, sr))
-        return s
+        return s, []
 
 
 def _wav_bytes(a, sr):
@@ -108,9 +152,11 @@ def _wav_bytes(a, sr):
     return b.getvalue()
 
 
-def tempos_palavras(frase, t0, dur):
-    """Distribui as palavras da frase pelo tempo falado (peso ~ tamanho da palavra)."""
-    palavras = frase.split()
+def _limpa(w):
+    return re.sub(r"[^\w]", "", w.lower())
+
+
+def tempos_proporcionais(palavras, t0, dur):
     pesos = [len(re.sub(r"\W", "", w)) + 2.5 for w in palavras]
     total = sum(pesos)
     out, t = [], t0
@@ -121,6 +167,22 @@ def tempos_palavras(frase, t0, dur):
     return out
 
 
+def tempos_da_voz(frase, pron, marcas, t0, corte, dur):
+    """Usa os tempos reais que a voz informou (WordBoundary). Cada palavra exibida pode virar várias
+    palavras faladas (ex.: "26,8" → "vinte e seis vírgula oito"). Se não bater, cai no proporcional."""
+    palavras = frase.split()
+    falado = [len(para_tts(re.sub(r"[.,;:!?]+$", "", w), pron).split()) or 1 for w in palavras]
+    marcas = [m for m in marcas if _limpa(m[2])]
+    if not marcas or len(marcas) != sum(falado):
+        return tempos_proporcionais(palavras, t0, dur)
+    out, i = [], 0
+    for w, n in zip(palavras, falado):
+        ini, fim = marcas[i][0] - corte, marcas[i + n - 1][1] - corte
+        out.append({"w": w, "start": round(t0 + max(0, ini), 3), "end": round(t0 + min(dur, fim), 3)})
+        i += n
+    return out
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -128,46 +190,59 @@ def main():
     slug = args[0]
     rot = json.load(open(os.path.join(ROOT, "videos", slug, "roteiro.json"), encoding="utf-8"))
     voz = rot.get("voz", {})
-    vel = voz.get("velocidade", 1.0)
+    vel = voz.get("velocidade", 1.05)
     pron = rot.get("pronuncia", {})
     out_dir = os.path.join(ROOT, "public", "explicativo", slug)
     os.makedirs(out_dir, exist_ok=True)
 
+    # gênero principal (compatível com roteiros antigos que só tinham "edge": "<voz>")
+    principal = voz.get("principal")
+    if not principal:
+        antiga = voz.get("edge", "")
+        principal = "feminina" if any(n in antiga for n in ["Francisca", "Thalita", "Leila", "Leticia"]) else "masculina"
+    outra = "feminina" if principal == "masculina" else "masculina"
+    preferida_edge = {"masculina": voz.get("masculina"), "feminina": voz.get("feminina")}
+    if voz.get("edge"):
+        preferida_edge[principal] = preferida_edge[principal] or voz["edge"]
+
     motor = None
     if "--kokoro" not in sys.argv:
         try:
-            motor = Edge(voz.get("edge", "pt-BR-AntonioNeural"), vel)
-            motor.falar("teste")
+            motor = Edge(vel, voz.get("pitch", "+0Hz"))
+            motor.voz_de(principal, preferida_edge[principal])
         except Exception as e:
             print(f"edge-tts indisponível ({type(e).__name__}); usando a voz local Kokoro.")
             motor = None
     if motor is None:
-        motor = Kokoro(voz.get("kokoro", "pm_alex"), vel)
-    print(f"motor: {motor.nome}")
+        motor = Kokoro(vel)
+        preferida_edge = {"masculina": None, "feminina": None}
+    print(f"motor: {motor.nome} · voz principal: {principal}" + (" · alternando por cena" if voz.get("alternar") == "cenas" else ""))
 
-    pedacos, cenas, t = [], [], 0.0
-    pedacos.append(np.zeros(int(0.25 * SR), dtype=np.float32))
+    pedacos, cenas = [np.zeros(int(0.25 * SR), dtype=np.float32)], []
     t = 0.25
-    for cena in rot["cenas"]:
+    for ci, cena in enumerate(rot["cenas"]):
+        genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
         c0 = t
         palavras = []
         for frase, pont in frases(cena["fala"]):
-            a = aparar(motor.falar(para_tts(frase, pron)))
+            bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
+            a, corte = aparar(bruto)
             dur = len(a) / SR
-            palavras += tempos_palavras(frase, t, dur)
+            palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
             palavras[-1]["fimFrase"] = True
-            pausa = PAUSA.get(pont, 0.1)
+            pausa = PAUSA_FRASE.get(pont, 0.16)
             pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
             t += dur + pausa
         pedacos.append(np.zeros(int(FIM_CENA * SR), dtype=np.float32))
         t += FIM_CENA
-        cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "palavras": palavras})
-        print(f"  {cena['id']:<12} {t - c0:5.2f}s")
+        cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "voz": genero, "palavras": palavras})
+        print(f"  {cena['id']:<12} {t - c0:5.2f}s  ({genero})")
     audio = np.concatenate(pedacos)
     audio = audio / max(1e-6, np.abs(audio).max()) * 0.89
     wav = os.path.join(out_dir, "narracao.wav")
+    # leve "presença" de voz de locução: tira grave embolado, compressão suave, volume padrão de redes
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
-                    "-af", "highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=80,loudnorm=I=-16:TP=-1.5",
+                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-16:TP=-1.5",
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

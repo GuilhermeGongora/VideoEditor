@@ -27,12 +27,23 @@ Leia `references/estilo.md` e `references/biblioteca.md` antes de montar as cena
 - Última cena: o que acontece agora / o que a pessoa deve saber. Sem pedir like.
 - `composicao` = nome do componente (ex.: `Escala6x1`).
 - `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
+- `voz` = `{ "principal": "...", "alternar": "nao", "velocidade": 1.05 }` (ver passo 3).
 - `thumb` = capa do vídeo (ver passo 6): `{ "titulos": [2 opções], "cena": "<id da cena de fundo>", "quadro": <frame da cena>, "descer": 330, "zoom": 1.45 }`.
 
 ## 3. Narração
 `npm run narrar -- <slug>` → `public/explicativo/<slug>/narracao.wav` + `tempos.json` (tempo de cada
-palavra). Usa a voz neural do edge-tts (precisa de internet) e cai para a voz local Kokoro se não der.
-Se o usuário quiser outra voz, troque `voz.edge` (ex.: `pt-BR-FranciscaNeural`, `pt-BR-ThalitaMultilingualNeural`).
+palavra, vindo da própria voz). Voz neural do edge-tts (internet); sem internet cai na voz local Kokoro.
+Campo `voz` do roteiro:
+- `"principal": "feminina" | "masculina"` — **alterne entre vídeos**: olhe o `roteiro.json` mais recente
+  em `videos/` (o de data mais nova) e use o gênero oposto ao dele.
+- `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (fica com cara de dupla conversando).
+  Bom para assuntos com pergunta e resposta ou vídeos acima de 50 s. Padrão: `"nao"`.
+- `"velocidade": 1.05` (1.0 normal). Uma cena pode forçar a voz com `"voz": "feminina"`.
+- Vozes padrão: feminina `pt-BR-ThalitaMultilingualNeural` (cai para Francisca), masculina
+  `pt-BR-AntonioNeural`. Para trocar: `"feminina": "<voz>"` / `"masculina": "<voz>"`; o usuário ouve as
+  opções com `npm run vozes`.
+- Escreva a fala para o OUVIDO: frases curtas, vírgulas onde se respira, nada de parênteses ou siglas
+  sem `pronuncia`.
 
 ## 4. Cenas → `src/explicativo/videos/<Nome>.tsx`
 - Copie a estrutura do `Escala6x1.tsx`: um componente por cena, exporte `CENAS_<NOME>` e registre em

@@ -42,7 +42,12 @@ const downloadsPage = () => {
   const grid = thumbs
     .map(({ f }) => `<a href="/thumbs/${encodeURIComponent(f)}" download style="display:inline-block;margin:6px;text-align:center;color:#ccc;font-size:13px"><img src="/thumbs/${encodeURIComponent(f)}?v" style="width:160px;border-radius:10px;display:block"><span>${esc(f)}</span></a>`)
     .join("");
-  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul>${grid ? `<h2>Thumbnails (clique para baixar)</h2><div>${grid}</div>` : ""}</main>`;
+  const VOZES = path.join(OUT, "vozes");
+  const vozes = fs.existsSync(VOZES) ? fs.readdirSync(VOZES).filter((f) => f.endsWith(".mp3")).sort() : [];
+  const vozesHtml = vozes
+    .map((f) => `<div class="s"><div class="n">${esc(f.replace(/\.mp3$/, ""))}</div><div></div><audio controls preload="none" src="/out/vozes/${encodeURIComponent(f)}?ouvir"></audio></div>`)
+    .join("");
+  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul>${grid ? `<h2>Thumbnails (clique para baixar)</h2><div>${grid}</div>` : ""}${vozesHtml ? `<h2>Vozes (npm run vozes)</h2>${vozesHtml}` : ""}</main>`;
 };
 
 const soundsPage = () => {
@@ -131,11 +136,11 @@ http
     };
     if (url.startsWith("/out/")) {
       const p = safe(OUT, url.slice(5));
-      return p ? sendFile(res, p, true) : res.writeHead(403).end();
+      return p ? sendFile(res, p, !(req.url ?? "").includes("?ouvir")) : res.writeHead(403).end();
     }
     if (url.startsWith("/thumbs/")) {
-      const p = safe(THUMBS, url.slice(8).split("?")[0]);
-      return p ? sendFile(res, p, !url.includes("?")) : res.writeHead(403).end();
+      const p = safe(THUMBS, url.slice(8));
+      return p ? sendFile(res, p, !(req.url ?? "").includes("?")) : res.writeHead(403).end();
     }
     if (url.startsWith("/public/")) {
       const p = safe(PUBLIC, url.slice(8));

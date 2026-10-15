@@ -3,9 +3,9 @@
   "composicao": "Escala6x1",
   "marca": "SCIENTIA · 6x1",
   "voz": {
-    "edge": "pt-BR-AntonioNeural",
-    "kokoro": "pm_alex",
-    "velocidade": 1.08
+    "principal": "masculina",
+    "alternar": "nao",
+    "velocidade": 1.05
   },
   "pronuncia": {
     "6x1": "seis por um",
