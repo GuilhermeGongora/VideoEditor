@@ -3,6 +3,7 @@ import { interpolate, useCurrentFrame } from "remotion";
 import { C, MONO, SANS } from "../theme";
 import { clamp, pop } from "../anim";
 import { Simbolo } from "./Simbolo";
+import { SomAparecer } from "./Sons";
 
 /** Na thumbnail os cartões/anotações das cenas somem (só fica o 3D + título). */
 export const SemOverlays = createContext(false);
@@ -72,6 +73,7 @@ export const DataCard: React.FC<{
         transform: `translateY(${(1 - s) * 30}px)`,
       }}
     >
+      <SomAparecer at={at} />
       <div>
         <div style={{ fontFamily: MONO, fontSize: 20, letterSpacing: 3, color: "rgba(244,244,240,0.55)" }}>{label}</div>
         <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 88, color: C.text, lineHeight: 1.05, letterSpacing: -2 }}>
@@ -114,6 +116,7 @@ export const Tags: React.FC<{ items: { text: string; at: number; on?: boolean }[
               transform: `scale(${0.7 + 0.3 * s})`,
             }}
           >
+            <SomAparecer at={it.at} mult={0.7} />
             {it.text}
           </div>
         );
@@ -144,6 +147,7 @@ export const Callout: React.FC<{
   const ang = (Math.atan2(dy, dx) * 180) / Math.PI;
   return (
     <div style={{ position: "absolute", inset: 0, opacity: o }}>
+      <SomAparecer at={at} mult={0.8} />
       <div
         style={{
           position: "absolute",

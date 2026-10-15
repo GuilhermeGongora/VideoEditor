@@ -13,6 +13,7 @@ Voz (campo "voz" do roteiro.json):
   Cada cena também aceita "voz": "masculina" | "feminina".
 
 Motores:
+  eleven → ElevenLabs, a mais humana (paga; "motor": "eleven" + ELEVENLABS_API_KEY; vozes em "eleven": {"feminina": "<id>", "masculina": "<id>"})
   edge   → vozes neurais da Microsoft (grátis, naturais; precisa de internet). pip: edge-tts
   kokoro → voz local, offline (pip: kokoro-onnx soundfile; baixa o modelo do GitHub sozinho)
 
@@ -26,8 +27,8 @@ import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SR = 24000
-PAUSA_FRASE = {".": 0.28, "!": 0.3, "?": 0.32, ":": 0.2, ";": 0.2, "": 0.16}
-FIM_CENA = 0.4
+PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}  # só no modo frase a frase
+FIM_CENA = 0.18  # respiro entre cenas (a trilha cobre, nunca fica silêncio morto)
 KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
 KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 
@@ -123,6 +124,52 @@ class Edge:
         return self._gerar(texto, self.voz_de(genero, preferida))
 
 
+class Eleven:
+    """ElevenLabs (pago, a voz mais humana). Precisa de ELEVENLABS_API_KEY. Tempo das palavras vem do
+    endpoint with-timestamps (alinhamento por caractere)."""
+    nome = "eleven"
+    PADRAO = {"feminina": "21m00Tcm4TlvDq8ikWAM", "masculina": "pNInz6obpgDQGcFmaJgB"}  # Rachel / Adam (troque por vozes pt-BR)
+
+    def __init__(self, vel, ids=None):
+        self.key = os.environ.get("ELEVENLABS_API_KEY")
+        if not self.key:
+            raise RuntimeError("sem ELEVENLABS_API_KEY")
+        self.ids = {**self.PADRAO, **(ids or {})}
+        self.vel = max(0.7, min(1.2, vel))
+
+    def voz_de(self, genero, preferida=None):
+        return self.ids[genero]
+
+    def falar(self, texto, genero, preferida=None):
+        import base64
+        body = json.dumps({
+            "text": texto,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {"stability": 0.4, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": True, "speed": self.vel},
+        }).encode()
+        req = urllib.request.Request(
+            f"https://api.elevenlabs.io/v1/text-to-speech/{self.ids[genero]}/with-timestamps?output_format=mp3_44100_128",
+            data=body, headers={"xi-api-key": self.key, "Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=120) as r:
+            d = json.loads(r.read())
+        audio = decode(base64.b64decode(d["audio_base64"]))
+        al = d.get("alignment") or {}
+        chars, ini, fim = al.get("characters", []), al.get("character_start_times_seconds", []), al.get("character_end_times_seconds", [])
+        marcas, cur, c0, c1 = [], "", None, None
+        for ch, a, b in zip(chars, ini, fim):
+            if ch.isspace():
+                if cur:
+                    marcas.append((c0, c1, cur))
+                cur, c0 = "", None
+                continue
+            if c0 is None:
+                c0 = a
+            cur, c1 = cur + ch, b
+        if cur:
+            marcas.append((c0, c1, cur))
+        return audio, marcas
+
+
 class Kokoro:
     nome = "kokoro"
 
@@ -183,6 +230,25 @@ def tempos_da_voz(frase, pron, marcas, t0, corte, dur):
     return out
 
 
+def tempos_cena(fala, pron, marcas, t0, corte, dur):
+    """Tempos de todas as palavras da cena a partir das marcas da voz. None se não bater (aí vai frase a frase)."""
+    palavras = fala.split()
+    falado = [len(para_tts(re.sub(r"[.,;:!?]+$", "", w), pron).split()) or 1 for w in palavras]
+    marcas = [m for m in marcas if _limpa(m[2])]
+    if not marcas or len(marcas) != sum(falado):
+        return None
+    out, i = [], 0
+    for w, n in zip(palavras, falado):
+        ini, fim = marcas[i][0] - corte, marcas[i + n - 1][1] - corte
+        item = {"w": w, "start": round(t0 + max(0, ini), 3), "end": round(t0 + min(dur, fim), 3)}
+        if re.search(r"[.!?;:]$", w):
+            item["fimFrase"] = True
+        out.append(item)
+        i += n
+    out[-1]["fimFrase"] = True
+    return out
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -206,7 +272,13 @@ def main():
         preferida_edge[principal] = preferida_edge[principal] or voz["edge"]
 
     motor = None
-    if "--kokoro" not in sys.argv:
+    if voz.get("motor") == "eleven" and "--kokoro" not in sys.argv:
+        try:
+            motor = Eleven(vel, voz.get("eleven"))
+        except Exception as e:
+            print(f"ElevenLabs indisponível ({e}); usando edge-tts.")
+            motor = None
+    if motor is None and "--kokoro" not in sys.argv:
         try:
             motor = Edge(vel, voz.get("pitch", "+0Hz"))
             motor.voz_de(principal, preferida_edge[principal])
@@ -223,16 +295,27 @@ def main():
     for ci, cena in enumerate(rot["cenas"]):
         genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
         c0 = t
-        palavras = []
-        for frase, pont in frases(cena["fala"]):
-            bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
+        palavras = None
+        if motor.nome != "kokoro":
+            # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
+            bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
             a, corte = aparar(bruto)
             dur = len(a) / SR
-            palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
-            palavras[-1]["fimFrase"] = True
-            pausa = PAUSA_FRASE.get(pont, 0.16)
-            pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
-            t += dur + pausa
+            palavras = tempos_cena(cena["fala"], pron, marcas, t, corte, dur)
+            if palavras:
+                pedacos.append(a)
+                t += dur
+        if not palavras:
+            palavras = []
+            for frase, pont in frases(cena["fala"]):
+                bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
+                a, corte = aparar(bruto)
+                dur = len(a) / SR
+                palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
+                palavras[-1]["fimFrase"] = True
+                pausa = PAUSA_FRASE.get(pont, 0.12)
+                pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
+                t += dur + pausa
         pedacos.append(np.zeros(int(FIM_CENA * SR), dtype=np.float32))
         t += FIM_CENA
         cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "voz": genero, "palavras": palavras})
@@ -242,7 +325,7 @@ def main():
     wav = os.path.join(out_dir, "narracao.wav")
     # leve "presença" de voz de locução: tira grave embolado, compressão suave, volume padrão de redes
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
-                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-16:TP=-1.5",
+                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-15:TP=-1.5",
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

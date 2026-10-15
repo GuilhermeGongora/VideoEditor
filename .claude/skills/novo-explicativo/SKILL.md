@@ -21,11 +21,21 @@ Leia `references/estilo.md` e `references/biblioteca.md` antes de montar as cena
 - Separe o que é fato do que é projeção/opinião ("o Dieese calcula…", "a CNI diz…").
 
 ## 2. Roteiro → `videos/<slug>/roteiro.json`
+**Ritmo de vídeo viral (referência: Ludificando):** a voz quase nunca para (≥ 90% do tempo com fala ou
+som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título só no fim.
 - 45–60 s, 5–7 cenas, UMA ideia por cena. `chip` = nome curto do capítulo em maiúsculas.
 - 1ª frase = o gancho (a notícia ou o número mais forte). Nada de "olá, hoje vamos falar".
 - Frases curtas, como se falasse com um amigo. Número escrito com dígitos ("75 votos").
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
 - Última cena: o que acontece agora / o que a pessoa deve saber. Sem pedir like.
+- 1ª cena com no máximo ~3 s de fala. Cenas de 4–8 s. Frases de 6–14 palavras, emendadas
+  ("Mas calma:", "E tem mais:", "Só que…") para a narração fluir sem pausas longas.
+- `cta` = chamada curta que aparece no encerramento, de preferência pedindo COMENTÁRIO
+  (ex.: "comenta PIX que eu te mando as fontes", "segue pra saber quando muda").
+- `sons` (opcional, recomendado se o usuário tem biblioteca): escolha no `public/soundeffects/catalog.md`
+  `{"musica": "<src papel music, calmo e contínuo>", "musicaVolume": 0.5, "aparecer": "<src papel pop/click curto>",
+  "transicao": "<src papel whoosh suave>"}`. Sem isso, usa a trilha e os efeitos padrão do Scientia.
+  A trilha abaixa sozinha enquanto a voz fala; cartões, anotações e pílulas fazem "tick" ao aparecer.
 - `composicao` = nome do componente (ex.: `Escala6x1`).
 - `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
 - `voz` = `{ "principal": "...", "alternar": "nao", "velocidade": 1.05 }` (ver passo 3).
@@ -63,6 +73,13 @@ Campo `voz` do roteiro:
 - Sincronize com a fala: `w("palavra")` devolve o frame em que a palavra é dita. O visual muda NA
   palavra (ex.: o número do cartão troca quando a voz diz o número).
 - Câmera: `cam(pos, look)` interpolando posição inicial → final durante a cena (`ease(f, 0, dur)`).
+- Cenário: o `Stage` já vem no modo estúdio (cinza quente, parede com prateleiras). Use
+  `cenario="escuro"` só em cena dramática pontual.
+- Enquadramento: o objeto principal ocupa 40–70% da largura. **Nunca** quadro vazio, objeto minúsculo
+  (linha fina) ou um bloco que toma a tela inteira sem referência. Escala sempre com referência humana
+  (boneco ao lado) ou objeto conhecido.
+- Monte objetos do tema com formas simples (livro = caixas finas, cofre = caixa + cilindro, celular =
+  caixa arredondada com tela escura, balança = cilindros) — contexto concreto prende mais que blocos abstratos.
 - Conteúdo na faixa central da tela (y ≈ 450–1250 px). Topo = marca/chip/cartão; 1300+ = legenda e
   botões do TikTok. Nada importante na borda direita (ícones do app).
 - Anote fontes de números em `Callout` (`sub="FONTE: …"`).

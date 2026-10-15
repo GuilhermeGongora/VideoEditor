@@ -28,3 +28,8 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
 ## Explicativos
 - Estilo de referência do usuário: vídeo da 6x1 (bonecos-manequim, fundo escuro, uma cor de destaque,
   legenda karaokê). Primeiro vídeo: `videos/6x1`.
+- 2026-10-15 — Comparação com o Ludificando: o deles tinha 96% do tempo com som (trilha + efeitos +
+  voz contínua) e o brilho médio era quase o dobro do nosso (77 x 40). Nosso "milhão x bilhão" tinha
+  24% de silêncio digital, 6 pausas acima de 0,5 s e quadros vazios (só uma linha fina, bloco gigante).
+  Regra: narração por cena inteira, trilha de fundo sempre, cenário estúdio claro, objeto principal
+  grande e com referência de escala.

@@ -4,13 +4,13 @@ import { C, MONO, SANS } from "../theme";
 import { clamp, ease, easeOut, pop } from "../anim";
 
 /** Duração do encerramento (frames, 30 fps). */
-export const ENCERRAMENTO = 84;
+export const ENCERRAMENTO = 96;
 
 /**
  * Fechamento do vídeo: escurece a última cena, o S se desenha, o ponto limão acende,
  * "scientia" + @ aparecem e tudo some num fade para preto.
  */
-export const Encerramento: React.FC<{ handle?: string }> = ({ handle = "@scientia.ia" }) => {
+export const Encerramento: React.FC<{ handle?: string; cta?: string }> = ({ handle = "@scientia.ia", cta }) => {
   const f = useCurrentFrame();
   const fundo = interpolate(f, [0, 14], [0, 1], clamp);
   const traco = ease(f, 8, 34);
@@ -60,6 +60,26 @@ export const Encerramento: React.FC<{ handle?: string }> = ({ handle = "@scienti
           <div style={{ marginTop: 18, fontFamily: MONO, fontWeight: 700, fontSize: 28, letterSpacing: 5, color: C.textDim }}>
             {handle.toUpperCase()}
           </div>
+          {cta ? (
+            <div
+              style={{
+                marginTop: 34,
+                display: "inline-block",
+                padding: "14px 28px",
+                borderRadius: 999,
+                background: C.accent,
+                color: C.ink,
+                fontFamily: MONO,
+                fontWeight: 700,
+                fontSize: 30,
+                letterSpacing: 3,
+                opacity: easeOut(f, 46, 58),
+                transform: `scale(${0.85 + 0.15 * pop(f, 46)})`,
+              }}
+            >
+              {cta.toUpperCase()}
+            </div>
+          ) : null}
         </div>
       </AbsoluteFill>
       <AbsoluteFill style={{ background: "#000", opacity: interpolate(f, [ENCERRAMENTO - 10, ENCERRAMENTO - 1], [0, 1], clamp) }} />
