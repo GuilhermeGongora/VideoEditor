@@ -1,0 +1,6 @@
+{
+  "_ajuda": "Favoritos e banidos: nome do arquivo (sem extensão) ou caminho a partir de public/ (ex.: soundeffects/memes/vine boom.mp3). Notas: explique o som em poucas palavras para o Claude. Dica: use 'npm run sons' para fazer isso ouvindo os sons no navegador.",
+  "favorites": [],
+  "banned": [],
+  "notes": {}
+}

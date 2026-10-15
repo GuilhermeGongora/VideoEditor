@@ -1,62 +1,42 @@
-# ranking-video
+# VideoEditor — vídeos de ranking automáticos
 
-Gera vídeos de ranking (estilo "Ranking Funniest Robot Moments") automaticamente:
-você joga os clipes, o Claude monta a lista, os textos, as legendas e os efeitos sonoros.
+Você joga os clipes, o Claude assiste cada um, escreve a lista, corta no ritmo, coloca os efeitos
+sonoros da sua biblioteca, renderiza e revisa o resultado.
 
-## 1. Subir no GitHub e abrir no Codespaces
-1. Crie um repositório vazio no GitHub (ex.: `ranking-video`) e envie estes arquivos
-   (Add file → Upload files, arrastando o conteúdo do zip).
-2. No repositório: **Code → Codespaces → Create codespace on main**.
-   O setup instala ffmpeg, dependências, efeitos sonoros e o Claude Code (~3–5 min).
+## Começar (Codespaces)
+1. **Code → Codespaces → Create codespace on main** (só na primeira vez; depois reabra o mesmo).
+2. Atualizar quando houver novidade: `git pull` e `npm install`.
 
-## 2. Fazer um vídeo
-1. Arraste os clipes para a pasta `clips/`, nomeados pela posição:
-   `6-nice-grandma.mp4`, `5-bro.mp4`, …, `1-fbi-robot.mp4`.
-2. No terminal: `claude` e peça, por exemplo:
-   > /novo-ranking título "Funniest Robot Moments", @gongoale, em inglês
-3. O vídeo sai em `out/ranking.mp4`.
+## Fazer um vídeo
+1. Arraste os clipes para `clips/`, nomeados pela posição: `5-....mp4` … `1-....mp4`.
+2. No terminal: `claude` → `/novo-ranking título "Funniest Instant Karma Moments", @gongoale`
+3. Baixar: `npm run baixar` → aba **Ports** → porta **8080** → ícone de globo.
+4. Não gostou de algo? Diga ao Claude com `/feedback ...` (ex.: "/feedback o 4 não é dança, o cara
+   está socando o vidro; os sons do 4 estão exagerados"). Ele corrige e anota a lição em
+   `notas-do-editor.md` para não repetir.
 
-## Baixar o vídeo
-- **Jeito garantido:** no terminal, `npm run baixar`. Vá na aba **Ports**, passe o mouse na
-  porta **8080** e clique no ícone de globo. Abre uma página com os vídeos: é só clicar.
-  Funciona também pelo celular (logado no GitHub).
-- Ou no painel de arquivos: botão direito em `out/ranking.mp4` → **Download** (funciona melhor no Chrome/Edge).
-
-## Seus efeitos sonoros
-1. No Codespaces, arraste sua pasta de sons para dentro de `public/soundeffects/`
-   (pode manter subpastas, ex.: `impacts/`, `whoosh/`, `memes/`). Nomes descritivos ajudam o
-   Claude a escolher ("glass break.wav" é melhor que "sfx_0231.wav").
-2. Rode `npm run sfx:index` (o Claude também roda sozinho).
-3. Para salvar no GitHub: aba **Source Control** → mensagem → **Commit** → **Sync**.
-   Arquivos acima de 100 MB não sobem no GitHub; sons normalmente são bem menores.
+## Sua biblioteca de sons
+1. Arraste seus sons para `public/soundeffects/` (subpastas ajudam: `impacts/`, `memes/`, `whoosh/`…).
+2. `npm run sfx:index` — cataloga, deduz o tipo de cada som e cria versões com volume igualado.
+3. **Ensine o Claude:** `npm run sons` → abra a porta 8080 → `/sons`. Ouça, marque ⭐ (favorito),
+   ⛔ (não usar) e escreva o que cada som é ("tapa estalado, bom para queda"). Fica salvo em
+   `public/soundeffects/preferences.json` e o Claude usa nas próximas edições.
+4. Salve no GitHub pela aba **Source Control** (Commit → Sync). Arquivos > 100 MB não sobem.
 
 ## Comandos
 | Comando | O que faz |
 |---|---|
-| `npm run prep -- --reset` | Converte os clipes de `clips/` e recria a lista no `ranking.json` |
-| `npm run dev` | Abre o Remotion Studio (prévia ao vivo, porta 3000) |
-| `npm run render` | Renderiza `out/ranking.mp4` |
-| `npm run baixar` | Página de download dos vídeos (porta 8080) |
-| `npm run sfx:index` | Cataloga os sons de `public/soundeffects/` para o Claude usar |
-| `npm run sfx` | Gera os sons básicos de reserva (pop, whoosh, ding, boom, riser) |
-| `npm run sfx:ai -- laugh "crowd laughing" 2` | Gera um som com IA (ElevenLabs) |
+| `npm run prep -- --reset` | Converte os clipes e recria a lista |
+| `npm run analyze` | Folhas de frames com o tempo + análise do áudio de cada clipe |
+| `npm run sfx:index` | Cataloga/normaliza os sons |
+| `npm run sfx:find -- impact` | Busca sons por tipo ou palavra |
+| `npm run dev` | Prévia ao vivo (Remotion Studio, porta 3000) |
+| `npm run render` | Gera `out/ranking.mp4` |
+| `npm run qa` | Revisão automática (silêncios, estouro, ritmo, labels) |
+| `npm run baixar` / `npm run sons` | Painel: baixar vídeos / ouvir e classificar sons |
 
-Para a ElevenLabs: Codespaces → Settings → Secrets → `ELEVENLABS_API_KEY`.
-
-## Editar na mão (`ranking.json`)
-```json
-{
-  "titleLines": ["Ranking [Funniest](red)", "[Robot](blue) Moments"],
-  "subtitle": "(Last one is amazing 😂😂)",
-  "handle": "@gongoale",
-  "items": [
-    { "rank": 3, "label": "lego 😂", "clip": "clips/3-lego.mp4", "start": 0.5, "end": 3,
-      "sounds": [{ "src": "soundeffects/impacts/bonk.wav", "at": 1.4, "volume": 0.9 }] }
-  ]
-}
-```
-`sounds`: efeitos dentro do clipe (`at` = segundo em que o som começa).
-Legendas (`captions`) existem mas ficam desligadas por padrão; peça ao Claude se quiser uma.
-Clipe horizontal: `"fit": "contain"`.
+## Como o Claude edita
+O guia de edição fica em `.claude/skills/novo-ranking/` (`SKILL.md` + `references/som.md`,
+`labels.md`, `ritmo.md`). Dá para editar esses arquivos para mudar o estilo do canal.
 
 Remotion é gratuito para uso comercial por pessoas e empresas de até 3 pessoas.

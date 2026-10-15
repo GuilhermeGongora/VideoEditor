@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, OffthreadVideo, staticFile, useVideoConfig } from "remotion";
 import { Item } from "./types";
 
-export const Clip: React.FC<{ item: Item; top: number }> = ({ item, top }) => {
+export const Clip: React.FC<{ item: Item; top: number; volume: (f: number) => number }> = ({ item, top, volume }) => {
   const { fps } = useVideoConfig();
   const src = staticFile(item.clip);
   const trimBefore = item.start ? Math.round(item.start * fps) : undefined;
@@ -30,7 +30,7 @@ export const Clip: React.FC<{ item: Item; top: number }> = ({ item, top }) => {
       ) : null}
       <OffthreadVideo
         src={src}
-        volume={item.volume ?? 1}
+        volume={volume}
         trimBefore={trimBefore}
         trimAfter={trimAfter}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: fit }}

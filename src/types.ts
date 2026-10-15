@@ -25,8 +25,15 @@ export type Sound = {
   at: number;
   /** 0 a 1. Padrão 0.8. */
   volume?: number;
-  /** Cortar o som depois de N segundos. */
+  /** Cortar o som depois de N segundos (com fade curto). */
   maxSeconds?: number;
+  /**
+   * Abaixa o áudio original do clipe enquanto este som toca (0 a 1).
+   * 0.4 = clipe cai para 60%. Use em memes/vozes/risadas para o som "aparecer". Padrão 0.
+   */
+  duck?: number;
+  /** Por quanto tempo abaixar (s). Padrão: maxSeconds ou 0.8s. */
+  duckSeconds?: number;
 };
 
 export type Item = {
@@ -64,7 +71,9 @@ export type RankingData = {
   colors?: Record<string, string>;
   /** Altura da barra preta do topo, em px. */
   headerHeight?: number;
-  list?: { top?: number; spacing?: number; x?: number; fontSize?: number };
+  list?: { top?: number; spacing?: number; x?: number; fontSize?: number; labelMaxWidth?: number };
+  /** Fade-out de todo o áudio no fim do vídeo (s). Padrão 0.4. */
+  endFadeSeconds?: number;
   sfx?: {
     reveal?: string | null;
     transition?: string | null;
@@ -72,7 +81,7 @@ export type RankingData = {
     volume?: number;
   };
   music?: { src: string; volume?: number } | null;
-  /** Fade de entrada a partir do preto, em segundos. */
+  /** Fade de entrada a partir do preto, em segundos. Padrão 0.4. */
   fadeInSeconds?: number;
   /** Itens NA ORDEM EM QUE APARECEM (normalmente do último lugar até o #1). */
   items: Item[];

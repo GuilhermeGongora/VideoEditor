@@ -4,7 +4,7 @@ set -e
 # ffmpeg (converter clipes) + bibliotecas que o Chrome headless do Remotion precisa
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
-  ffmpeg fonts-noto-color-emoji \
+  ffmpeg fonts-noto-color-emoji fonts-dejavu-core \
   libnss3 libdbus-1-3 libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2 \
   libxrandr2 libxkbcommon0 libxfixes3 libxcomposite1 libxdamage1 libcups2 \
   libpango-1.0-0 libcairo2

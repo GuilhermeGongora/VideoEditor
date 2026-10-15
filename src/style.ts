@@ -74,11 +74,15 @@ const emojiFile = (emoji: string): string | null => {
  * Troca emojis por imagens (Twemoji). Assim eles aparecem iguais no Studio,
  * no render local e no Codespaces, mesmo com contorno no texto.
  */
-export const withEmoji = (text: string): React.ReactNode =>
-  text.split(EMOJI_RE).map((part, i) => {
+export const withEmoji = (text: string): React.ReactNode => {
+  const parts = text.split(EMOJI_RE);
+  return parts.map((part, i) => {
     if (i % 2 === 0 || !part) return part;
     const file = emojiFile(part);
     if (!file) return part;
+    // Emoji grudado na palavra ("back💦") ganha um respiro
+    const prev = parts[i - 1] ?? "";
+    const glued = prev.length > 0 && !/\s$/.test(prev);
     return React.createElement(Img, {
       key: i,
       src: staticFile(file),
@@ -86,8 +90,12 @@ export const withEmoji = (text: string): React.ReactNode =>
         height: "1.05em",
         width: "1.05em",
         verticalAlign: "-0.17em",
-        margin: "0 0.04em",
+        margin: `0 0.04em 0 ${glued ? "0.22em" : "0.04em"}`,
         display: "inline-block",
       },
     });
   });
+};
+
+/** Texto aproximado para medir largura: cada emoji vira "MM" (≈ largura da imagem). */
+export const plainForMeasure = (text: string) => text.replace(EMOJI_RE, "MM");

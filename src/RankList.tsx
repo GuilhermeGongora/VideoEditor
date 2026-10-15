@@ -1,6 +1,7 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { rankColor, strokeText, withEmoji } from "./style";
+import { fitText } from "@remotion/layout-utils";
+import { plainForMeasure, rankColor, strokeText, withEmoji } from "./style";
 import { Segment } from "./timeline";
 
 export const RankList: React.FC<{
@@ -10,9 +11,12 @@ export const RankList: React.FC<{
   spacing: number;
   x: number;
   fontSize: number;
-}> = ({ slots, segments, top, spacing, x, fontSize }) => {
+  labelMaxWidth: number;
+  fontsReady: boolean;
+}> = ({ slots, segments, top, spacing, x, fontSize, labelMaxWidth, fontsReady }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const numberWidth = fontSize * 1.25;
 
   return (
     <>
@@ -23,6 +27,14 @@ export const RankList: React.FC<{
         const pop = shown ? spring({ frame: t, fps, config: { damping: 11, stiffness: 220, mass: 0.6 } }) : 0;
         const scale = shown ? interpolate(pop, [0, 1], [0.3, 1]) : 1;
         const y = top + (rank - 1) * spacing;
+        // Label longo encolhe para caber (sem cobrir o vídeo inteiro)
+        const labelSize =
+          seg && fontsReady
+            ? Math.min(
+                fontSize,
+                Math.floor(fitText({ text: plainForMeasure(seg.item.label), withinWidth: labelMaxWidth, fontFamily: "Montserrat", fontWeight: 800 }).fontSize),
+              )
+            : fontSize;
         return (
           <div
             key={rank}
@@ -39,12 +51,14 @@ export const RankList: React.FC<{
               ...strokeText(Math.round(fontSize * 0.2)),
             }}
           >
-            <span style={{ color: rankColor(rank), minWidth: fontSize * 1.25 }}>{rank}.</span>
+            <span style={{ color: rankColor(rank), minWidth: numberWidth }}>{rank}.</span>
             {shown ? (
               <span
                 style={{
                   color: "#fff",
                   display: "inline-block",
+                  fontSize: labelSize,
+                  WebkitTextStroke: `${Math.round(labelSize * 0.2)}px #000`,
                   transform: `scale(${scale})`,
                   transformOrigin: "left center",
                   opacity: Math.min(1, pop * 1.5),

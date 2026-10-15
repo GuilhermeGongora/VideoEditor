@@ -8,3 +8,5 @@ public/emoji/
 .env
 public/soundeffects/catalog.json
 ranking.json
+public/soundeffects/_norm/
+public/soundeffects/catalog.md
