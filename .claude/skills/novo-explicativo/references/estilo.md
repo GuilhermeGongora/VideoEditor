@@ -13,7 +13,7 @@
 - Transição entre cenas: fade de 10 frames (automático).
 
 ## Texto na tela
-- Marca + chip do capítulo (automático, topo esquerdo).
+- Marca (símbolo Scientia + texto) e chip do capítulo: automáticos, topo esquerdo. Símbolo: `ui/Simbolo.tsx`; arquivos da marca em `marca/`.
 - `DataCard`: o número da cena (grande). O valor troca quando a voz fala o novo número.
 - `Tags`: 2–3 pílulas curtas ("+60 DIAS", "+1 ANO"); a ativa fica na cor de destaque.
 - `Callout`: anotação presa a um objeto 3D (use `projetar([x,y,z], cam)` para achar o ponto na tela),

@@ -3,6 +3,7 @@ import { AbsoluteFill, continueRender, delayRender, Sequence } from "remotion";
 import { fitText } from "@remotion/layout-utils";
 import { C, MONO, SANS } from "./theme";
 import { SemOverlays } from "./ui/Overlays";
+import { Simbolo } from "./ui/Simbolo";
 import type { CenaProps, Roteiro, Tempos } from "./Explicativo";
 
 export type ThumbCfg = {
@@ -83,13 +84,13 @@ export const Thumb: React.FC<{
             display: "inline-flex",
             alignItems: "center",
             gap: 14,
-            padding: "12px 26px 12px 16px",
+            padding: "10px 26px 10px 14px",
             borderRadius: 999,
             border: `2px solid ${C.border}`,
             background: "rgba(30,30,30,0.9)",
           }}
         >
-          <div style={{ width: 26, height: 26, borderRadius: 99, background: C.accent, boxShadow: `0 0 22px ${C.accent}` }} />
+          <Simbolo size={40} />
           <div style={{ fontFamily: MONO, fontWeight: 700, fontSize: 30, letterSpacing: 4, color: C.text }}>
             {roteiro.marca}
           </div>

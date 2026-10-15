@@ -2,6 +2,7 @@ import React, { createContext, useContext } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 import { C, MONO, SANS } from "../theme";
 import { clamp, pop } from "../anim";
+import { Simbolo } from "./Simbolo";
 
 /** Na thumbnail os cartões/anotações das cenas somem (só fica o 3D + título). */
 export const SemOverlays = createContext(false);
@@ -12,7 +13,10 @@ export const Hud: React.FC<{ marca: string; chip: string; chipAt?: number }> = (
   const s = pop(f, chipAt);
   return (
     <div style={{ position: "absolute", left: 64, top: 150 }}>
-      <div style={{ fontFamily: MONO, fontSize: 21, letterSpacing: 4, color: C.textDim, fontWeight: 500 }}>{marca}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <Simbolo size={34} glow={false} />
+        <div style={{ fontFamily: MONO, fontSize: 21, letterSpacing: 4, color: "rgba(244,244,240,0.55)", fontWeight: 700 }}>{marca}</div>
+      </div>
       <div
         style={{
           marginTop: 16,
