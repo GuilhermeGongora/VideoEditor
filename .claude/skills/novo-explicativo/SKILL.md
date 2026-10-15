@@ -5,7 +5,8 @@ description: Cria um vídeo educativo vertical (Shorts/TikTok/Reels) no estilo 3
 
 # Vídeo explicativo 3D
 
-**Entrega completa, sem o usuário pedir:** `out/<slug>.mp4` + `thumbs/<slug>-1.png` e `-2.png` + lista de fontes.
+**Entrega completa, sem o usuário pedir:** `out/<slug>.mp4` (já termina com o encerramento da marca) +
+`thumbs/<slug>-1.png` e `-2.png` + `out/<slug>-legenda.txt` (legenda do post com fontes e hashtags).
 O usuário só digita o tema; não pare no meio para perguntar o que dá para decidir sozinho.
 
 Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de
@@ -28,6 +29,10 @@ Leia `references/estilo.md` e `references/biblioteca.md` antes de montar as cena
 - `composicao` = nome do componente (ex.: `Escala6x1`).
 - `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
 - `voz` = `{ "principal": "...", "alternar": "nao", "velocidade": 1.05 }` (ver passo 3).
+- `post` = legenda do Instagram/TikTok (vira `out/<slug>-legenda.txt`):
+  `{ "gancho": "<fato forte + pergunta> 📌", "pontos": [3 frases curtas, sem ponto final, com números],
+  "fontes": ["Agência Senado", "IBGE", …só os nomes], "hashtags": ["tema", "assunto", …até 5, sem #] }`
+  (`#scientia` entra sozinha). Mesmo tom do vídeo: o que muda pra pessoa, sem opinião. Um emoji no máximo.
 - `thumb` = capa do vídeo (ver passo 6): `{ "titulos": [2 opções], "cena": "<id da cena de fundo>", "quadro": <frame da cena>, "descer": 330, "zoom": 1.45 }`.
 
 ## 3. Narração
@@ -74,5 +79,5 @@ Escreva 2 títulos em `thumb.titulos` (linhas com `\n`, destaque entre `*asteris
 ## 7. Renderizar e entregar
 `npm run explicar -- <slug>` → `out/<slug>.mp4` + thumbs (3D renderiza sem GPU: ~6–10 min por minuto de vídeo
 no Codespace). Assista 3–4 quadros do mp4 final, confira o fim do áudio, e entregue com as fontes.
-Mostre ao usuário: o vídeo, as 2 thumbs (diga qual você postaria e por quê), as fontes e uma
-legenda/descrição curta para o post com 3–5 hashtags. Peça a opinião e registre o que ele achar em `notas-do-editor.md` (seção "Explicativos").
+Mostre ao usuário: o vídeo, as 2 thumbs (diga qual você postaria e por quê) e cole a legenda do
+`out/<slug>-legenda.txt` pronta para copiar. Peça a opinião e registre o que ele achar em `notas-do-editor.md` (seção "Explicativos").

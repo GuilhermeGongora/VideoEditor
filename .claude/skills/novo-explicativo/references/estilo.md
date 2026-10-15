@@ -11,6 +11,7 @@
 - Objetos entram com mola (`pop`) em cascata (2–4 frames entre um e outro), nunca todos juntos.
 - A mudança principal da cena acontece na palavra-chave da fala (`w("…")`).
 - Transição entre cenas: fade de 10 frames (automático).
+- Fim: encerramento da marca automático (~2,4 s: o S se desenha, ponto limão, "scientia" + @, fade para preto). A última fala não precisa se despedir.
 
 ## Texto na tela
 - Marca (símbolo Scientia + texto) e chip do capítulo: automáticos, topo esquerdo. Símbolo: `ui/Simbolo.tsx`; arquivos da marca em `marca/`.

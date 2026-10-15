@@ -47,7 +47,13 @@ const downloadsPage = () => {
   const vozesHtml = vozes
     .map((f) => `<div class="s"><div class="n">${esc(f.replace(/\.mp3$/, ""))}</div><div></div><audio controls preload="none" src="/out/vozes/${encodeURIComponent(f)}?ouvir"></audio></div>`)
     .join("");
-  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul>${grid ? `<h2>Thumbnails (clique para baixar)</h2><div>${grid}</div>` : ""}${vozesHtml ? `<h2>Vozes (npm run vozes)</h2>${vozesHtml}` : ""}</main>`;
+  const legendas = fs.existsSync(OUT)
+    ? fs.readdirSync(OUT).filter((f) => f.endsWith("-legenda.txt")).map((f) => ({ f, s: fs.statSync(path.join(OUT, f)) })).sort((a, b) => b.s.mtimeMs - a.s.mtimeMs)
+    : [];
+  const legHtml = legendas
+    .map(({ f }, i) => `<div class="s"><div class="n">${esc(f.replace(/-legenda\.txt$/, ""))}</div><div class="b"><button onclick="navigator.clipboard.writeText(document.getElementById('leg${i}').value);this.textContent='Copiado ✓'">Copiar</button></div><textarea id="leg${i}" readonly rows="10" style="grid-column:1/-1;background:#0d0d0d;color:#eee;border:1px solid #333;border-radius:8px;padding:8px;font:14px system-ui">${esc(fs.readFileSync(path.join(OUT, f), "utf8"))}</textarea></div>`)
+    .join("");
+  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul>${grid ? `<h2>Thumbnails (clique para baixar)</h2><div>${grid}</div>` : ""}${legHtml ? `<h2>Legendas dos posts</h2>${legHtml}` : ""}${vozesHtml ? `<h2>Vozes (npm run vozes)</h2>${vozesHtml}` : ""}</main>`;
 };
 
 const soundsPage = () => {

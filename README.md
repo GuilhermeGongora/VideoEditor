@@ -22,6 +22,7 @@ Assunto explicado com bonecos e objetos 3D, narração e legenda palavra por pal
 2. Ou na mão: `npm run narrar -- 6x1` → `npm run quadros -- 6x1` (prévia) → `npm run explicar -- 6x1`.
    Vozes: `npm run vozes` gera uma amostra de cada voz em português (ouça no `npm run baixar`).
    No roteiro: `"voz": {"principal": "feminina", "alternar": "cenas"}` (alternar = dupla de vozes).
+   Legenda do post (com fontes e hashtags): `npm run legenda -- 6x1` → `out/6x1-legenda.txt` (o painel tem botão Copiar).
    Thumbnails: `npm run thumb -- 6x1` → pasta `thumbs/` (o `explicar` já gera junto).
 3. Baixar vídeos e thumbs: `npm run baixar` (porta 8080). O 3D renderiza sem placa de vídeo: ~10 min por minuto.
 

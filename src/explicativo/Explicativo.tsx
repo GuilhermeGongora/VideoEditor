@@ -4,6 +4,7 @@ import { C } from "./theme";
 import { clamp } from "./anim";
 import { Hud } from "./ui/Overlays";
 import { Karaoke, Palavra } from "./ui/Karaoke";
+import { ENCERRAMENTO, Encerramento } from "./ui/Encerramento";
 
 export type Tempos = {
   duracao: number;
@@ -77,6 +78,9 @@ export const Explicativo: React.FC<{
       })}
       <Karaoke palavras={todas} />
       <Audio src={staticFile(`explicativo/${roteiro.slug}/narracao.wav`)} />
+      <Sequence from={Math.round(tempos.duracao * fps) - 12} durationInFrames={ENCERRAMENTO} name="encerramento">
+        <Encerramento />
+      </Sequence>
     </AbsoluteFill>
   );
 };

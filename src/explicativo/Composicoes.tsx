@@ -2,6 +2,7 @@ import React from "react";
 import { CalculateMetadataFunction, Composition, staticFile } from "remotion";
 import { Explicativo, Roteiro, Tempos } from "./Explicativo";
 import { Thumb, ThumbCfg } from "./Thumb";
+import { ENCERRAMENTO } from "./ui/Encerramento";
 import { CENAS_6X1 } from "./videos/Escala6x1";
 import roteiro6x1 from "../../videos/6x1/roteiro.json";
 import { CENAS_APROXIMACAO } from "./videos/Aproximacao";
@@ -15,7 +16,7 @@ const meta: CalculateMetadataFunction<Props> = async ({ props }) => {
   const res = await fetch(staticFile(`explicativo/${props.roteiro.slug}/tempos.json`));
   if (!res.ok) throw new Error(`Rode antes: npm run narrar -- ${props.roteiro.slug}`);
   const tempos = (await res.json()) as Tempos;
-  return { durationInFrames: Math.ceil(tempos.duracao * 30), props: { ...props, tempos } };
+  return { durationInFrames: Math.ceil(tempos.duracao * 30) - 12 + ENCERRAMENTO, props: { ...props, tempos } };
 };
 
 /** Cada vídeo explicativo = roteiro (videos/<slug>/roteiro.json) + cenas (src/explicativo/videos/*.tsx). */

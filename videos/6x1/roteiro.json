@@ -65,5 +65,27 @@
     "quadro": 120,
     "descer": 330,
     "zoom": 1.45
+  },
+  "post": {
+    "gancho": "O fim da escala 6x1 foi aprovado no Senado: 75 votos a 1. Mas quando isso muda na sua vida? 📌",
+    "pontos": [
+      "Depois da promulgação: em 60 dias vale o 5x2, com até 42 h por semana. Um ano depois, 40 h. Sem cortar salário",
+      "O Dieese calcula 26,8 milhões de beneficiados, cerca de 22 milhões com carteira assinada",
+      "Acordo coletivo ainda pode manter outra escala, se a folga extra for compensada no mesmo mês"
+    ],
+    "fontes": [
+      "Agência Senado",
+      "Agência Brasil",
+      "O Tempo",
+      "Dieese/PNAD 2025"
+    ],
+    "hashtags": [
+      "escala6x1",
+      "6x1",
+      "trabalho",
+      "clt",
+      "noticias",
+      "scientia"
+    ]
   }
 }
