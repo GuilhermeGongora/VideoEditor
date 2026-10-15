@@ -22,18 +22,42 @@ const id = rot.composicao;
 const extra = process.env.REMOTION_BROWSER ? [`--browser-executable=${process.env.REMOTION_BROWSER}`] : [];
 const run = (args) => execFileSync("npx", ["remotion", ...args, ...extra], { cwd: ROOT, stdio: "inherit" });
 
+// O 3D precisa de WebGL. Sem placa de vídeo (Codespaces), cada máquina aceita um modo diferente:
+// testa um quadro em cada modo e guarda o primeiro que funcionar em out/.gl
+const GL_FILE = path.join(ROOT, "out", ".gl");
+const escolherGl = (frame) => {
+  const salvo = fs.existsSync(GL_FILE) ? fs.readFileSync(GL_FILE, "utf8").trim() : null;
+  const modos = [...new Set([salvo, "angle", "swiftshader", "swangle"].filter(Boolean))];
+  for (const gl of modos) {
+    try {
+      execFileSync("npx", ["remotion", "still", "out/bundle", id, "out/.gltest.png", `--frame=${frame}`, `--gl=${gl}`, "--log=error", ...extra], { cwd: ROOT, stdio: "pipe" });
+      fs.writeFileSync(GL_FILE, gl);
+      if (gl !== salvo) console.log(`3D: usando o modo --gl=${gl}`);
+      return gl;
+    } catch {
+      console.log(`3D: modo ${gl} não funcionou aqui, testando o próximo…`);
+    }
+  }
+  console.error("Nenhum modo de WebGL funcionou. Rode: npx remotion browser ensure  e tente de novo.");
+  process.exit(1);
+};
+const bundle = () => execFileSync("npx", ["remotion", "bundle", "--out-dir=out/bundle", "--log=error"], { cwd: ROOT, stdio: "inherit" });
+
 if (modo === "render") {
   const out = `out/${slug}.mp4`;
-  run(["render", id, out, "--concurrency=2"]);
+  bundle();
+  const gl = escolherGl(Math.round(tempos.duracao * 15));
+  run(["render", "out/bundle", id, out, "--concurrency=2", `--gl=${gl}`]);
   console.log(`\nPronto: ${out}  (baixe com: npm run baixar)`);
 } else {
   const dir = path.join(ROOT, "out", "quadros", slug);
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
-  execFileSync("npx", ["remotion", "bundle", "--out-dir=out/bundle", "--log=error"], { cwd: ROOT, stdio: "inherit" });
+  bundle();
+  const gl = escolherGl(Math.round(tempos.duracao * 15));
   const frames = tempos.cenas.map((c) => Math.round((c.start * 0.2 + c.end * 0.8) * 30));
   frames.forEach((fr, i) => {
-    run(["still", "out/bundle", id, path.join(dir, `${String(i + 1).padStart(2, "0")}-${tempos.cenas[i].id}.jpg`), `--frame=${fr}`, "--image-format=jpeg", "--log=error"]);
+    run(["still", "out/bundle", id, path.join(dir, `${String(i + 1).padStart(2, "0")}-${tempos.cenas[i].id}.jpg`), `--frame=${fr}`, "--image-format=jpeg", "--log=error", `--gl=${gl}`]);
   });
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).sort();
   const n = files.length;
