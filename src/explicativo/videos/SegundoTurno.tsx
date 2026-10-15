@@ -4,7 +4,8 @@ import { Stage, Cam } from "../three/Stage";
 import { Mannequin, idlePose, walkPose } from "../three/Mannequin";
 import { DashedRing, Mat, Paper, RoundBox } from "../three/Objetos";
 import { Callout, DataCard, Label, Tags } from "../ui/Overlays";
-import { CenaProps } from "../Explicativo";
+import { CenaProps, Roteiro } from "../Explicativo";
+import roteiro from "../../../videos/segundo-turno/roteiro.json";
 import { projetar } from "../projetar";
 import { clamp, ease, easeOut, lerp, lerp3, pop } from "../anim";
 import { C, MONO, SANS } from "../theme";
@@ -475,3 +476,6 @@ export const CENAS_SEGUNDO_TURNO: Record<string, React.FC<CenaProps>> = {
   urna: NaUrna,
   dia: Dia,
 };
+
+/** Registro do vídeo: o Composicoes.tsx acha este export sozinho (não precisa editar mais nada). */
+export const VIDEO = { id: "SegundoTurno", roteiro: roteiro as Roteiro, cenas: CENAS_SEGUNDO_TURNO };

@@ -3,28 +3,36 @@ import { CalculateMetadataFunction, Composition, staticFile } from "remotion";
 import { Explicativo, Roteiro, Tempos } from "./Explicativo";
 import { Thumb, ThumbCfg } from "./Thumb";
 import { ENCERRAMENTO } from "./ui/Encerramento";
-import { CENAS_6X1 } from "./videos/Escala6x1";
-import roteiro6x1 from "../../videos/6x1/roteiro.json";
-import { CENAS_APROXIMACAO } from "./videos/Aproximacao";
-import roteiroAproximacao from "../../videos/aproximacao/roteiro.json";
-import { CENAS_SEGUNDO_TURNO } from "./videos/SegundoTurno";
-import roteiroSegundoTurno from "../../videos/segundo-turno/roteiro.json";
+import type { CenaProps } from "./Explicativo";
 
 type Props = { roteiro: Roteiro & { thumb?: ThumbCfg }; tempos: Tempos | null; variante?: number };
 
 const meta: CalculateMetadataFunction<Props> = async ({ props }) => {
   const res = await fetch(staticFile(`explicativo/${props.roteiro.slug}/tempos.json`));
-  if (!res.ok) throw new Error(`Rode antes: npm run narrar -- ${props.roteiro.slug}`);
+  // Sem narração ainda: não quebra os outros vídeos; este fica curto e vazio até rodar o narrar.
+  if (!res.ok) return { durationInFrames: 30, props: { ...props, tempos: null } };
   const tempos = (await res.json()) as Tempos;
   return { durationInFrames: Math.ceil(tempos.duracao * 30) - 12 + ENCERRAMENTO, props: { ...props, tempos } };
 };
 
-/** Cada vídeo explicativo = roteiro (videos/<slug>/roteiro.json) + cenas (src/explicativo/videos/*.tsx). */
-const VIDEOS: { id: string; roteiro: Roteiro; cenas: typeof CENAS_6X1 }[] = [
-  { id: "Escala6x1", roteiro: roteiro6x1 as Roteiro, cenas: CENAS_6X1 },
-  { id: "Aproximacao", roteiro: roteiroAproximacao as Roteiro, cenas: CENAS_APROXIMACAO },
-  { id: "SegundoTurno", roteiro: roteiroSegundoTurno as Roteiro, cenas: CENAS_SEGUNDO_TURNO },
-];
+type Video = { id: string; roteiro: Roteiro; cenas: Record<string, React.FC<CenaProps>> };
+
+/**
+ * Cada vídeo explicativo = roteiro (videos/<slug>/roteiro.json) + cenas (src/explicativo/videos/<Nome>.tsx).
+ * Os vídeos se registram sozinhos: todo arquivo em ./videos que exporta `VIDEO` vira uma composição
+ * (e a sua thumbnail). NÃO é preciso editar este arquivo para criar um vídeo novo.
+ */
+declare const require: { context: (d: string, sub: boolean, re: RegExp) => { keys: () => string[]; (k: string): { VIDEO?: Video } } };
+const ctx = require.context(
+  "./videos",
+  false,
+  /\.tsx$/,
+);
+const VIDEOS: Video[] = ctx
+  .keys()
+  .map((k) => ctx(k).VIDEO)
+  .filter((v): v is Video => Boolean(v))
+  .sort((a, b) => a.id.localeCompare(b.id));
 
 export const Explicativos: React.FC = () => (
   <>

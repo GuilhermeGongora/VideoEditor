@@ -4,7 +4,8 @@ import { Stage, Cam } from "../three/Stage";
 import { Mannequin, idlePose, walkPose } from "../three/Mannequin";
 import { Coins, DashedRing, Paper, Pill, RoundBox, Stall } from "../three/Objetos";
 import { Callout, DataCard, Label, Tags } from "../ui/Overlays";
-import { CenaProps } from "../Explicativo";
+import { CenaProps, Roteiro } from "../Explicativo";
+import roteiro from "../../../videos/6x1/roteiro.json";
 import { projetar } from "../projetar";
 import { clamp, ease, easeOut, lerp, lerp3, pop, rand } from "../anim";
 import { C } from "../theme";
@@ -391,3 +392,6 @@ export const CENAS_6X1: Record<string, React.FC<CenaProps>> = {
   excecoes: Excecoes,
   agora: Agora,
 };
+
+/** Registro do vídeo: o Composicoes.tsx acha este export sozinho (não precisa editar mais nada). */
+export const VIDEO = { id: "Escala6x1", roteiro: roteiro as Roteiro, cenas: CENAS_6X1 };

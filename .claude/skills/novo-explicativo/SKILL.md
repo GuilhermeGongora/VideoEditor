@@ -51,8 +51,12 @@ Campo `voz` do roteiro:
   sem `pronuncia`.
 
 ## 4. Cenas → `src/explicativo/videos/<Nome>.tsx`
-- Copie a estrutura do `Escala6x1.tsx`: um componente por cena, exporte `CENAS_<NOME>` e registre em
-  `src/explicativo/Composicoes.tsx` (import do roteiro + cenas).
+- Copie a estrutura do `Escala6x1.tsx`: um componente por cena, `CENAS_<NOME>` e, no fim do arquivo,
+  `export const VIDEO = { id: "<Nome>", roteiro: roteiro as Roteiro, cenas: CENAS_<NOME> };`
+  (com `import roteiro from "../../../videos/<slug>/roteiro.json"`). O vídeo se registra sozinho:
+  **NÃO edite `Composicoes.tsx`** (editar ele causa conflito no `git pull`).
+- Ao terminar o vídeo, salve no GitHub: `git add videos/<slug> src/explicativo/videos/<Nome>.tsx` +
+  commit + push (assim o próximo `git pull` do usuário não trava).
 - Para cada cena, escolha UMA metáfora visual do dado (ver `references/estilo.md`):
   votos → cadeiras acendendo; horas → cubos sumindo; pessoas → bonecos (1 boneco = X); dinheiro →
   moedas/holerite; prazo → placas numa linha do tempo; regra/lei → papel + checklist.

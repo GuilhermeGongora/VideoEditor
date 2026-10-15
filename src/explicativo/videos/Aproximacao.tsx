@@ -4,7 +4,8 @@ import { Stage, Cam } from "../three/Stage";
 import { Mannequin, idlePose } from "../three/Mannequin";
 import { Coins, Mat, RoundBox } from "../three/Objetos";
 import { Callout, DataCard, Label, Tags } from "../ui/Overlays";
-import { CenaProps } from "../Explicativo";
+import { CenaProps, Roteiro } from "../Explicativo";
+import roteiro from "../../../videos/aproximacao/roteiro.json";
 import { projetar } from "../projetar";
 import { clamp, ease, easeOut, lerp, lerp3, pop } from "../anim";
 import { C } from "../theme";
@@ -523,3 +524,6 @@ export const CENAS_APROXIMACAO: Record<string, React.FC<CenaProps>> = {
   banco: Banco,
   senha: Senha,
 };
+
+/** Registro do vídeo: o Composicoes.tsx acha este export sozinho (não precisa editar mais nada). */
+export const VIDEO = { id: "Aproximacao", roteiro: roteiro as Roteiro, cenas: CENAS_APROXIMACAO };
