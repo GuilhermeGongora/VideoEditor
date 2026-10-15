@@ -7,3 +7,4 @@ public/clips/*
 public/emoji/
 .env
 public/soundeffects/catalog.json
+ranking.json

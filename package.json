@@ -9,9 +9,11 @@
     "render": "remotion render Ranking out/ranking.mp4",
     "sfx": "node scripts/sfx-local.mjs",
     "sfx:ai": "node scripts/sfx-elevenlabs.mjs",
-    "postinstall": "node scripts/setup-emoji.mjs",
+    "postinstall": "node scripts/setup-emoji.mjs && node scripts/ensure-ranking.mjs",
     "sfx:index": "node scripts/sfx-index.mjs",
-    "baixar": "node scripts/baixar.mjs"
+    "baixar": "node scripts/baixar.mjs",
+    "predev": "node scripts/ensure-ranking.mjs",
+    "prerender": "node scripts/ensure-ranking.mjs"
   },
   "dependencies": {
     "@fontsource/courier-prime": "^5.3.0",

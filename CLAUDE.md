@@ -8,7 +8,8 @@ para TikTok/Shorts/Reels, com Remotion. Responda sempre em português do Brasil.
 - Lista fixa de posições na esquerda (1 dourado, 2 azul, 3 vermelho, demais brancos).
 - Os clipes passam do último lugar até o #1. Quando cada clipe começa, o texto dele
   "pula" na lista com som; troca de clipe tem whoosh; o #1 entra com um som de impacto.
-- TUDO é controlado pelo `ranking.json`. Para mudar um vídeo, edite o JSON; só mexa em
+- TUDO é controlado pelo `ranking.json` (local, fora do Git; o modelo é `ranking.example.json`).
+  Para mudar um vídeo, edite o JSON; só mexa em
   `src/` se o usuário pedir mudança de estilo/layout.
 
 ## Texto na tela: só o fixo
