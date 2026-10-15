@@ -1,0 +1,88 @@
+{
+  "slug": "imposto-de-renda",
+  "composicao": "ImpostoDeRenda",
+  "marca": "SCIENTIA · IMPOSTO DE RENDA",
+  "voz": {
+    "principal": "feminina",
+    "alternar": "nao",
+    "velocidade": 1.1
+  },
+  "pronuncia": {
+    "7,5%": "sete e meio por cento",
+    "27,5%": "vinte e sete e meio por cento",
+    "7.350": "sete mil trezentos e cinquenta",
+    "141": "cento e quarenta e um"
+  },
+  "fontes": [
+    "Agência Brasil, 01/01/2026: isenção total até R$ 5 mil/mês desde 01/01/2026; desconto gradual de R$ 5.000,01 a R$ 7.350; acima disso, tabela atual com máximo de 27,5%; imposto mínimo de até 10% acima de R$ 600 mil/ano, ~141 mil contribuintes, apurado na declaração de 2027",
+    "Agência Senado, 27/11/2025: Lei 15.270/2025 sancionada; mais de 15 milhões de beneficiados; vale para o ano-base 2026, declarado em 2027",
+    "Receita Federal / contabilidades (Jettax, InfoMoney), 2026: tabela progressiva mantida, alíquotas de 7,5% a 27,5%; o redutor é aplicado depois do cálculo"
+  ],
+  "post": {
+    "gancho": "Desde janeiro, quem ganha até R$ 5 mil por mês não paga mais imposto de renda. Mas como o IR funciona de verdade? 📌",
+    "pontos": [
+      "Até R$ 5 mil por mês, um desconto zera o imposto. Entre R$ 5 mil e R$ 7.350, o desconto vai diminuindo",
+      "As alíquotas vão de 7,5% a 27,5%, e cada uma só vale para o pedaço da renda na sua faixa",
+      "Quem ganha mais de R$ 600 mil por ano passa a ter um imposto mínimo de até 10%, cerca de 141 mil pessoas"
+    ],
+    "fontes": [
+      "Agência Brasil",
+      "Agência Senado",
+      "Receita Federal"
+    ],
+    "hashtags": [
+      "impostoderenda",
+      "irpf",
+      "isencao",
+      "dinheiro",
+      "receitafederal"
+    ]
+  },
+  "thumb": {
+    "titulos": [
+      "Até R$ 5 mil,\nzero de IR.\n*Como funciona?*",
+      "Ganha mais e\npaga 27,5%?\n*Não é bem assim*"
+    ],
+    "cena": "faixas",
+    "quadro": 270,
+    "descer": 330,
+    "zoom": 1.45
+  },
+  "cenas": [
+    {
+      "id": "isento",
+      "chip": "ATÉ R$ 5 MIL",
+      "fala": "Desde janeiro, quem ganha até 5 mil reais por mês não paga mais imposto de renda. São mais de 15 milhões de pessoas."
+    },
+    {
+      "id": "oque",
+      "chip": "O QUE É",
+      "fala": "O imposto de renda é a parte do que você ganha que vai para o governo. Com carteira assinada, ele já sai descontado do salário."
+    },
+    {
+      "id": "faixas",
+      "chip": "AS FAIXAS",
+      "fala": "Ele funciona em faixas, como degraus, de 7,5% até 27,5%. Mas cada taxa só vale para o pedaço do salário naquele degrau."
+    },
+    {
+      "id": "desconto",
+      "chip": "O DESCONTO",
+      "fala": "Até 5 mil, um desconto zera o imposto. Entre 5 mil e 7.350, o desconto vai diminuindo. Acima disso, nada muda."
+    },
+    {
+      "id": "alta",
+      "chip": "QUEM PAGA MAIS",
+      "fala": "Para compensar, quem ganha mais de 600 mil reais por ano vai ter um imposto mínimo, de até 10%. São cerca de 141 mil pessoas."
+    },
+    {
+      "id": "declaracao",
+      "chip": "A DECLARAÇÃO",
+      "fala": "Uma vez por ano, vem a declaração, o acerto de contas. Pagou a mais, recebe a restituição. Pagou a menos, paga a diferença."
+    },
+    {
+      "id": "agora",
+      "chip": "E AGORA?",
+      "fala": "No salário, já vale desde janeiro. Na declaração, aparece em 2027, sobre o que você ganhou em 2026."
+    }
+  ]
+}

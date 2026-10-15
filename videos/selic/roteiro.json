@@ -1,0 +1,74 @@
+{
+  "slug": "selic",
+  "composicao": "Selic",
+  "marca": "SCIENTIA · SELIC",
+  "voz": {
+    "edge": "pt-BR-AntonioNeural",
+    "kokoro": "pm_alex",
+    "velocidade": 1.08
+  },
+  "pronuncia": {
+    "13,75%": "treze vírgula setenta e cinco por cento",
+    "4,58%": "quatro vírgula cinquenta e oito por cento",
+    "4,5%": "quatro e meio por cento",
+    "3%": "três por cento",
+    "IPCA": "ipê cê á",
+    "CDB": "cê dê bê",
+    "Copom": "Copóm",
+    "Focus": "Fôcus"
+  },
+  "fontes": [
+    "CNN Brasil, 16/09/2026: Copom corta a Selic de 14% para 13,75% ao ano, quinto corte seguido, decisão unânime; Focus vê esse como o último corte de 2026",
+    "ADVFN / comunicado do BC, 09/2026: 281ª reunião, Selic 13,75%; trajetória 14,75% (mar), 14,50% (abr), 14,25% (jun), 14,00% (ago), 13,75% (set)",
+    "Correio Braziliense e Brasil 61, 10/2026 (IBGE): IPCA de 0,82% em setembro; 4,58% em 12 meses",
+    "Meta de inflação: 3% ao ano, com tolerância de 1,5 ponto (1,5% a 4,5%), conforme reportagens sobre a decisão de setembro",
+    "B3 Bora Investir e XP: Copom tem 8 reuniões em 2026; próximas em 3–4/11 e 8–9/12"
+  ],
+  "thumb": {
+    "titulos": [
+      "Selic em\n13,75%.\n*E o seu bolso?*",
+      "O juro do país\ncaiu 5 vezes.\n*Por quê?*"
+    ],
+    "cena": "corte",
+    "quadro": 200,
+    "descer": 330,
+    "zoom": 1.45
+  },
+  "cenas": [
+    {
+      "id": "corte",
+      "chip": "13,75%",
+      "fala": "A Selic está em 13,75% ao ano. Em setembro, o Banco Central cortou pela quinta vez seguida. Mas o que esse número faz no seu bolso?"
+    },
+    {
+      "id": "base",
+      "chip": "O QUE É",
+      "fala": "A Selic é a taxa básica de juros do país. Ela serve de base para todos os outros juros: do empréstimo, do cartão, do financiamento."
+    },
+    {
+      "id": "copom",
+      "chip": "QUEM DECIDE",
+      "fala": "Quem decide é o Copom, um comitê do Banco Central. São 8 reuniões por ano."
+    },
+    {
+      "id": "freio",
+      "chip": "O FREIO",
+      "fala": "A Selic funciona como um freio. Juro alto deixa o crédito mais caro, as pessoas compram menos, e os preços sobem mais devagar."
+    },
+    {
+      "id": "meta",
+      "chip": "A META",
+      "fala": "O alvo é inflação de 3% ao ano, aceitando até 4,5%. Em 12 meses até setembro, o IPCA foi de 4,58%. Acima do teto."
+    },
+    {
+      "id": "bolso",
+      "chip": "NO SEU BOLSO",
+      "fala": "Com a Selic alta, a dívida pesa mais. Mas o dinheiro guardado rende mais, como no Tesouro Selic e no CDB."
+    },
+    {
+      "id": "agora",
+      "chip": "E AGORA?",
+      "fala": "A próxima reunião é nos dias 3 e 4 de novembro. Pelo Boletim Focus, o mercado acha que o corte de setembro foi o último do ano."
+    }
+  ]
+}

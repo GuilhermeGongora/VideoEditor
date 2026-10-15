@@ -1,0 +1,72 @@
+{
+  "slug": "pix",
+  "composicao": "Pix",
+  "marca": "SCIENTIA · PIX",
+  "voz": {
+    "edge": "pt-BR-AntonioNeural",
+    "kokoro": "pm_alex",
+    "velocidade": 1.08
+  },
+  "pronuncia": {
+    "7,1": "sete vírgula um",
+    "DICT": "díquiti",
+    "SPI": "ésse pê í",
+    "20h": "20 horas",
+    "6h": "6 horas",
+    "1.000": "mil"
+  },
+  "fontes": [
+    "Agência Brasil, 09/10/2026: 1,008 bilhão de chaves Pix em 30/09/2026; 7,1 bilhões de transações em setembro (R$ 3,2 tri) pelo SPI; ~170 milhões de clientes",
+    "Olhar Digital, 08/10/2026 e JB, 09/10/2026: mesmos números, dados do BC/DICT",
+    "Transfeera / BC: DICT = diretório de chaves operado pelo Banco Central; o banco do pagador consulta o DICT e mostra os dados do recebedor",
+    "Jovem Pan / Jornal de Brasília (regra do BC): limite padrão de R$ 1.000 entre pessoas das 20h às 6h; aumento pelo app leva de 24 a 48 horas",
+    "Jornal Contábil / Band / A Crítica, 2026: MED 2.0 obrigatório desde 02/02/2026, rastreia o dinheiro por até 5 transferências; devolução não é garantida"
+  ],
+  "thumb": {
+    "titulos": [
+      "1 bilhão de\nchaves Pix.\n*Como funciona?*",
+      "Você mandou\num Pix. Pra\n*onde ele vai?*"
+    ],
+    "cena": "caminho",
+    "quadro": 270,
+    "descer": 330,
+    "zoom": 1.45
+  },
+  "cenas": [
+    {
+      "id": "bilhao",
+      "chip": "1 BILHÃO",
+      "fala": "O Pix acabou de passar de 1 bilhão de chaves cadastradas. Só em setembro, foram 7,1 bilhões de transações."
+    },
+    {
+      "id": "chave",
+      "chip": "A CHAVE",
+      "fala": "A chave é um apelido da sua conta: CPF, celular, e-mail ou aleatória. Por trás dela estão banco, agência e conta."
+    },
+    {
+      "id": "agenda",
+      "chip": "A AGENDA",
+      "fala": "Essas chaves ficam numa agenda do Banco Central, o DICT. Quando você digita a chave, seu banco consulta essa agenda e mostra o nome de quem vai receber."
+    },
+    {
+      "id": "caminho",
+      "chip": "O CAMINHO",
+      "fala": "Você confirma, e o dinheiro passa pelo SPI, o sistema do Banco Central que liga os bancos. Sai de um e cai no outro na hora, até de madrugada."
+    },
+    {
+      "id": "noite",
+      "chip": "À NOITE",
+      "fala": "Mas à noite tem trava. Das 20h às 6h, o limite padrão entre pessoas é de 1.000 reais. Para aumentar, leva de 24 a 48 horas."
+    },
+    {
+      "id": "golpe",
+      "chip": "E SE FOR GOLPE?",
+      "fala": "Caiu num golpe? Avise o banco rápido. Desde fevereiro, a devolução segue o dinheiro por até 5 transferências. Mas não é garantida."
+    },
+    {
+      "id": "confira",
+      "chip": "CONFIRA O NOME",
+      "fala": "Por isso, antes de confirmar, olhe o nome que aparece na tela. É ele que diz para onde vai o seu dinheiro."
+    }
+  ]
+}
