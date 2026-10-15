@@ -1,7 +1,10 @@
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 import { C, MONO, SANS } from "../theme";
 import { clamp, pop } from "../anim";
+
+/** Na thumbnail os cartões/anotações das cenas somem (só fica o 3D + título). */
+export const SemOverlays = createContext(false);
 
 /** Marca no topo + chip do capítulo. */
 export const Hud: React.FC<{ marca: string; chip: string; chipAt?: number }> = ({ marca, chip, chipAt = 0 }) => {
@@ -43,6 +46,7 @@ export const DataCard: React.FC<{
   top?: number;
   out?: number;
 }> = ({ at, label, value, unit, rightLabel, rightValue, top = 300, out }) => {
+  if (useContext(SemOverlays)) return null;
   const f = useCurrentFrame();
   const s = pop(f, at);
   const o = out !== undefined ? interpolate(f, [out, out + 8], [1, 0], clamp) : 1;
@@ -83,6 +87,7 @@ export const DataCard: React.FC<{
 
 /** Pílulas pequenas (ex.: "+60 DIAS", "+1 ANO"). */
 export const Tags: React.FC<{ items: { text: string; at: number; on?: boolean }[]; top: number }> = ({ items, top }) => {
+  if (useContext(SemOverlays)) return null;
   const f = useCurrentFrame();
   return (
     <div style={{ position: "absolute", top, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 16 }}>
@@ -124,6 +129,7 @@ export const Callout: React.FC<{
   sub?: string;
   out?: number;
 }> = ({ at, x, y, dx = -120, dy = -160, title, sub, out }) => {
+  if (useContext(SemOverlays)) return null;
   const f = useCurrentFrame();
   const s = pop(f, at, 30, 16);
   const line = interpolate(f, [at, at + 10], [0, 1], clamp);
@@ -195,6 +201,7 @@ export const Label: React.FC<{ x: number; y: number; at: number; text: string; c
   color = C.textDim,
   size = 20,
 }) => {
+  if (useContext(SemOverlays)) return null;
   const f = useCurrentFrame();
   const s = pop(f, at);
   return (

@@ -9,6 +9,7 @@ import path from "node:path";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const OUT = path.join(ROOT, "out");
+const THUMBS = path.join(ROOT, "thumbs");
 const PUBLIC = path.join(ROOT, "public");
 const CATALOG = path.join(PUBLIC, "soundeffects", "catalog.json");
 const PREFS = path.join(PUBLIC, "soundeffects", "preferences.json");
@@ -35,7 +36,13 @@ const downloadsPage = () => {
     ? fs.readdirSync(OUT).filter((f) => /\.(mp4|mov|webm)$/i.test(f)).map((f) => ({ f, s: fs.statSync(path.join(OUT, f)) })).sort((a, b) => b.s.mtimeMs - a.s.mtimeMs)
     : [];
   const rows = files.map(({ f, s }) => `<li><a href="/out/${encodeURIComponent(f)}" download>${esc(f)}</a> <span class="m">${(s.size / 1e6).toFixed(1)} MB · ${s.mtime.toLocaleString("pt-BR")}</span></li>`).join("");
-  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul></main>`;
+  const thumbs = fs.existsSync(THUMBS)
+    ? fs.readdirSync(THUMBS).filter((f) => /\.(png|jpe?g)$/i.test(f)).map((f) => ({ f, s: fs.statSync(path.join(THUMBS, f)) })).sort((a, b) => b.s.mtimeMs - a.s.mtimeMs)
+    : [];
+  const grid = thumbs
+    .map(({ f }) => `<a href="/thumbs/${encodeURIComponent(f)}" download style="display:inline-block;margin:6px;text-align:center;color:#ccc;font-size:13px"><img src="/thumbs/${encodeURIComponent(f)}?v" style="width:160px;border-radius:10px;display:block"><span>${esc(f)}</span></a>`)
+    .join("");
+  return `<!doctype html><title>Downloads</title>${STYLE}<header><b>Vídeos</b><a href="/sons">Biblioteca de sons →</a></header><main><ul style="line-height:2.4">${rows || "<li>Nada em out/ ainda.</li>"}</ul>${grid ? `<h2>Thumbnails (clique para baixar)</h2><div>${grid}</div>` : ""}</main>`;
 };
 
 const soundsPage = () => {
@@ -125,6 +132,10 @@ http
     if (url.startsWith("/out/")) {
       const p = safe(OUT, url.slice(5));
       return p ? sendFile(res, p, true) : res.writeHead(403).end();
+    }
+    if (url.startsWith("/thumbs/")) {
+      const p = safe(THUMBS, url.slice(8).split("?")[0]);
+      return p ? sendFile(res, p, !url.includes("?")) : res.writeHead(403).end();
     }
     if (url.startsWith("/public/")) {
       const p = safe(PUBLIC, url.slice(8));

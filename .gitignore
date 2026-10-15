@@ -14,3 +14,4 @@ public/soundeffects/catalog.md
 # vídeos explicativos: narração e tempos são gerados (npm run narrar)
 public/explicativo/
 __pycache__/
+thumbs/

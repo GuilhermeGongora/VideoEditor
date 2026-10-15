@@ -1,7 +1,7 @@
 {
   "slug": "6x1",
   "composicao": "Escala6x1",
-  "marca": "EXPLICADO · 6x1",
+  "marca": "SCIENTIA · 6x1",
   "voz": {
     "edge": "pt-BR-AntonioNeural",
     "kokoro": "pm_alex",
@@ -55,5 +55,15 @@
       "chip": "E AGORA?",
       "fala": "Agora falta a promulgação no Congresso. É a partir dela que o relógio começa a contar."
     }
-  ]
+  ],
+  "thumb": {
+    "titulos": [
+      "Senado aprovou\no fim da 6x1.\n*Quando muda?*",
+      "75 votos a 1.\nA 6x1 vai\n*acabar mesmo?*"
+    ],
+    "cena": "aprovado",
+    "quadro": 120,
+    "descer": 330,
+    "zoom": 1.45
+  }
 }

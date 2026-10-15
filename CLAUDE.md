@@ -8,7 +8,7 @@ para TikTok/Shorts/Reels, com Remotion. Responda sempre em português do Brasil.
 - **Explicativo 3D** (assunto explicado com bonecos/objetos 3D, narração e legenda karaokê):
   skill `/novo-explicativo`, roteiro em `videos/<slug>/roteiro.json`, cenas em
   `src/explicativo/videos/*.tsx`. Comandos: `npm run narrar -- <slug>`, `npm run quadros -- <slug>`,
-  `npm run explicar -- <slug>`.
+  `npm run explicar -- <slug>`, `npm run thumb -- <slug>` (capas em `thumbs/`). Marca do canal: Scientia.
 
 ## Antes de qualquer edição
 - Para montar um vídeo use a skill **`/novo-ranking`** (fluxo completo de editor: assistir clipes,

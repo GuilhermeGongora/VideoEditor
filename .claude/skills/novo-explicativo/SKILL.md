@@ -23,6 +23,8 @@ Leia `references/estilo.md` e `references/biblioteca.md` antes de montar as cena
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
 - Última cena: o que acontece agora / o que a pessoa deve saber. Sem pedir like.
 - `composicao` = nome do componente (ex.: `Escala6x1`).
+- `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
+- `thumb` = capa do vídeo (ver passo 6): `{ "titulos": [2 opções], "cena": "<id da cena de fundo>", "quadro": <frame da cena>, "descer": 330, "zoom": 1.45 }`.
 
 ## 3. Narração
 `npm run narrar -- <slug>` → `public/explicativo/<slug>/narracao.wav` + `tempos.json` (tempo de cada
@@ -47,7 +49,15 @@ Se o usuário quiser outra voz, troque `voz.edge` (ex.: `pt-BR-FranciscaNeural`,
 OLHE a grade. Confira: nada cortado ou atrás da legenda; texto legível; objeto principal grande o
 bastante; nada sobreposto ao cartão/chip; o visual bate com a frase. Ajuste câmera/escala e repita.
 
-## 6. Renderizar e entregar
-`npm run explicar -- <slug>` → `out/<slug>.mp4` (3D renderiza sem GPU: ~6–10 min por minuto de vídeo
+## 6. Thumbnail (capa)
+Escreva 2 títulos em `thumb.titulos` (linhas com `\n`, destaque entre `*asteriscos*`):
+- 3 linhas, no máximo ~16 caracteres por linha; a última linha é a pergunta/curiosidade em destaque.
+- Um com o fato/número forte ("75 votos a 1."), outro com a pergunta que a pessoa tem ("*Quando muda?*").
+- Verdadeiro: nada de prometer o que o vídeo não mostra.
+- Fundo: a cena mais bonita/legível (`cena` + `quadro` em que ela já está montada).
+`npm run thumb -- <slug>` → `thumbs/<slug>-1.png`, `-2.png`. OLHE as duas antes de entregar.
+
+## 7. Renderizar e entregar
+`npm run explicar -- <slug>` → `out/<slug>.mp4` + thumbs (3D renderiza sem GPU: ~6–10 min por minuto de vídeo
 no Codespace). Assista 3–4 quadros do mp4 final, confira o fim do áudio, e entregue com as fontes.
 Peça a opinião do usuário e registre o que ele achar em `notas-do-editor.md` (seção "Explicativos").

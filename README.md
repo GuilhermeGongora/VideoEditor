@@ -20,7 +20,8 @@ Assunto explicado com bonecos e objetos 3D, narração e legenda palavra por pal
 1. No terminal: `claude` → `/novo-explicativo escala 6x1` (ou qualquer assunto).
    O Claude pesquisa, escreve o roteiro, gera a voz, monta as cenas, confere e renderiza.
 2. Ou na mão: `npm run narrar -- 6x1` → `npm run quadros -- 6x1` (prévia) → `npm run explicar -- 6x1`.
-3. Baixar: `npm run baixar` (porta 8080). O 3D renderiza sem placa de vídeo: ~10 min por minuto.
+   Thumbnails: `npm run thumb -- 6x1` → pasta `thumbs/` (o `explicar` já gera junto).
+3. Baixar vídeos e thumbs: `npm run baixar` (porta 8080). O 3D renderiza sem placa de vídeo: ~10 min por minuto.
 
 ## Sua biblioteca de sons
 1. Arraste seus sons para `public/soundeffects/` (subpastas ajudam: `impacts/`, `memes/`, `whoosh/`…).

@@ -1,6 +1,7 @@
 // Atalhos dos vídeos explicativos.
 //   npm run quadros -- 6x1   → um quadro de cada cena (no fim de cada fala) em out/quadros/<slug>/grade.jpg
-//   npm run explicar -- 6x1  → renderiza o vídeo em out/<slug>.mp4
+//   npm run explicar -- 6x1  → renderiza o vídeo em out/<slug>.mp4 (e as thumbs)
+//   npm run thumb -- 6x1     → só as thumbnails em thumbs/<slug>-1.png, -2.png… (uma por título em roteiro.thumb)
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -8,7 +9,7 @@ import path from "node:path";
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const [modo, slug] = process.argv.slice(2);
 if (!slug) {
-  console.log("Uso: npm run quadros -- <slug>   |   npm run explicar -- <slug>");
+  console.log("Uso: npm run quadros -- <slug>  |  npm run explicar -- <slug>  |  npm run thumb -- <slug>");
   process.exit(1);
 }
 const rot = JSON.parse(fs.readFileSync(path.join(ROOT, "videos", slug, "roteiro.json"), "utf8"));
@@ -43,11 +44,28 @@ const escolherGl = (frame) => {
 };
 const bundle = () => execFileSync("npx", ["remotion", "bundle", "--out-dir=out/bundle", "--log=error"], { cwd: ROOT, stdio: "inherit" });
 
-if (modo === "render") {
+const thumbs = (gl) => {
+  if (!rot.thumb?.titulos?.length) {
+    console.log("Sem thumbnail: falta o campo \"thumb\" no roteiro.json.");
+    return;
+  }
+  fs.mkdirSync(path.join(ROOT, "thumbs"), { recursive: true });
+  rot.thumb.titulos.forEach((_, i) => {
+    const arq = `thumbs/${slug}-${i + 1}.png`;
+    run(["still", "out/bundle", `${id}Thumb`, arq, `--props=${JSON.stringify({ variante: i })}`, `--gl=${gl}`, "--log=error"]);
+    console.log(`Thumb: ${arq}`);
+  });
+};
+
+if (modo === "thumb") {
+  bundle();
+  thumbs(escolherGl(Math.round(tempos.duracao * 15)));
+} else if (modo === "render") {
   const out = `out/${slug}.mp4`;
   bundle();
   const gl = escolherGl(Math.round(tempos.duracao * 15));
   run(["render", "out/bundle", id, out, "--concurrency=2", `--gl=${gl}`]);
+  thumbs(gl);
   console.log(`\nPronto: ${out}  (baixe com: npm run baixar)`);
 } else {
   const dir = path.join(ROOT, "out", "quadros", slug);

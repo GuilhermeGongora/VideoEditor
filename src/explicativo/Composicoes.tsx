@@ -1,10 +1,11 @@
 import React from "react";
 import { CalculateMetadataFunction, Composition, staticFile } from "remotion";
 import { Explicativo, Roteiro, Tempos } from "./Explicativo";
+import { Thumb, ThumbCfg } from "./Thumb";
 import { CENAS_6X1 } from "./videos/Escala6x1";
 import roteiro6x1 from "../../videos/6x1/roteiro.json";
 
-type Props = { roteiro: Roteiro; tempos: Tempos | null };
+type Props = { roteiro: Roteiro & { thumb?: ThumbCfg }; tempos: Tempos | null; variante?: number };
 
 const meta: CalculateMetadataFunction<Props> = async ({ props }) => {
   const res = await fetch(staticFile(`explicativo/${props.roteiro.slug}/tempos.json`));
@@ -28,6 +29,19 @@ export const Explicativos: React.FC = () => (
         defaultProps={{ roteiro: v.roteiro, tempos: null } as Props}
         calculateMetadata={meta}
         durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+    ))}
+    {VIDEOS.map((v) => (
+      <Composition
+        key={`${v.id}Thumb`}
+        id={`${v.id}Thumb`}
+        component={({ roteiro, tempos, variante }: Props) => <Thumb roteiro={roteiro} tempos={tempos} cenas={v.cenas} variante={variante} />}
+        defaultProps={{ roteiro: v.roteiro, tempos: null, variante: 0 } as Props}
+        calculateMetadata={async (a) => ({ ...(await meta(a)), durationInFrames: 1 })}
+        durationInFrames={1}
         fps={30}
         width={1080}
         height={1920}
