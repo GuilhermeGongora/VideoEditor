@@ -8,23 +8,32 @@
     "velocidade": 1.05
   },
   "pronuncia": {
-    "1.560": "mil quinhentos e sessenta",
-    "1,5": "um e meio"
+    "1.000": "mil",
+    "109": "cento e nove",
+    "330": "trezentos e trinta"
   },
   "fontes": [
     "Banco Central (bcb.gov.br/novasnotas/nota-100-reais): nota de R$ 100 da 2ª família mede 15,6 cm × 7 cm",
-    "Valor Final e Distância Cidades: São Paulo–Brasília por estrada ≈ 1.020 km",
-    "Contas: 1 milhão de segundos = 11,6 dias; 1 bilhão de segundos = 31,7 anos; 10 mil notas × 15,6 cm = 1,56 km; 10 milhões × 15,6 cm = 1.560 km; 1 milhão de cubos de 1 cm = cubo de 1 m; 1 bilhão = cubo de 10 m"
+    "Contas: 1 milhão de segundos = 11,6 dias; 1 bilhão de segundos = 31,7 anos; 10 mil notas × (0,156 m × 0,07 m) = 109 m² (quadrado de 10,4 m); 10 milhões de notas = 109.200 m² (quadrado de 330 m); 1 milhão de cubos de 1 cm = cubo de 1 m; 1 bilhão = cubo de 10 m"
   ],
   "post": {
-    "gancho": "Ganhando 1 real por segundo, você junta 1 milhão em 11 dias e meio. E 1 bilhão? 📌",
+    "gancho": "1 milhão de segundos são 11 dias. 1 bilhão de segundos? 31 anos. 📌",
     "pontos": [
-      "1 bilhão é mil vezes 1 milhão: são só 3 zeros a mais, mas a distância é enorme",
-      "Em notas de 100 enfileiradas, 1 milhão dá 1,5 km. 1 bilhão dá 1.560 km, mais que de São Paulo a Brasília",
-      "Em cubinhos de 1 cm, 1 milhão forma um cubo de 1 metro. 1 bilhão, um cubo de 10 metros de lado"
+      "1 bilhão é mil vezes 1 milhão: só 3 zeros a mais, mas cada zero multiplica por 10",
+      "Em notas de 100 no chão, 1 milhão cobre 109 m². 1 bilhão cobre um quadrado de 330 metros de lado",
+      "Em cubinhos de 1 cm, 1 milhão vira um cubo de 1 metro. 1 bilhão, um cubo de 10 metros"
     ],
-    "fontes": ["Banco Central (medida da nota de 100)", "contas a partir dela"],
-    "hashtags": ["matematica", "curiosidades", "dinheiro", "escala", "ciencia"]
+    "fontes": [
+      "Banco Central (medida da nota de 100)",
+      "contas a partir dela"
+    ],
+    "hashtags": [
+      "matematica",
+      "curiosidades",
+      "dinheiro",
+      "escala",
+      "ciencia"
+    ]
   },
   "thumb": {
     "titulos": [
@@ -32,40 +41,46 @@
       "1 milhão: 11 dias\n1 bilhão:\n*31 anos.*"
     ],
     "cena": "cubos",
-    "quadro": 300,
+    "quadro": 200,
     "descer": 330,
     "zoom": 1.45
   },
   "cenas": [
     {
+      "id": "gancho",
+      "chip": "MILHÃO × BILHÃO",
+      "fala": "1 milhão de segundos: 11 dias. 1 bilhão? 31 anos."
+    },
+    {
       "id": "segundos",
       "chip": "1 REAL POR SEGUNDO",
-      "fala": "Ganhando 1 real por segundo, você junta 1 milhão em 11 dias e meio. Para chegar a 1 bilhão, precisa de quase 32 anos."
+      "fala": "Pensa assim: ganhando 1 real por segundo, sem parar, você junta 1 milhão em 11 dias e meio. Já 1 bilhão leva quase 32 anos."
     },
     {
       "id": "zeros",
       "chip": "MIL VEZES",
-      "fala": "Parece só um número a mais. Mas 1 bilhão é mil vezes 1 milhão. São três zeros, e cada zero multiplica por 10."
+      "fala": "Isso porque 1 bilhão é mil vezes 1 milhão. São três zeros a mais, e cada zero multiplica por 10."
     },
     {
-      "id": "notas",
+      "id": "tapete",
       "chip": "EM NOTAS DE 100",
-      "fala": "Em notas de 100, 1 milhão são 10 mil notas. 1 bilhão são 10 milhões de notas."
+      "fala": "Agora em notas de 100. 1 milhão são 10 mil notas. Lado a lado no chão, cobrem 109 metros quadrados."
     },
     {
-      "id": "fila",
-      "chip": "ENFILEIRADAS",
-      "fala": "Cada nota tem 15,6 centímetros. Enfileiradas, as notas de 1 milhão dão 1,5 quilômetro. As de 1 bilhão, 1.560 quilômetros. Mais que de São Paulo a Brasília."
+      "id": "campo",
+      "chip": "1 BILHÃO EM NOTAS",
+      "fala": "E 1 bilhão? São 10 milhões de notas. Dá 1.000 tapetes desses, um quadrado de 330 metros de lado."
     },
     {
       "id": "cubos",
       "chip": "EM CUBINHOS",
-      "fala": "Agora, em cubinhos de 1 centímetro. 1 milhão forma um cubo de 1 metro, menor que uma pessoa. 1 bilhão forma um cubo de 10 metros de lado."
+      "fala": "Em cubinhos de 1 centímetro, 1 milhão vira um cubo de 1 metro, mais baixo que você. 1 bilhão vira um cubo de 10 metros."
     },
     {
       "id": "lembre",
       "chip": "PARA LEMBRAR",
-      "fala": "Então, quando ouvir milhão e bilhão na mesma frase, lembre: é a diferença entre 11 dias e 31 anos."
+      "fala": "Então não confunda: entre milhão e bilhão, é a diferença de 11 dias para 31 anos."
     }
-  ]
+  ],
+  "cta": "comenta o que você faria com 1 bilhão"
 }
