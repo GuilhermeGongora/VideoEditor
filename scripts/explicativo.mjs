@@ -44,15 +44,33 @@ const escolherGl = (frame) => {
 };
 const bundle = () => execFileSync("npx", ["remotion", "bundle", "--out-dir=out/bundle", "--log=error"], { cwd: ROOT, stdio: "inherit" });
 
+// Quebra uma frase em linhas curtas (~16 letras) e destaca a última.
+const quebrar = (frase) => {
+  const linhas = [];
+  for (const p of frase.split(/\s+/)) {
+    const ult = linhas[linhas.length - 1];
+    if (ult !== undefined && (ult + " " + p).length <= 16) linhas[linhas.length - 1] = ult + " " + p;
+    else linhas.push(p);
+  }
+  if (linhas.length > 1) linhas[linhas.length - 1] = `*${linhas[linhas.length - 1]}*`;
+  return linhas.slice(0, 4).join("\n");
+};
+
 const thumbs = (gl) => {
-  if (!rot.thumb?.titulos?.length) {
-    console.log("Sem thumbnail: falta o campo \"thumb\" no roteiro.json.");
-    return;
+  let cfg = rot.thumb;
+  let props = {};
+  if (!cfg?.titulos?.length) {
+    // Roteiro sem "thumb": gera uma capa automática com a 1ª frase e a 1ª cena (melhor escrever à mão).
+    const c0 = tempos.cenas[0];
+    const frase = rot.cenas[0].fala.split(/(?<=[.!?])\s/)[0];
+    cfg = { titulos: [quebrar(frase)], cena: c0.id, quadro: Math.round((c0.end - c0.start) * 30 * 0.8) };
+    props = { roteiro: { ...rot, thumb: cfg } };
+    console.log("Aviso: roteiro sem \"thumb\"; gerando capa automática com a 1ª frase.");
   }
   fs.mkdirSync(path.join(ROOT, "thumbs"), { recursive: true });
-  rot.thumb.titulos.forEach((_, i) => {
+  cfg.titulos.forEach((_, i) => {
     const arq = `thumbs/${slug}-${i + 1}.png`;
-    run(["still", "out/bundle", `${id}Thumb`, arq, `--props=${JSON.stringify({ variante: i })}`, `--gl=${gl}`, "--log=error"]);
+    run(["still", "out/bundle", `${id}Thumb`, arq, `--props=${JSON.stringify({ ...props, variante: i })}`, `--gl=${gl}`, "--log=error"]);
     console.log(`Thumb: ${arq}`);
   });
 };

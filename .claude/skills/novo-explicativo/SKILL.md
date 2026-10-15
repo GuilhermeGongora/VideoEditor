@@ -1,9 +1,12 @@
 ---
 name: novo-explicativo
-description: Cria um vídeo educativo vertical (Shorts/TikTok/Reels) no estilo 3D clean do canal — pesquisa o assunto, escreve o roteiro, gera a narração, monta as cenas 3D com Remotion + Three.js, renderiza e revisa. Use quando o usuário pedir um vídeo explicando um assunto ("explica a 6x1", "faz um vídeo sobre…") ou disser "/novo-explicativo".
+description: Cria um vídeo educativo vertical (Shorts/TikTok/Reels) no estilo 3D clean do canal Scientia, completo e pronto para postar — pesquisa o assunto, escreve o roteiro, gera a narração, monta as cenas 3D com Remotion + Three.js, gera 2 thumbnails, renderiza e revisa. Use quando o usuário pedir um vídeo explicando um assunto ("explica a 6x1", "faz um vídeo sobre…") ou disser "/novo-explicativo".
 ---
 
 # Vídeo explicativo 3D
+
+**Entrega completa, sem o usuário pedir:** `out/<slug>.mp4` + `thumbs/<slug>-1.png` e `-2.png` + lista de fontes.
+O usuário só digita o tema; não pare no meio para perguntar o que dá para decidir sozinho.
 
 Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de
 destaque (`C.accent`), poeira no ar, câmera sempre se mexendo devagar, legenda karaokê, cartões de
@@ -60,4 +63,5 @@ Escreva 2 títulos em `thumb.titulos` (linhas com `\n`, destaque entre `*asteris
 ## 7. Renderizar e entregar
 `npm run explicar -- <slug>` → `out/<slug>.mp4` + thumbs (3D renderiza sem GPU: ~6–10 min por minuto de vídeo
 no Codespace). Assista 3–4 quadros do mp4 final, confira o fim do áudio, e entregue com as fontes.
-Peça a opinião do usuário e registre o que ele achar em `notas-do-editor.md` (seção "Explicativos").
+Mostre ao usuário: o vídeo, as 2 thumbs (diga qual você postaria e por quê), as fontes e uma
+legenda/descrição curta para o post com 3–5 hashtags. Peça a opinião e registre o que ele achar em `notas-do-editor.md` (seção "Explicativos").
