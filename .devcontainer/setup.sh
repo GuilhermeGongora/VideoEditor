@@ -16,6 +16,7 @@ npx remotion browser ensure || true
 
 # Efeitos sonoros básicos (sem API)
 npm run sfx
+npm run sfx:index || true
 
 # Claude Code no terminal
 npm install -g @anthropic-ai/claude-code || true

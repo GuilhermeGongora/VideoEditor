@@ -6,3 +6,4 @@ public/clips/*
 !public/clips/.gitkeep
 public/emoji/
 .env
+public/soundeffects/catalog.json

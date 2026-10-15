@@ -18,6 +18,17 @@ export type Caption = {
   sfx?: string;
 };
 
+export type Sound = {
+  /** Caminho dentro de public/, ex.: "soundeffects/impacts/punch 01.wav". */
+  src: string;
+  /** Segundo (a partir do início DESTE clipe, depois do "start") em que o som COMEÇA. */
+  at: number;
+  /** 0 a 1. Padrão 0.8. */
+  volume?: number;
+  /** Cortar o som depois de N segundos. */
+  maxSeconds?: number;
+};
+
 export type Item = {
   /** Posição no ranking (1 = melhor). */
   rank: number;
@@ -33,6 +44,8 @@ export type Item = {
   /** cover = preenche a tela (corta bordas); contain = mostra inteiro com fundo desfocado. */
   fit?: "cover" | "contain";
   captions?: Caption[];
+  /** Efeitos sonoros extras dentro do clipe (queda, impacto, risada…), sem texto na tela. */
+  sounds?: Sound[];
   /** Som ao revelar este item. null = sem som. Se ausente, usa o padrão. */
   sfx?: string | null;
   /** Preenchido automaticamente pelo "npm run prep". */

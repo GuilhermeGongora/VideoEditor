@@ -45,6 +45,20 @@ export const Ranking: React.FC<RankingData> = (props) => {
               </Sequence>
             );
           })}
+          {(s.item.sounds ?? []).map((snd, si) => {
+            const at = Math.round(snd.at * fps);
+            if (at >= s.len) return null;
+            return (
+              <Sequence
+                key={`snd-${si}`}
+                from={at}
+                durationInFrames={snd.maxSeconds ? Math.round(snd.maxSeconds * fps) : undefined}
+                layout="none"
+              >
+                <Audio src={staticFile(snd.src)} volume={snd.volume ?? 0.8} />
+              </Sequence>
+            );
+          })}
         </Sequence>
       ))}
 

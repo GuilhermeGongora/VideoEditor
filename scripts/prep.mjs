@@ -125,7 +125,7 @@ for (const p of prepared) {
   if (existing) {
     existing.duration = p.duration;
   } else {
-    data.items.push({ rank: p.rank, label: p.label, clip: p.clip, duration: p.duration, captions: [] });
+    data.items.push({ rank: p.rank, label: p.label, clip: p.clip, duration: p.duration, captions: [], sounds: [] });
   }
 }
 // Remove itens cujo arquivo não existe mais

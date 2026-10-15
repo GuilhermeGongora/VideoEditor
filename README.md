@@ -14,7 +14,21 @@ você joga os clipes, o Claude monta a lista, os textos, as legendas e os efeito
    `6-nice-grandma.mp4`, `5-bro.mp4`, …, `1-fbi-robot.mp4`.
 2. No terminal: `claude` e peça, por exemplo:
    > /novo-ranking título "Funniest Robot Moments", @gongoale, em inglês
-3. O vídeo sai em `out/ranking.mp4` (botão direito → Download).
+3. O vídeo sai em `out/ranking.mp4`.
+
+## Baixar o vídeo
+- **Jeito garantido:** no terminal, `npm run baixar`. Vá na aba **Ports**, passe o mouse na
+  porta **8080** e clique no ícone de globo. Abre uma página com os vídeos: é só clicar.
+  Funciona também pelo celular (logado no GitHub).
+- Ou no painel de arquivos: botão direito em `out/ranking.mp4` → **Download** (funciona melhor no Chrome/Edge).
+
+## Seus efeitos sonoros
+1. No Codespaces, arraste sua pasta de sons para dentro de `public/soundeffects/`
+   (pode manter subpastas, ex.: `impacts/`, `whoosh/`, `memes/`). Nomes descritivos ajudam o
+   Claude a escolher ("glass break.wav" é melhor que "sfx_0231.wav").
+2. Rode `npm run sfx:index` (o Claude também roda sozinho).
+3. Para salvar no GitHub: aba **Source Control** → mensagem → **Commit** → **Sync**.
+   Arquivos acima de 100 MB não sobem no GitHub; sons normalmente são bem menores.
 
 ## Comandos
 | Comando | O que faz |
@@ -22,7 +36,9 @@ você joga os clipes, o Claude monta a lista, os textos, as legendas e os efeito
 | `npm run prep -- --reset` | Converte os clipes de `clips/` e recria a lista no `ranking.json` |
 | `npm run dev` | Abre o Remotion Studio (prévia ao vivo, porta 3000) |
 | `npm run render` | Renderiza `out/ranking.mp4` |
-| `npm run sfx` | Gera os sons básicos (pop, whoosh, ding, boom, riser) |
+| `npm run baixar` | Página de download dos vídeos (porta 8080) |
+| `npm run sfx:index` | Cataloga os sons de `public/soundeffects/` para o Claude usar |
+| `npm run sfx` | Gera os sons básicos de reserva (pop, whoosh, ding, boom, riser) |
 | `npm run sfx:ai -- laugh "crowd laughing" 2` | Gera um som com IA (ElevenLabs) |
 
 Para a ElevenLabs: Codespaces → Settings → Secrets → `ELEVENLABS_API_KEY`.
@@ -35,11 +51,12 @@ Para a ElevenLabs: Codespaces → Settings → Secrets → `ELEVENLABS_API_KEY`.
   "handle": "@gongoale",
   "items": [
     { "rank": 3, "label": "lego 😂", "clip": "clips/3-lego.mp4", "start": 0.5, "end": 3,
-      "captions": [{ "text": "Wait for it… 😏", "from": 0.1, "to": 1.7, "style": "box", "sfx": "sfx/riser.wav" }] }
+      "sounds": [{ "src": "soundeffects/impacts/bonk.wav", "at": 1.4, "volume": 0.9 }] }
   ]
 }
 ```
-Estilos de legenda: `box` (caixa preta, máquina de escrever), `whitebox`, `pop` (grande, vermelho), `plain`.
+`sounds`: efeitos dentro do clipe (`at` = segundo em que o som começa).
+Legendas (`captions`) existem mas ficam desligadas por padrão; peça ao Claude se quiser uma.
 Clipe horizontal: `"fit": "contain"`.
 
 Remotion é gratuito para uso comercial por pessoas e empresas de até 3 pessoas.

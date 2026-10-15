@@ -1,15 +1,30 @@
 {
   "name": "ranking-video",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
-  "hostRequirements": { "cpus": 4, "memory": "8gb" },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  },
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "forwardPorts": [3000],
+  "forwardPorts": [
+    3000,
+    8080
+  ],
   "portsAttributes": {
-    "3000": { "label": "Remotion Studio", "onAutoForward": "openBrowser" }
+    "3000": {
+      "label": "Remotion Studio",
+      "onAutoForward": "openBrowser"
+    },
+    "8080": {
+      "label": "Downloads (npm run baixar)",
+      "onAutoForward": "notify"
+    }
   },
   "customizations": {
     "vscode": {
-      "extensions": ["anthropic.claude-code"]
+      "extensions": [
+        "anthropic.claude-code"
+      ]
     }
   }
 }
