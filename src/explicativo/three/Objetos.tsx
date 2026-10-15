@@ -11,6 +11,7 @@ export const Mat: React.FC<{ color?: string; glow?: number; opacity?: number; ro
   rough = 0.55,
 }) => (
   <meshStandardMaterial
+    key={opacity < 1 ? "t" : "o"}
     color={color}
     emissive={glow > 0 ? color : "#000"}
     emissiveIntensity={glow}

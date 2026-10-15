@@ -1,6 +1,30 @@
 {
   "_ajuda": "Favoritos e banidos: nome do arquivo (sem extensão) ou caminho a partir de public/ (ex.: soundeffects/memes/vine boom.mp3). Notas: explique o som em poucas palavras para o Claude. Dica: use 'npm run sons' para fazer isso ouvindo os sons no navegador.",
-  "favorites": [],
-  "banned": [],
-  "notes": {}
+  "favorites": [
+    "soundeffects/SoundEffects/WAV/auughhh.mp3.mpeg.wav",
+    "soundeffects/SoundEffects/WAV/faaah.mp3 (1).mpeg.wav",
+    "soundeffects/SoundEffects/WAV/ive-got-this.mp3.mpeg.wav",
+    "soundeffects/SoundEffects/WAV/jump.mp3.mpeg.wav",
+    "soundeffects/SoundEffects/WAV/klonk.mp3 (1).mpeg.wav",
+    "soundeffects/SoundEffects/WAV/gunshot-one.mp3.mpeg.wav"
+  ],
+  "banned": [
+    "soundeffects/SoundEffects/ElevenLabs_2026-08-17T21_49_41_mw_sarcastic_The Hyperactive Skeptic_gen_sp113_s50_sb75_v3.mp3",
+    "soundeffects/SoundEffects/ElevenLabs_2026-10-06T18_18_57_Mark - Natural Conversations_pvc_sp100_s44_sb75_se0_b_m2.mp3",
+    "soundeffects/SoundEffects/WAV/WhatsApp Ptt 2026-07-23 at 00.30.44.ogg",
+    "soundeffects/SoundEffects/WAV/core-sound-effect.mp3.wav",
+    "soundeffects/SoundEffects/WAV/core-sound-effect.wav.wav"
+  ],
+  "notes": {
+    "soundeffects/SoundEffects/WAV/auughhh.mp3.mpeg.wav": "Momento de dor",
+    "soundeffects/SoundEffects/WAV/awkward-moment.mp3.mpeg.wav": "Inicio, momento surpresa",
+    "soundeffects/SoundEffects/WAV/chicken-on-tree-screaming.mp3.mpeg.wav": "Momento de dor",
+    "soundeffects/SoundEffects/WAV/core-sound-effect.mp3.mpeg.wav": "transições",
+    "soundeffects/SoundEffects/WAV/delicious.mp3": "Algo gostoso aparecer",
+    "soundeffects/SoundEffects/WAV/faaah.mp3 (1).mpeg.wav": "algo engraçado ocorrer",
+    "soundeffects/SoundEffects/WAV/gunshot-one.mp3.mpeg.wav": "Barulho de tiro, pancada",
+    "soundeffects/SoundEffects/WAV/ive-got-this.mp3.mpeg.wav": "Inicio de video",
+    "soundeffects/SoundEffects/WAV/jump.mp3.mpeg.wav": "pulo",
+    "soundeffects/SoundEffects/WAV/klonk.mp3 (1).mpeg.wav": "batida"
+  }
 }

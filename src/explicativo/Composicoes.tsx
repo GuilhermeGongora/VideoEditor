@@ -4,6 +4,10 @@ import { Explicativo, Roteiro, Tempos } from "./Explicativo";
 import { Thumb, ThumbCfg } from "./Thumb";
 import { CENAS_6X1 } from "./videos/Escala6x1";
 import roteiro6x1 from "../../videos/6x1/roteiro.json";
+import { CENAS_APROXIMACAO } from "./videos/Aproximacao";
+import roteiroAproximacao from "../../videos/aproximacao/roteiro.json";
+import { CENAS_SEGUNDO_TURNO } from "./videos/SegundoTurno";
+import roteiroSegundoTurno from "../../videos/segundo-turno/roteiro.json";
 
 type Props = { roteiro: Roteiro & { thumb?: ThumbCfg }; tempos: Tempos | null; variante?: number };
 
@@ -17,6 +21,8 @@ const meta: CalculateMetadataFunction<Props> = async ({ props }) => {
 /** Cada vídeo explicativo = roteiro (videos/<slug>/roteiro.json) + cenas (src/explicativo/videos/*.tsx). */
 const VIDEOS: { id: string; roteiro: Roteiro; cenas: typeof CENAS_6X1 }[] = [
   { id: "Escala6x1", roteiro: roteiro6x1 as Roteiro, cenas: CENAS_6X1 },
+  { id: "Aproximacao", roteiro: roteiroAproximacao as Roteiro, cenas: CENAS_APROXIMACAO },
+  { id: "SegundoTurno", roteiro: roteiroSegundoTurno as Roteiro, cenas: CENAS_SEGUNDO_TURNO },
 ];
 
 export const Explicativos: React.FC = () => (

@@ -1,0 +1,58 @@
+{
+  "slug": "aproximacao",
+  "composicao": "Aproximacao",
+  "marca": "EXPLICADO · APROXIMAÇÃO",
+  "voz": {
+    "edge": "pt-BR-AntonioNeural",
+    "kokoro": "pm_alex",
+    "velocidade": 1.08
+  },
+  "pronuncia": {
+    "13,56": "treze vírgula cinquenta e seis",
+    "NFC": "êne éfe cê"
+  },
+  "fontes": [
+    "Panorama Abecs, 20/08/2026: aproximação movimentou R$ 1 trilhão no 1º semestre de 2026 (+18,5%); 76,2% das transações presenciais com cartão em junho/26",
+    "Metrópoles / Times Brasil, 08/2026: mesmos números da Abecs (R$ 1 tri, 76,2%)",
+    "Canaltech / Febraban Tech, 12/2020: Abecs elevou de R$ 100 para R$ 200 o limite sem senha; cada banco/credenciadora pode praticar limite menor (sem mudança encontrada até 2026)",
+    "Técnica: NFC / ISO 14443 opera em 13,56 MHz; cartão passivo, sem bateria, alimentado por indução do campo do leitor; alcance de poucos centímetros (até ~10 cm pela norma)",
+    "Técnica EMV: o chip gera um criptograma por transação a partir de um número imprevisível da maquininha e de uma chave gravada no chip pelo emissor"
+  ],
+  "cenas": [
+    {
+      "id": "gancho",
+      "chip": "3 EM CADA 4",
+      "fala": "Três em cada quatro compras com cartão na maquininha já são por aproximação. Mas como um cartão sem bateria consegue pagar alguma coisa?"
+    },
+    {
+      "id": "energia",
+      "chip": "A ENERGIA",
+      "fala": "A maquininha cria um campo magnético invisível. Dentro do cartão tem uma antena, uma bobina de fio. Quando ela entra no campo, gera energia e liga o chip."
+    },
+    {
+      "id": "perto",
+      "chip": "BEM PERTO",
+      "fala": "Por isso tem que chegar perto. O campo só alcança poucos centímetros. É o NFC, numa frequência de 13,56 megahertz."
+    },
+    {
+      "id": "conversa",
+      "chip": "A CONVERSA",
+      "fala": "Aí os dois conversam. A maquininha manda um número aleatório. O chip mistura esse número com uma chave secreta e devolve um código que só vale para essa compra."
+    },
+    {
+      "id": "copia",
+      "chip": "E SE COPIAREM?",
+      "fala": "Se alguém copiar esse código, não adianta. Na próxima compra o número é outro, e o código velho é recusado. E a chave nunca sai do chip."
+    },
+    {
+      "id": "banco",
+      "chip": "O BANCO",
+      "fala": "O código segue para o banco, que confere e aprova. Tudo isso antes de você guardar o cartão."
+    },
+    {
+      "id": "senha",
+      "chip": "E A SENHA?",
+      "fala": "Até 200 reais, em geral, nem pede senha. Esse teto foi definido pelas empresas de cartão, mas o seu banco pode usar um limite menor."
+    }
+  ]
+}

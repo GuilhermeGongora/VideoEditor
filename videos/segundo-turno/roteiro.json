@@ -1,0 +1,60 @@
+{
+  "slug": "segundo-turno",
+  "composicao": "SegundoTurno",
+  "marca": "EXPLICADO · 2º TURNO",
+  "voz": {
+    "edge": "pt-BR-AntonioNeural",
+    "kokoro": "pm_alex",
+    "velocidade": 1.08
+  },
+  "pronuncia": {
+    "47,03%": "quarenta e sete vírgula zero três por cento",
+    "45,16%": "quarenta e cinco vírgula dezesseis por cento",
+    "50%": "cinquenta por cento",
+    "8h": "8 horas",
+    "17h": "17 horas"
+  },
+  "fontes": [
+    "Agência Brasil, 04/10/2026: 2º turno em 25/10; presidente: Flávio Bolsonaro (PL) 47,03% e Lula (PT) 45,16% dos votos válidos; governador em AC, AM, DF, ES, RJ, RN e TO",
+    "Bloomberg Línea, 10/2026 (citando o TSE): mesmos percentuais; votação das 8h às 17h, horário de Brasília; quem está na fila às 17h ainda vota",
+    "TSE, 10/2026: nos locais com 2º turno para governador, vota-se primeiro para governador e depois para presidente",
+    "TSE / Constituição: maioria absoluta dos votos válidos (sem brancos e nulos) para presidente, governador e prefeito; prefeito só tem 2º turno em cidades com mais de 200 mil eleitores"
+  ],
+  "cenas": [
+    {
+      "id": "placar",
+      "chip": "NINGUÉM PASSOU",
+      "fala": "Ninguém passou de 50% no primeiro turno. Flávio Bolsonaro teve 47,03% dos votos válidos, e Lula, 45,16%."
+    },
+    {
+      "id": "regra",
+      "chip": "A REGRA",
+      "fala": "Para ganhar de primeira, precisa de mais da metade dos votos válidos. Com 100 votos válidos, precisa de 51."
+    },
+    {
+      "id": "validos",
+      "chip": "VOTO VÁLIDO",
+      "fala": "Voto válido é o voto dado a um candidato. Branco e nulo ficam fora da conta, e não vão para ninguém."
+    },
+    {
+      "id": "dois",
+      "chip": "SÓ DOIS",
+      "fala": "No segundo turno, só os dois mais votados continuam. E ganha quem tiver mais votos válidos."
+    },
+    {
+      "id": "cargos",
+      "chip": "QUAIS CARGOS",
+      "fala": "Isso vale para presidente, governador e prefeito, mas prefeito só em cidades com mais de 200 mil eleitores. Senador e deputado não têm segundo turno."
+    },
+    {
+      "id": "urna",
+      "chip": "NA URNA",
+      "fala": "Neste ano, 6 estados e o Distrito Federal também escolhem governador. Lá, você vota primeiro para governador, depois para presidente."
+    },
+    {
+      "id": "dia",
+      "chip": "DIA 25",
+      "fala": "O segundo turno é no domingo, 25 de outubro, das 8h às 17h, horário de Brasília. Quem estiver na fila às 17h ainda vota."
+    }
+  ]
+}

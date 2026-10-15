@@ -15,3 +15,5 @@ public/soundeffects/catalog.md
 public/explicativo/
 __pycache__/
 thumbs/
+
+out/bundle

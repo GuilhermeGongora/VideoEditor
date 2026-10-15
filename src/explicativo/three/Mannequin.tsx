@@ -29,6 +29,7 @@ const Mat: React.FC<{ look: Look; opacity?: number }> = ({ look, opacity = 1 }) 
   const c = COLORS[look];
   return (
     <meshStandardMaterial
+      key={opacity < 1 ? "t" : "o"}
       color={c.color}
       emissive={c.emissive}
       emissiveIntensity={c.ei}
