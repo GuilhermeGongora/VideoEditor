@@ -1,0 +1,59 @@
+{
+  "slug": "6x1",
+  "composicao": "Escala6x1",
+  "marca": "EXPLICADO · 6x1",
+  "voz": {
+    "edge": "pt-BR-AntonioNeural",
+    "kokoro": "pm_alex",
+    "velocidade": 1.08
+  },
+  "pronuncia": {
+    "6x1": "seis por um",
+    "5x2": "cinco por dois",
+    "26,8": "vinte e seis vírgula oito",
+    "PEC": "péc",
+    "Dieese": "Diêse"
+  },
+  "fontes": [
+    "Senado Notícias, 14/10/2026: PEC 221/2019 aprovada por 75 x 1 nos dois turnos",
+    "Agência Brasil, 10/2026: 60 dias → 5x2 e 42h; +12 meses → 40h; Dieese: 26,8 mi beneficiados, ~22 mi com carteira",
+    "O Tempo, 14/10/2026: sem redução salarial; acordo coletivo pode manter outra escala com compensação no mês"
+  ],
+  "cenas": [
+    {
+      "id": "aprovado",
+      "chip": "APROVADO",
+      "fala": "O Senado aprovou o fim da escala 6x1. Foram 75 votos a 1."
+    },
+    {
+      "id": "muda",
+      "chip": "O QUE MUDA",
+      "fala": "Hoje, a lei permite 44 horas por semana, com uma folga. Com a PEC, passam a ser duas folgas, e no máximo 40 horas."
+    },
+    {
+      "id": "aos-poucos",
+      "chip": "AOS POUCOS",
+      "fala": "Mas não é de uma vez. Sessenta dias depois da promulgação, já vale o 5x2, com até 42 horas. Um ano depois, o limite cai para 40."
+    },
+    {
+      "id": "salario",
+      "chip": "O SALÁRIO",
+      "fala": "E o salário não pode cair. Trabalha menos, ganha o mesmo."
+    },
+    {
+      "id": "quem",
+      "chip": "QUEM GANHA",
+      "fala": "O Dieese calcula 26,8 milhões de pessoas beneficiadas. Cerca de 22 milhões têm carteira assinada."
+    },
+    {
+      "id": "excecoes",
+      "chip": "AS EXCEÇÕES",
+      "fala": "Acordo coletivo ainda pode manter outra escala, se a folga extra for compensada no mesmo mês. E pequenas empresas podem ganhar regras de transição."
+    },
+    {
+      "id": "agora",
+      "chip": "E AGORA?",
+      "fala": "Agora falta a promulgação no Congresso. É a partir dela que o relógio começa a contar."
+    }
+  ]
+}

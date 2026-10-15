@@ -10,3 +10,7 @@ public/soundeffects/catalog.json
 ranking.json
 public/soundeffects/_norm/
 public/soundeffects/catalog.md
+
+# vídeos explicativos: narração e tempos são gerados (npm run narrar)
+public/explicativo/
+__pycache__/

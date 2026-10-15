@@ -21,3 +21,7 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
 
 ## Sons usados recentemente
 (o Claude atualiza: últimos 3 vídeos, só os acentos)
+
+## Explicativos
+- Estilo de referência do usuário: vídeo da 6x1 (bonecos-manequim, fundo escuro, uma cor de destaque,
+  legenda karaokê). Primeiro vídeo: `videos/6x1`.

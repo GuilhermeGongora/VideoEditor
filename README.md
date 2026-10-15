@@ -15,6 +15,13 @@ sonoros da sua biblioteca, renderiza e revisa o resultado.
    está socando o vidro; os sons do 4 estão exagerados"). Ele corrige e anota a lição em
    `notas-do-editor.md` para não repetir.
 
+## Vídeos explicativos 3D (canal educativo)
+Assunto explicado com bonecos e objetos 3D, narração e legenda palavra por palavra.
+1. No terminal: `claude` → `/novo-explicativo escala 6x1` (ou qualquer assunto).
+   O Claude pesquisa, escreve o roteiro, gera a voz, monta as cenas, confere e renderiza.
+2. Ou na mão: `npm run narrar -- 6x1` → `npm run quadros -- 6x1` (prévia) → `npm run explicar -- 6x1`.
+3. Baixar: `npm run baixar` (porta 8080). O 3D renderiza sem placa de vídeo: ~10 min por minuto.
+
 ## Sua biblioteca de sons
 1. Arraste seus sons para `public/soundeffects/` (subpastas ajudam: `impacts/`, `memes/`, `whoosh/`…).
 2. `npm run sfx:index` — cataloga, deduz o tipo de cada som e cria versões com volume igualado.

@@ -17,22 +17,31 @@
     "qa": "node scripts/qa.mjs",
     "sfx:find": "node scripts/sfx-find.mjs",
     "baixar": "node scripts/painel.mjs",
-    "sons": "node scripts/painel.mjs"
+    "sons": "node scripts/painel.mjs",
+    "narrar": "python3 scripts/narrar.py",
+    "quadros": "node scripts/explicativo.mjs quadros",
+    "explicar": "node scripts/explicativo.mjs render"
   },
   "dependencies": {
     "@fontsource/courier-prime": "^5.3.0",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
     "@fontsource/montserrat": "^5.3.0",
+    "@react-three/fiber": "9.8.2",
     "@remotion/cli": "4.0.535",
     "@remotion/layout-utils": "4.0.535",
     "@remotion/media-parser": "4.0.535",
+    "@remotion/three": "4.0.535",
     "@twemoji/svg": "^15.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "remotion": "4.0.535"
+    "remotion": "4.0.535",
+    "three": "0.186.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
+    "@types/three": "0.186.0",
     "typescript": "^7.0.2"
   }
 }

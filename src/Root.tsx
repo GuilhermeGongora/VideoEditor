@@ -5,6 +5,7 @@ import { Ranking } from "./Ranking";
 import { clipFrames } from "./timeline";
 import { RankingData } from "./types";
 import data from "../ranking.json";
+import { Explicativos } from "./explicativo/Composicoes";
 
 const calculateMetadata: CalculateMetadataFunction<RankingData> = async ({ props }) => {
   const fps = props.fps ?? 30;
@@ -29,6 +30,7 @@ const calculateMetadata: CalculateMetadataFunction<RankingData> = async ({ props
 };
 
 export const RemotionRoot: React.FC = () => (
+  <>
   <Composition
     id="Ranking"
     component={Ranking}
@@ -39,4 +41,6 @@ export const RemotionRoot: React.FC = () => (
     width={1080}
     height={1920}
   />
+  <Explicativos />
+  </>
 );

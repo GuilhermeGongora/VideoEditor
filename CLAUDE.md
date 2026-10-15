@@ -3,6 +3,13 @@
 Este projeto gera vídeos verticais (1080x1920, 30fps) no estilo "Ranking Funniest X Moments"
 para TikTok/Shorts/Reels, com Remotion. Responda sempre em português do Brasil.
 
+## Dois tipos de vídeo
+- **Ranking** (clipes + lista): skill `/novo-ranking`, dados em `ranking.json`.
+- **Explicativo 3D** (assunto explicado com bonecos/objetos 3D, narração e legenda karaokê):
+  skill `/novo-explicativo`, roteiro em `videos/<slug>/roteiro.json`, cenas em
+  `src/explicativo/videos/*.tsx`. Comandos: `npm run narrar -- <slug>`, `npm run quadros -- <slug>`,
+  `npm run explicar -- <slug>`.
+
 ## Antes de qualquer edição
 - Para montar um vídeo use a skill **`/novo-ranking`** (fluxo completo de editor: assistir clipes,
   labels, cortes, sons, render e QA). Para comentários do usuário sobre um vídeo, use **`/feedback`**.
