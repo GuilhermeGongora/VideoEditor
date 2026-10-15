@@ -1,0 +1,81 @@
+{
+  "titleLines": [
+    "Ranking [Funniest](red)",
+    "[Robot](blue) Moments"
+  ],
+  "subtitle": "(Last one is amazing 😂😂)",
+  "handle": "@gongoale",
+  "fadeInSeconds": 0.8,
+  "sfx": {
+    "reveal": "sfx/pop.wav",
+    "transition": "sfx/whoosh.wav",
+    "final": "sfx/boom.wav",
+    "volume": 0.7
+  },
+  "music": null,
+  "items": [
+    {
+      "rank": 6,
+      "label": "nice grandma",
+      "clip": "clips/6-nice-grandma.mp4",
+      "duration": 8.336,
+      "captions": []
+    },
+    {
+      "rank": 5,
+      "label": "bro 💀",
+      "clip": "clips/5-bro.mp4",
+      "duration": 4.876,
+      "captions": []
+    },
+    {
+      "rank": 4,
+      "label": "AI kick",
+      "clip": "clips/4-ai-kick.mp4",
+      "duration": 5.248,
+      "captions": []
+    },
+    {
+      "rank": 3,
+      "label": "lego 😂",
+      "clip": "clips/3-lego.mp4",
+      "duration": 2.368,
+      "captions": [
+        {
+          "text": "Wait for it… 😏",
+          "from": 0.1,
+          "to": 1.7,
+          "style": "box",
+          "x": 560,
+          "y": 618,
+          "sfx": "sfx/riser.wav",
+          "size": 58
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "label": "cowboy 🤠",
+      "clip": "clips/2-cowboy.mp4",
+      "duration": 5.387,
+      "captions": []
+    },
+    {
+      "rank": 1,
+      "label": "FBI robot",
+      "clip": "clips/1-fbi-robot.mp4",
+      "duration": 8.104,
+      "captions": [
+        {
+          "text": "-$5,300",
+          "from": 4.6,
+          "to": 6.2,
+          "style": "pop",
+          "x": 760,
+          "y": 1560,
+          "sfx": "sfx/ding.wav"
+        }
+      ]
+    }
+  ]
+}

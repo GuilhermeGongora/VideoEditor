@@ -1,0 +1,8 @@
+node_modules/
+out/
+clips/*
+!clips/.gitkeep
+public/clips/*
+!public/clips/.gitkeep
+public/emoji/
+.env
