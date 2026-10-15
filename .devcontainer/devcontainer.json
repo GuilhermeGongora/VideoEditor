@@ -12,8 +12,8 @@
   ],
   "portsAttributes": {
     "3000": {
-      "label": "Remotion Studio",
-      "onAutoForward": "openBrowser"
+      "label": "Remotion Studio (npm run dev)",
+      "onAutoForward": "silent"
     },
     "8080": {
       "label": "Downloads (npm run baixar)",
@@ -26,5 +26,8 @@
         "anthropic.claude-code"
       ]
     }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
   }
 }

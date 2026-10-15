@@ -1,0 +1,9 @@
+{
+  // O Remotion abre um servidor na porta 3000 a cada render/quadro.
+  // "silent" evita que o Codespaces abra uma aba do navegador toda vez.
+  "remote.portsAttributes": {
+    "3000": { "label": "Remotion Studio (npm run dev)", "onAutoForward": "silent" },
+    "8080": { "label": "Downloads (npm run baixar)", "onAutoForward": "notify" }
+  },
+  "remote.otherPortsAttributes": { "onAutoForward": "silent" }
+}
