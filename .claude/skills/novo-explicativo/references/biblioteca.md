@@ -24,10 +24,8 @@
 - `AnelPrazo({f, at, duracao?, raio?, position?, rotation?})` — anel que se fecha em volta de um objeto (prazo).
 
 ## Acabamento do `Stage`
-Profundidade de campo (foco no ponto `cam.look`) + bloom + tone mapping já vêm ligados. Props:
-`foco` (distância), `desfoque` (padrão 5; 0 desliga), `brilho` (padrão 0.8), `acabamento={false}`.
-Coisas com `glow`/emissive acendem — use destaque com moderação. Sem GPU e lento demais:
-`REMOTION_SEM_ACABAMENTO=1` no `.env`.
+DESLIGADO por padrão (a referência é nítida). `acabamento` liga profundidade de campo + bloom; `cenario`
+padrão é "escuro". Só mude se o usuário pedir.
 
 ## Overlays — `ui/`
 - `DataCard({at, label, value, unit?, rightLabel?, rightValue?, top?, out?, fixo?})` — `fixo` = já vem da

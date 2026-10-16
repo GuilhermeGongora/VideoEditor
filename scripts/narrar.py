@@ -37,8 +37,16 @@ if os.path.exists(_env):
             _k, _v = _l.split("=", 1)
             os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
 SR = 24000
-PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}  # só no modo frase a frase
-FIM_CENA = 0.1  # respiro entre cenas (a trilha cobre, nunca fica silêncio morto)
+# ESTILO "referencia" (padrão) = exatamente como foi narrado o vídeo do cartão por aproximação, que o
+# usuário aprovou como referência: frase a frase (corta também nas vírgulas), pausas fixas, respiro entre
+# cenas, voz calma e clara. NÃO troque o padrão sem o usuário pedir.
+PAUSA_REF = {",": 0.12, ";": 0.18, ":": 0.18, ".": 0.32, "!": 0.32, "?": 0.32, "": 0.1}
+FIM_CENA_REF = 0.45
+TRATAMENTO_REF = "highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=80,loudnorm=I=-16:TP=-1.5"
+# ESTILO "continuo" (opcional, "voz": {"estilo": "continuo"}): cena inteira numa chamada, pausas curtas.
+PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}
+FIM_CENA = 0.1
+TRATAMENTO_CONTINUO = "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-14:TP=-1.2"
 KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
 KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 
@@ -49,6 +57,16 @@ EDGE = {
     "masculina": ["pt-BR-AntonioNeural"],
 }
 KOKORO = {"feminina": "pf_dora", "masculina": "pm_alex"}
+
+
+def frases_ref(texto):
+    """Estilo referência: corta em , . ; : ! ? seguidos de espaço (não quebra "26,8" nem "14.10")."""
+    out = []
+    for s in re.split(r"(?<=[,.;:!?])\s+", texto.strip()):
+        s = s.strip()
+        if s:
+            out.append((s, s[-1] if s[-1] in ",.;:!?" else ""))
+    return out
 
 
 def frases(texto):
@@ -454,6 +472,9 @@ def main():
         preferida_edge = {"masculina": None, "feminina": None}
     print(f"motor: {motor.nome} · voz principal: {principal}" + (" · alternando por cena" if voz.get("alternar") == "cenas" else ""))
 
+    continuo = voz.get("estilo") == "continuo"
+    print("estilo da narração: " + ("contínuo" if continuo else "referência (frase a frase, como o vídeo da aproximação)"))
+
     def gerar(motor, preferida_edge):
         pedacos, cenas = [np.zeros(int(0.25 * SR), dtype=np.float32)], []
         t = 0.25
@@ -461,7 +482,7 @@ def main():
             genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
             c0 = t
             palavras = None
-            if motor.nome in ("edge", "eleven"):
+            if continuo and motor.nome in ("edge", "eleven"):
                 # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
                 bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
                 bruto, remap = encurtar_pausas(bruto)
@@ -474,17 +495,19 @@ def main():
                     t += dur
             if not palavras:
                 palavras = []
-                for frase, pont in frases(cena["fala"]):
+                for frase, pont in (frases(cena["fala"]) if continuo else frases_ref(cena["fala"])):
                     bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
                     a, corte = aparar(bruto)
                     dur = len(a) / SR
                     palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
-                    palavras[-1]["fimFrase"] = True
-                    pausa = PAUSA_FRASE.get(pont, 0.12)
+                    if pont in ".!?;:" or not continuo:
+                        palavras[-1]["fimFrase"] = True
+                    pausa = PAUSA_FRASE.get(pont, 0.12) if continuo else PAUSA_REF.get(pont, 0.1)
                     pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
                     t += dur + pausa
-            pedacos.append(np.zeros(int(FIM_CENA * SR), dtype=np.float32))
-            t += FIM_CENA
+            fim = FIM_CENA if continuo else FIM_CENA_REF
+            pedacos.append(np.zeros(int(fim * SR), dtype=np.float32))
+            t += fim
             cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "voz": genero, "palavras": palavras})
             print(f"  {cena['id']:<12} {t - c0:5.2f}s  ({genero})")
         return pedacos, cenas, t
@@ -508,7 +531,7 @@ def main():
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
                     # mesmo tratamento dos primeiros vídeos (6x1, aproximação), aprovado pelo usuário.
                     # NÃO adicione eco/ambiência nem EQ pesado: deixou a voz pior.
-                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-14:TP=-1.2",
+                    "-af", TRATAMENTO_CONTINUO if continuo else TRATAMENTO_REF,
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

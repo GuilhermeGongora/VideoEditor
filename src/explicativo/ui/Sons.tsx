@@ -41,7 +41,7 @@ export type Sons = {
 };
 
 export const SONS_PADRAO: Required<Sons> = {
-  musica: "sfx/bed-scientia.mp3",
+  musica: null, // o vídeo de referência (aproximação) não tem trilha; ligue por roteiro: "sons": {"musica": "sfx/bed-scientia.mp3"}
   musicaVolume: 0.5,
   transicao: ["sfx/swoosh.wav", "sfx/whoosh.wav"],
   aparecer: "sfx/tick.wav",

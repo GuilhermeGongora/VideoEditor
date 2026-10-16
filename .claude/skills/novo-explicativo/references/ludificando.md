@@ -1,8 +1,11 @@
-# Padrão de referência: Ludificando (analisado em 16/10/2026, 4 vídeos)
+# Ludificando: só fonte de ideias (analisado em 16/10/2026, 4 vídeos)
+
+> **ATENÇÃO:** isto NÃO é o padrão do canal. O usuário testou este padrão e reprovou (16/10/2026).
+> A referência é o vídeo da aproximação (`references/referencia.md`). Use daqui apenas ideias pontuais
+> (ex.: o plenário numa votação) quando o tema pedir.
 
 Vídeos estudados: escala 6x1 (93 s), dívida do MEI (92 s), "quanto o presidente manda" (95 s),
-taxa das blusinhas (77 s). Use isto como régua de qualidade. **Não copie roteiro, voz ou marca deles**:
-copie a GRAMÁTICA (estrutura, ritmo, acabamento).
+taxa das blusinhas (77 s). **Não copie roteiro, voz ou marca deles.**
 
 ## Números medidos (nosso → deles)
 | Medida | Scientia (antes) | Ludificando |

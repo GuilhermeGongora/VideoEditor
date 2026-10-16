@@ -1,7 +1,8 @@
 # Linguagem visual
 
 ## Paleta (src/explicativo/theme.ts)
-- Fundo `C.bg` quase preto, chão cinza escuro, poeira branca flutuando, vinheta nas bordas.
+- Fundo `C.bg` quase preto, chão cinza escuro, poeira branca flutuando, vinheta nas bordas (padrão do
+  `Stage`, igual ao vídeo de referência da aproximação; nada de estúdio com prateleiras).
 - Objetos: `C.white` (principal), `C.gray`/`C.dark` (secundário, "os outros"), `C.accent` (o que
   importa NAQUELE momento). Destaque é escasso: se tudo brilha, nada brilha.
 - Dourado (`C.gold`) só para dinheiro.

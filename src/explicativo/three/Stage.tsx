@@ -59,9 +59,10 @@ const SceneSetup: React.FC<{ claro: boolean }> = ({ claro }) => {
 };
 
 const FUNDO_CLARO = "#34322E";
-/** Desligue com REMOTION_SEM_ACABAMENTO=1 no .env se o render ficar lento demais sem GPU. */
+/** Liga com acabamento={true} na cena (ou REMOTION_ACABAMENTO=1 no .env para todas). */
 declare const process: { env: Record<string, string | undefined> };
-const ACABAMENTO = process.env.REMOTION_SEM_ACABAMENTO !== "1";
+// Desligado por padrão: o vídeo de referência (cartão por aproximação) é nítido, sem desfoque nem bloom.
+const ACABAMENTO = process.env.REMOTION_ACABAMENTO === "1";
 
 /** Cenário de estúdio: parede ao fundo com prateleiras e potes/caixas (dá contexto e profundidade). */
 const Estudio: React.FC = () => {
@@ -146,7 +147,7 @@ export const Stage: React.FC<{
   cam: Cam;
   children: React.ReactNode;
   dust?: boolean;
-  /** "estudio" (padrão): mais claro, parede com prateleiras · "escuro": fundo preto (cenas dramáticas) */
+  /** "escuro" (PADRÃO, igual ao vídeo de referência da aproximação) · "estudio": parede com prateleiras (só se pedir) */
   cenario?: "estudio" | "escuro";
   /** distância de foco (padrão: até o ponto para onde a câmera olha) */
   foco?: number;
@@ -156,7 +157,7 @@ export const Stage: React.FC<{
   brilho?: number;
   /** false = sem acabamento (render mais rápido em máquina fraca) */
   acabamento?: boolean;
-}> = ({ cam, children, dust = true, cenario = "estudio", foco, desfoque = 5, brilho = 0.8, acabamento = ACABAMENTO }) => {
+}> = ({ cam, children, dust = true, cenario = "escuro", foco, desfoque = 5, brilho = 0.8, acabamento = ACABAMENTO }) => {
   const claro = cenario === "estudio";
   const { width, height } = useVideoConfig();
   return (

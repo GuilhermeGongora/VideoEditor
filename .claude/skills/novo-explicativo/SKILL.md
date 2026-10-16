@@ -12,13 +12,12 @@ No PC do usuário o `npm run explicar` também copia tudo para o Google Drive
 Se aparecer "Não achei o Drive", mostre ao usuário os comandos de montagem que o script imprime.
 O usuário só digita o tema; não pare no meio para perguntar o que dá para decidir sozinho.
 
-Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de
-destaque (`C.accent`), poeira no ar, câmera sempre se mexendo devagar, legenda karaokê, cartões de
-dado e anotações com fonte. Exemplo pronto: `videos/6x1/roteiro.json` + `src/explicativo/videos/Escala6x1.tsx`.
-**Régua de qualidade: `references/ludificando.md`** (estrutura de capítulos, cenário-herói, HUD que
-atravessa o vídeo, os dois lados, cuidado/golpe, números medidos). Leia ANTES de tudo.
-Depois `references/ganchos.md` (antes do roteiro) e `references/estilo.md` + `references/biblioteca.md`
-(antes das cenas).
+**REFERÊNCIA DE QUALIDADE (decisão do usuário, 16/10/2026): o vídeo do cartão por aproximação.**
+`videos/aproximacao/roteiro.json` + `src/explicativo/videos/Aproximacao.tsx`. Leia os dois ANTES de
+começar e copie a receita de `references/referencia.md`. Os vídeos feitos no "padrão Ludificando"
+(fundo cinza com prateleiras, desfoque, muitos bonecos, 80–90 s) foram REPROVADOS — não volte a eles.
+Depois leia `references/ganchos.md` (antes do roteiro) e `references/estilo.md` + `references/biblioteca.md`
+(antes das cenas). `references/ludificando.md` é só fonte de ideias, não é regra.
 
 ## 1. Pesquisar (obrigatório)
 - Tudo que é atual (lei, número, cargo, prazo) vem de busca na web feita AGORA, em 2+ fontes
@@ -27,28 +26,26 @@ Depois `references/ganchos.md` (antes do roteiro) e `references/estilo.md` + `re
 - Separe o que é fato do que é projeção/opinião ("o Dieese calcula…", "a CNI diz…").
 
 ## 2. Roteiro → `videos/<slug>/roteiro.json`
-**Ritmo de vídeo viral (referência: Ludificando):** a voz quase nunca para (≥ 90% do tempo com fala ou
-som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título só no fim.
-- **75–90 s, 9–11 cenas** (padrão Ludificando), UMA ideia por cena, cenas de 5–9 s. `chip` = nome curto
-  do capítulo em maiúsculas. Siga a estrutura de capítulos de `references/ludificando.md`
-  (gancho → hoje → o que muda → quando → exceções → os dois lados → o que falta → cuidado → fecho),
-  adaptando ao tema (assunto de ciência/tecnologia troca "os dois lados"/"votação" por "mito × fato",
-  "por dentro", "na prática").
+**Receita da aproximação:** ~60 s, **7 cenas**, 18–30 palavras por cena (~170–190 palavras no total),
+UMA ideia por cena, explicação em sequência lógica (cada cena puxa a próxima: "Por isso…", "Aí…",
+"Se alguém…"). `chip` = nome curto do capítulo em maiúsculas ("A ENERGIA", "BEM PERTO", "E SE COPIAREM?").
+- Gancho = número forte + pergunta ("Três em cada quatro compras… Mas como um cartão sem bateria consegue
+  pagar alguma coisa?"). Última cena = a informação prática que a pessoa leva (ex.: o limite sem senha).
+- "Os dois lados" e "cuidado/golpe" só entram se o tema PEDIR (polêmica real, golpe real) — não são obrigatórios.
 - 1ª frase = o gancho, **SEMPRE uma pergunta** (regra do usuário) que a pessoa quer ver respondida, com o
   fato forte dentro ou logo depois. Ex.: "Como um cartão sem bateria consegue pagar?". Nada de "olá".
 - Frases curtas, como se falasse com um amigo. Número escrito com dígitos ("75 votos").
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
-- Penúltima cena: **CUIDADO** (golpe, fake news ou erro comum ligado ao tema), quando fizer sentido.
-- Última cena: **FECHO** — responde a pergunta do gancho e fecha o loop (ecoa a 1ª frase).
+- Última cena: **FECHO** — a informação prática final / resposta da pergunta do gancho.
   **Proibido (regra do usuário): pedir comentário, like, "salva", "segue", "comenta X que eu te mando…"**
   — nem na fala nem na tela. As fontes ficam só na descrição do post. Depois da última fala vem só o
   encerramento da marca (automático).
-- 1ª cena com no máximo ~3 s de fala. Pergunta retórica a cada 2–3 cenas ("E quem já pagou?"). Frases de 6–14 palavras, emendadas
-  ("Mas calma:", "E tem mais:", "Só que…") para a narração fluir sem pausas longas.
+- Frases de 6–14 palavras, ditas com calma (a narração é frase a frase, com pausa em cada vírgula e ponto).
 - NÃO existe mais `cta` no roteiro: o encerramento mostra só a marca.
-- `sons`: o padrão já faz sozinho trilha (abaixa sob a voz), impacto no 1º frame, swoosh/whoosh
-  alternados nas trocas de cena, "pop" quando o cartão de número aparece, "tick" em anotações/pílulas e
-  uma subida (riser) entrando no encerramento. **Sempre escreva 2–4 `acentos`** nas palavras-chave:
+- `sons`: o padrão faz sozinho impacto no 1º frame, swoosh/whoosh nas trocas de cena, "pop" no cartão de
+  número, "tick" em anotações/pílulas e uma subida entrando no encerramento. **Sem trilha de fundo** (a
+  referência não tem; só ligue com `"musica": "sfx/bed-scientia.mp3"` se o usuário pedir).
+  Escreva 2–3 `acentos` nas palavras-chave (com moderação):
   `"sons": {"acentos": [{"palavra": "75", "cena": "aprovado", "som": "sfx/ding.wav", "volume": 0.5},
   {"palavra": "desliga", "cena": "liga", "som": "sfx/boom.wav", "volume": 0.5},
   {"palavra": "relógio", "cena": "agora", "som": "sfx/riser.wav", "pico": 1.49, "volume": 0.35}]}`.
@@ -83,7 +80,8 @@ só define:
   - contraste e virada: "Só que…", "Mas atenção:", "E tem mais:";
   - número importante sozinho no fim da frase ("Foram 75 votos a 1.") ou repetido ("Onze dias!");
   - evite frases longas cheias de vírgulas e listas de 4+ itens (a voz fica monótona).
-- O `narrar` encurta sozinho pausas internas > 0,2 s (meta: < 5 % de silêncio, como o Ludificando).
+- A narração padrão é a da referência: frase a frase, pausa de 0,12 s na vírgula e 0,32 s no ponto,
+  0,45 s entre cenas, Antonio a 1.08. NÃO mude para `"estilo": "continuo"` sem o usuário pedir.
 - Para testar a voz local mais expressiva (Chatterbox na GPU do usuário): `npm run vozes -- comparar <slug>`.
 
 ## 4. Cenas → `src/explicativo/videos/<Nome>.tsx`
@@ -93,22 +91,20 @@ só define:
   **NÃO edite `Composicoes.tsx`** (editar ele causa conflito no `git pull`).
 - Ao terminar o vídeo, salve no GitHub: `git add videos/<slug> src/explicativo/videos/<Nome>.tsx` +
   commit + push (assim o próximo `git pull` do usuário não trava).
-- **Cenário-herói:** escolha UM conjunto de objetos que representa o tema (a mesa com botões, a esteira,
-  o caderninho, a máquina de lavar) e faça a maioria das cenas como variações dele (câmera perto de uma
-  parte, um item acende). A última cena volta ao enquadramento da primeira.
-- **HUD contínuo:** o cartão de número principal e a régua `<Etapas>` aparecem em várias cenas na MESMA
-  posição; a partir da 2ª aparição use `DataCard fixo` / `Etapas at={0}` para não "pular" de novo.
-- Use o kit pronto (`three/Kit.tsx`, `ui/Kit.tsx`, ver `references/biblioteca.md`): `Pergunta` no gancho,
-  `Contexto` (pílulas empilhando), `Etapas`, `Balanca` nos dois lados, `Hemiciclo` em votação,
-  `Celular` no cuidado, `AnelPrazo` em prazos.
+- **Objeto-herói (como a maquininha + cartão):** UM ou dois objetos do tema, bem feitos e GRANDES, que
+  aparecem em quase todas as cenas; cada cena mostra uma parte/estado deles (campo acendendo, código na
+  tela, chave saindo). Boneco só como coadjuvante (0–1 por cena, nunca o centro).
+- O kit (`three/Kit.tsx`, `ui/Kit.tsx`) é opcional: use uma peça só quando a cena pedir (ex.: `Hemiciclo`
+  numa votação). Não encha a cena de pílulas/réguas.
 - Para cada cena, escolha UMA metáfora visual do dado (ver `references/estilo.md`):
   votos → cadeiras acendendo; horas → cubos sumindo; pessoas → bonecos (1 boneco = X); dinheiro →
   moedas/holerite; prazo → placas numa linha do tempo; regra/lei → papel + checklist.
 - Sincronize com a fala: `w("palavra")` devolve o frame em que a palavra é dita. O visual muda NA
   palavra (ex.: o número do cartão troca quando a voz diz o número).
 - Câmera: `cam(pos, look)` interpolando posição inicial → final durante a cena (`ease(f, 0, dur)`).
-- Cenário: o `Stage` já vem no modo estúdio (cinza quente, parede com prateleiras). Use
-  `cenario="escuro"` só em cena dramática pontual.
+- Cenário: o `Stage` já vem no modo escuro (fundo preto, poeira) — igual à referência. NÃO use
+  `cenario="estudio"` nem `acabamento` (desfoque/bloom) sem o usuário pedir.
+- Câmera: distância 6–8 do objeto, olhando para y ≈ 1; aproximação lenta de 10–15 % na cena (como na Aproximacao.tsx).
 - Enquadramento: o objeto principal ocupa 40–70% da largura. **Nunca** quadro vazio, objeto minúsculo
   (linha fina) ou um bloco que toma a tela inteira sem referência. Escala sempre com referência humana
   (boneco ao lado) ou objeto conhecido.

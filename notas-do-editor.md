@@ -59,4 +59,9 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   Fontes ficam na descrição do post. Campo `cta` removido dos roteiros.
 - 16/10/2026 — Voz: velocidade 1.08 (mais energia, perto do ritmo do Ludificando); referência do Chatterbox
   agora é um texto expressivo; `npm run vozes -- comparar <slug>` para comparar Microsoft × local.
+- 16/10/2026 — REPROVADO o padrão Ludificando (6 vídeos: prospera MEI, lavagem, cripto…): fundo cinza com
+  prateleiras, desfoque, bonecos no centro, 80–90 s, narração corrida. **A referência do canal é o vídeo do
+  cartão por aproximação** (`references/referencia.md`): fundo escuro, objeto-herói grande e nítido,
+  ~60 s / 7 cenas, narração frase a frase com pausas (−16 LUFS), sem trilha. Código voltou a esse padrão
+  (Stage escuro, sem acabamento, narrar estilo "referencia", trilha desligada).
 
