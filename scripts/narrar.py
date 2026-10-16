@@ -26,6 +26,15 @@ import asyncio, io, json, os, re, subprocess, sys, urllib.request
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Chaves locais (ex.: ELEVENLABS_API_KEY) em .env na raiz do projeto — fora do Git.
+_env = os.path.join(ROOT, ".env")
+if os.path.exists(_env):
+    for _l in open(_env, encoding="utf-8"):
+        _l = _l.strip()
+        if _l and not _l.startswith("#") and "=" in _l:
+            _k, _v = _l.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
 SR = 24000
 PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}  # só no modo frase a frase
 FIM_CENA = 0.18  # respiro entre cenas (a trilha cobre, nunca fica silêncio morto)

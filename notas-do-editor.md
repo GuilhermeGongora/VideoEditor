@@ -33,3 +33,11 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   24% de silêncio digital, 6 pausas acima de 0,5 s e quadros vazios (só uma linha fina, bloco gigante).
   Regra: narração por cena inteira, trilha de fundo sempre, cenário estúdio claro, objeto principal
   grande e com referência de escala.
+- 15/10/2026: aprovou sem ressalvas ("todos os vídeos muito bons") aproximação, segundo turno, Pix, Selic e
+  imposto de renda. Manter a receita: 7 cenas de ~60 s, uma metáfora por cena, número na tela quando a voz
+  fala, fontes em cartão/callout, tom neutro em política (mesma cor para os dois lados).
+- Lições técnicas desses vídeos:
+  - Câmera a 8,5–10 de distância (vertical mostra só ~0,41 × distância de largura); objetos entre x ±1,2.
+  - Sempre `npm run quadros` antes do render: 1ª grade quase sempre tem algo cortado ou atrás da legenda.
+  - Rótulo sobre fundo de destaque precisa de cor escura (`C.ink`), senão some.
+  - Quadro da thumb: escolher o fim da cena (tudo já aceso), longe de objetos que ficam atrás do título.
