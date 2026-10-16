@@ -76,3 +76,7 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   imagens da notícia num telão 3D com crédito + passagem em tela cheia). Criados `TelaVideo` e
   `VideoTelaCheia`; clipes em public/explicativo/<slug>/clipes/.
 
+- 16/10/2026 — Pediu um raio-x das eleições 2026 (todos os cargos, partidos, esquerda/centro/direita, Senado,
+  2º turno do dia 25). Grande demais para 60 s → série de 4 vídeos (Câmara, Senado, governos + Assembleias,
+  Presidência/2º turno). Criado `HemicicloBlocos` (blocos neutros, só o bloco falado acende). Classificação
+  ideológica sempre com critério e fonte publicada; dados só do TSE/imprensa, "eleitos" separado de "2º turno".

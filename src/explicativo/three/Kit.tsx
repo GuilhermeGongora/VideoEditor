@@ -242,3 +242,76 @@ export const PilhaMoedas: React.FC<{ n: number; position?: V3 }> = ({ n, positio
 
 /** Interpolação útil para a balança pender aos poucos. */
 export const pender = (f: number, de: number, ate: number, alvo: number) => lerp(0, alvo, easeOut(f, de, ate));
+
+/* ───────────── Plenário dividido em blocos (ex.: esquerda / centro / direita, ou partidos) ───────────── */
+/**
+ * Cadeiras em semicírculo, da esquerda para a direita, na ordem dos `blocos`.
+ * Cores NEUTRAS por padrão (branco, cinza, grafite); o bloco em `destaque` acende na cor de destaque.
+ * Isso evita associar cor a lado político. `at`/`duracao`: as cadeiras aparecem em onda.
+ */
+export const HemicicloBlocos: React.FC<{
+  f: number;
+  blocos: { n: number; cor?: string }[];
+  destaque?: number | null;
+  at?: number;
+  duracao?: number;
+  position?: V3;
+  scale?: number;
+  raio?: number;
+}> = ({ f, blocos, destaque = null, at = 0, duracao = 30, position, scale = 1, raio = 1.6 }) => {
+  const total = blocos.reduce((s, b) => s + b.n, 0);
+  const fileiras = total > 200 ? 9 : 5;
+  const tam = total > 200 ? 0.07 : 0.12;
+  const NEUTRAS = ["#ecebe6", "#9a9892", "#5f5d58", "#c9c7c0", "#7c7a74"];
+  // lugares ordenados por ângulo (esquerda → direita), fila a fila
+  const lugares = useMemo(() => {
+    const out: { x: number; z: number; ang: number }[] = [];
+    let n = 0;
+    for (let k = 0; k < fileiras; k++) {
+      const r = raio * (0.45 + (0.55 * k) / (fileiras - 1));
+      const m = Math.round((total * (0.6 + (k * 0.4) / (fileiras - 1))) / (fileiras * 0.8));
+      for (let i = 0; i < m && n < total; i++, n++) {
+        const ang = Math.PI * (0.06 + (0.88 * i) / Math.max(1, m - 1));
+        out.push({ x: Math.cos(ang) * r, z: -Math.sin(ang) * r, ang });
+      }
+    }
+    while (out.length < total) out.push(out[out.length - 1]);
+    return out.sort((a, b) => b.ang - a.ang); // ângulo maior = lado esquerdo da tela
+  }, [total, fileiras, raio]);
+  const refs = useRef<(THREE.InstancedMesh | null)[]>([]);
+  const geo = useMemo(() => new THREE.CapsuleGeometry(tam * 0.5, tam * 0.9, 4, 8), [tam]);
+  const tmp = useMemo(() => new THREE.Object3D(), []);
+  const aparecidas = Math.round(interpolate(f, [at, at + duracao], [0, total], clamp));
+  useLayoutEffect(() => {
+    let ini = 0;
+    blocos.forEach((b, bi) => {
+      const m = refs.current[bi];
+      if (!m) return;
+      let c = 0;
+      for (let i = 0; i < b.n; i++) {
+        const idx = ini + i;
+        if (idx >= aparecidas) break;
+        const l = lugares[idx];
+        tmp.position.set(l.x, tam, l.z);
+        tmp.updateMatrix();
+        m.setMatrixAt(c++, tmp.matrix);
+      }
+      m.count = c;
+      m.instanceMatrix.needsUpdate = true;
+      ini += b.n;
+    });
+  }, [blocos, lugares, aparecidas, tmp, tam]);
+  return (
+    <group position={position} scale={scale}>
+      {blocos.map((b, bi) => {
+        const aceso = destaque === bi;
+        const cor = aceso ? C.accent : b.cor ?? NEUTRAS[bi % NEUTRAS.length];
+        return (
+          <instancedMesh key={bi} ref={(el) => { refs.current[bi] = el; }} args={[geo, undefined, Math.max(1, b.n)]} castShadow>
+            <meshStandardMaterial color={cor} emissive={aceso ? C.accent : "#000"} emissiveIntensity={aceso ? 0.6 : 0} roughness={0.55} />
+          </instancedMesh>
+        );
+      })}
+    </group>
+  );
+};

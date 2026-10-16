@@ -14,6 +14,7 @@
 
 ## Kit estilo Ludificando — `three/Kit.tsx`
 - `Hemiciclo({f, total, acesas, at, duracao?, position?, scale?, raio?})` — plenário (513 Câmara / 81 Senado)
+- `HemicicloBlocos({f, blocos:[{n, cor?}], destaque?, at?, duracao?, position?, scale?, raio?})` — plenário dividido em blocos (esquerda → direita na ordem do array: ex. esquerda/centro/direita ou partidos). Cores NEUTRAS por padrão; só o bloco em `destaque` acende na cor de destaque. Em política, nunca vermelho/azul por lado.
   que acende do centro para as pontas até `acesas`. Fica melhor com câmera alta e `cenario="escuro"`.
 - `Balanca({inclina, esquerda, direita, position?, scale?})` — "os dois lados"; `inclina` −1…1
   (use `pender(f, de, ate, alvo)` para pender aos poucos); `esquerda`/`direita` = o que vai no prato.
