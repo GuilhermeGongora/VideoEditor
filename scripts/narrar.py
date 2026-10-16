@@ -238,12 +238,37 @@ class Chatterbox:
     def voz_de(self, genero, preferida=None):
         return self.refs.get(genero) or next(iter(self.refs.values()))
 
-    def falar(self, texto, genero, preferida=None):
+    def _gerar(self, texto, genero, emocao, ritmo, seed):
+        self.torch.manual_seed(seed)
         with self.torch.inference_mode():
             wav = self.model.generate(texto, language_id="pt", audio_prompt_path=self.voz_de(genero),
-                                      exaggeration=self.emocao, cfg_weight=self.ritmo)
+                                      exaggeration=emocao, cfg_weight=ritmo)
         a = wav.squeeze().detach().cpu().numpy().astype(np.float32)
-        a = decode(_wav_bytes(a, self.model.sr))
+        return aparar(decode(_wav_bytes(a, self.model.sr)))[0]
+
+    def _uma(self, texto, genero):
+        """Gera e confere se não saiu cortado (o Chatterbox às vezes encerra a fala antes da hora)."""
+        esperado = len(texto) / 15.5  # ~15 caracteres por segundo em fala normal
+        melhor = None
+        for tentativa, (em, rt) in enumerate([(self.emocao, self.ritmo), (self.emocao * 0.85, 0.5), (0.45, 0.55)]):
+            a = self._gerar(texto, genero, em, rt, seed=1234 + tentativa * 7)
+            dur = len(a) / SR
+            if melhor is None or dur > len(melhor) / SR:
+                melhor = a
+            if dur >= 0.62 * esperado or len(texto) < 25:
+                return a
+            print(f"    (fala saiu curta {dur:.1f}s de ~{esperado:.1f}s; gerando de novo)")
+        return melhor
+
+    def falar(self, texto, genero, preferida=None):
+        # frases longas viram pedaços (o modelo se perde em textos compridos)
+        partes = [texto] if len(texto) <= 170 else [p for p in re.split(r"(?<=[,;:])\s+", texto) if p.strip()]
+        pedacos = []
+        for i, p in enumerate(partes):
+            pedacos.append(self._uma(p, genero))
+            if i < len(partes) - 1:
+                pedacos.append(np.zeros(int(0.08 * SR), dtype=np.float32))
+        a = np.concatenate(pedacos)
         if abs(self.vel - 1) > 0.01:  # acelera sem mudar o tom
             r = subprocess.run(["ffmpeg", "-v", "error", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
                                 "-af", f"atempo={self.vel:.3f}", "-f", "f32le", "pipe:1"], input=a.tobytes(), capture_output=True, check=True)

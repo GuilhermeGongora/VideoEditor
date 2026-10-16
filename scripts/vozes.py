@@ -179,7 +179,9 @@ def local():
     m = narrar.Chatterbox(cfg["chatterbox"], cfg.get("velocidade", 1.05))
     os.makedirs(OUT, exist_ok=True)
     for g in ("feminina", "masculina"):
-        a, _ = m.falar(FRASE, g)
+        import numpy as np
+        partes = [x for x in re.split(r"(?<=[.!?:])\s+", FRASE) if x]
+        a = np.concatenate([np.concatenate([m.falar(x, g)[0], np.zeros(int(0.2 * narrar.SR), dtype=np.float32)]) for x in partes])
         sf.write(os.path.join(OUT, f"local-{g}.wav"), a, narrar.SR)
         print(f"ok → out/vozes/local-{g}.wav")
     print("Ouça no painel (npm run baixar). Ajuste no voz.json → chatterbox.emocao (0.3 calmo … 0.8 animado).")
