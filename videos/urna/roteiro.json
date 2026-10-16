@@ -1,0 +1,95 @@
+{
+  "slug": "urna",
+  "composicao": "Urna",
+  "marca": "SCIENTIA · URNA ELETRÔNICA",
+  "voz": {
+    "principal": "feminina",
+    "alternar": "nao",
+    "velocidade": 1.05
+  },
+  "pronuncia": {
+    "UEnux": "u-é-núx",
+    "MSE": "ême ésse é",
+    "TSE": "tê ésse é",
+    "4 GB": "4 gigas",
+    "17h": "17 horas",
+    "Wi-Fi": "uái-fái"
+  },
+  "fontes": [
+    "Canaltech e A Crítica (2026): a urna roda o UEnux, distribuição Linux do TSE, usada desde 2008; TSE (Revista EJE): plataforma unificada em Linux após 2006",
+    "Folha de Pernambuco / TSE: software roda só no hardware da urna, sem conexão com redes externas",
+    "TSE, Informações técnicas e Detalhes técnicos da UE2020/UE2022: Intel Atom E3940, 4 GB de RAM DDR3L; teclado, leitor biométrico e impressora com chip criptográfico e comunicação cifrada — só periféricos reconhecidos pela Justiça Eleitoral funcionam",
+    "Futurecom / Canaltech (2026): o MSE (Módulo de Segurança Embarcado) confere a assinatura digital dos programas antes de iniciar e corta a energia da placa se algo não for assinado pelo TSE; também assina o BU e o RDV",
+    "TRE-MG e TRE-SP: zerésima antes do 1º voto; RDV grava cada voto em posição aleatória, sem ligação com o eleitor",
+    "TSE e TRE-PE, 09/2026: às 17h a votação encerra (fila ainda vota); BU em 5 vias, uma colada na porta da seção; mídia de resultado lacrada e transmitida por rede privada da Justiça Eleitoral"
+  ],
+  "post": {
+    "gancho": "A urna eletrônica roda Linux, não tem Wi-Fi e só aceita teclado que a Justiça Eleitoral reconhece. O que tem lá dentro? 📌",
+    "pontos": [
+      "O sistema é o UEnux, um Linux do TSE usado desde 2008. Os modelos novos têm Intel Atom e 4 GB de RAM",
+      "Ao ligar, o chip MSE confere a assinatura de cada programa. Se um não bater, a placa desliga",
+      "Os votos vão embaralhados para o Registro Digital do Voto, e às 17h o boletim de urna é colado na porta da seção"
+    ],
+    "fontes": [
+      "TSE",
+      "TRE-MG",
+      "TRE-SP",
+      "Canaltech"
+    ],
+    "hashtags": [
+      "urnaeletronica",
+      "eleicoes",
+      "tecnologia",
+      "linux",
+      "tse"
+    ]
+  },
+  "cta": "comenta URNA que eu te mando como conferir o da sua seção",
+  "thumb": {
+    "titulos": [
+      "A urna roda\nLinux.\n*O que tem dentro?*",
+      "Troca o teclado\nda urna e…\n*ela não aceita*"
+    ],
+    "cena": "dentro",
+    "quadro": 170,
+    "descer": 330,
+    "zoom": 1.45
+  },
+  "cenas": [
+    {
+      "id": "gancho",
+      "chip": "URNA POR DENTRO",
+      "fala": "A urna eletrônica roda Linux. E nem um teclado trocado ela aceita."
+    },
+    {
+      "id": "linux",
+      "chip": "O SISTEMA",
+      "fala": "O sistema se chama UEnux, um Linux feito pelo TSE, usado desde 2008. E ela não tem Wi-Fi nem cabo de rede."
+    },
+    {
+      "id": "dentro",
+      "chip": "AS PEÇAS",
+      "fala": "Nos modelos mais novos, tem um processador Intel Atom e 4 GB de memória. Pouco? Ela só faz uma coisa: guardar votos."
+    },
+    {
+      "id": "liga",
+      "chip": "AO LIGAR",
+      "fala": "Ao ligar, um chip chamado MSE confere a assinatura digital de cada programa. Se um só não bater, a placa desliga."
+    },
+    {
+      "id": "pecas",
+      "chip": "PEÇA TROCADA",
+      "fala": "Teclado, leitor de digital e impressora têm chip próprio e falam cifrado com a urna. Peça não reconhecida não funciona."
+    },
+    {
+      "id": "votos",
+      "chip": "O VOTO",
+      "fala": "Antes do primeiro voto, ela imprime a zerésima, a prova de que está vazia. Cada voto vai embaralhado para o Registro Digital do Voto."
+    },
+    {
+      "id": "fim",
+      "chip": "ÀS 17H",
+      "fala": "Às 17h, ela imprime o boletim de urna, e uma via fica na porta. Os totais seguem numa mídia lacrada, por rede privada."
+    }
+  ]
+}
