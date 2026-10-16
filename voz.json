@@ -3,7 +3,7 @@
   "motor": "edge",
   "principal": "masculina",
   "alternar": "nao",
-  "velocidade": 1.05,
+  "velocidade": 1.08,
   "edge": {
     "masculina": "pt-BR-AntonioNeural",
     "feminina": "pt-BR-FranciscaNeural"
@@ -25,7 +25,7 @@
   "chatterbox": {
     "feminina": "marca/voz-feminina.wav",
     "masculina": "marca/voz-masculina.wav",
-    "emocao": 0.55,
-    "ritmo": 0.45
+    "emocao": 0.65,
+    "ritmo": 0.4
   }
 }

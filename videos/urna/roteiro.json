@@ -5,7 +5,7 @@
   "voz": {
     "principal": "masculina",
     "alternar": "nao",
-    "velocidade": 1.05
+    "velocidade": 1.08
   },
   "pronuncia": {
     "UEnux": "u-é-núx",
@@ -44,7 +44,6 @@
       "tse"
     ]
   },
-  "cta": "comenta URNA que eu te mando como conferir o da sua seção",
   "thumb": {
     "titulos": [
       "A urna roda\nLinux.\n*O que tem dentro?*",

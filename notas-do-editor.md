@@ -54,4 +54,9 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   respiro (narrar.py encurta pausas > 0,2 s). Regra do usuário: todo vídeo abre com uma pergunta.
 - 16/10/2026 — Usuário vai gerar os vídeos no Claude do PC dele; aqui ele só quer o prompt pronto
   ("/novo-explicativo …") quando pedir um vídeo.
+- 16/10/2026 — REGRA: nada de "comenta X que eu te mando as fontes", "segue", "salva" ou pedido de like —
+  nem na fala nem na tela. O vídeo termina na última fala + encerramento da marca (só o símbolo e o @).
+  Fontes ficam na descrição do post. Campo `cta` removido dos roteiros.
+- 16/10/2026 — Voz: velocidade 1.08 (mais energia, perto do ritmo do Ludificando); referência do Chatterbox
+  agora é um texto expressivo; `npm run vozes -- comparar <slug>` para comparar Microsoft × local.
 

@@ -5,7 +5,7 @@
   "voz": {
     "principal": "masculina",
     "alternar": "nao",
-    "velocidade": 1.05
+    "velocidade": 1.08
   },
   "cenas": [
     {
@@ -56,13 +56,32 @@
   ],
   "sons": {
     "acentos": [
-      { "palavra": "mala", "cena": "problema", "som": "sfx/boom.wav", "volume": 0.45 },
-      { "palavra": "ninguém", "cena": "ocultacao", "som": "sfx/pop.wav", "volume": 0.6 },
-      { "palavra": "recorde", "cena": "coaf", "som": "sfx/ding.wav", "volume": 0.5 },
-      { "palavra": "pego", "cena": "pena", "som": "sfx/boom.wav", "volume": 0.5 }
+      {
+        "palavra": "mala",
+        "cena": "problema",
+        "som": "sfx/boom.wav",
+        "volume": 0.45
+      },
+      {
+        "palavra": "ninguém",
+        "cena": "ocultacao",
+        "som": "sfx/pop.wav",
+        "volume": 0.6
+      },
+      {
+        "palavra": "recorde",
+        "cena": "coaf",
+        "som": "sfx/ding.wav",
+        "volume": 0.5
+      },
+      {
+        "palavra": "pego",
+        "cena": "pena",
+        "som": "sfx/boom.wav",
+        "volume": 0.5
+      }
     ]
   },
-  "cta": "comenta LAVAGEM que eu te mando as fontes",
   "thumb": {
     "titulos": [
       "Como o dinheiro\ndo crime vira\n*dinheiro limpo?*",
@@ -80,7 +99,17 @@
       "Ocultação: passa por laranjas e empresas de fachada até sumir a origem",
       "Integração: volta como lucro e vira casa, carro e investimento"
     ],
-    "fontes": ["Lei 9.613/1998", "Coaf", "Banco Central"],
-    "hashtags": ["lavagemdedinheiro", "coaf", "direito", "economia", "crime"]
+    "fontes": [
+      "Lei 9.613/1998",
+      "Coaf",
+      "Banco Central"
+    ],
+    "hashtags": [
+      "lavagemdedinheiro",
+      "coaf",
+      "direito",
+      "economia",
+      "crime"
+    ]
   }
 }

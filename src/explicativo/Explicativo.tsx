@@ -16,8 +16,6 @@ export type Roteiro = {
   slug: string;
   marca: string;
   sons?: Sons;
-  /** chamada no encerramento, ex.: "comenta PIX que eu te mando as fontes" */
-  cta?: string;
   cenas: { id: string; chip: string; fala: string }[];
 };
 
@@ -115,7 +113,7 @@ export const Explicativo: React.FC<{
       <Karaoke palavras={todas} />
       <Audio src={staticFile(`explicativo/${roteiro.slug}/narracao.wav`)} />
       <Sequence from={Math.round(tempos.duracao * fps) - 12} durationInFrames={ENCERRAMENTO} name="encerramento">
-        <Encerramento cta={roteiro.cta} />
+        <Encerramento />
       </Sequence>
       {/* impacto no 1º frame: o gancho "bate" junto com a primeira palavra */}
       {sons.abertura ? (

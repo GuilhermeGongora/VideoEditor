@@ -8,6 +8,7 @@ Escolher a voz do canal pelo ouvido.
   npm run vozes -- testar <id>          → gera a frase de teste com uma voz do ElevenLabs (gasta ~150 créditos)
   npm run vozes -- referencia           → cria marca/voz-feminina.wav e voz-masculina.wav (Microsoft) para o Chatterbox clonar
   npm run vozes -- local                → liga o Chatterbox (GPU) e gera amostras feminina/masculina para ouvir
+  npm run vozes -- comparar lavagem     → narra o começo do vídeo nas duas vozes (Microsoft × local) para comparar
   npm run vozes -- usar <id> feminina   → fixa essa voz no voz.json (vale para todos os vídeos)
   npm run vozes -- usar marca/voz-minha.wav masculina  → clona a SUA gravação (Chatterbox)
   npm run vozes -- usar <id> masculina
@@ -144,21 +145,25 @@ def testar(vid):
     print(f"ok → out/vozes/teste-eleven-{vid}.mp3 (ouça no painel)")
 
 
-REF_TEXTO = ("Sabe aquela notícia que todo mundo comenta, mas ninguém explica direito? Então. "
-             "Aqui a gente pega o assunto, separa o que importa, e mostra com calma: o que muda, pra quem, e quando. "
-             "Sem enrolação, e sempre com fonte.")
+# Referência EXPRESSIVA: o Chatterbox copia timbre E jeito de falar da referência. Texto monótono → clone
+# monótono. Por isso perguntas, surpresa, ênfase em número e contraste ("Só que…").
+REF_TEXTO = ("Sabe quanto tempo leva pra contar até um bilhão? Trinta e um anos! Sem parar, dia e noite. "
+             "Parece exagero, né? Só que não é. E tem mais: um milhão você conta em onze dias. "
+             "Onze dias! Agora pensa nisso da próxima vez que ouvir essas duas palavras.")
 
 
 def referencia():
     import edge_tts
     cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
     edge = cfg.get("edge", {})
+    print("Dica: a MELHOR referência é uma gravação humana de 15–20 s, animada, sem música, com autorização de quem fala")
+    print("(npm run vozes -- usar marca/voz-minha.wav masculina). Esta aqui é a voz da Microsoft lendo um texto expressivo.")
     for genero, padrao in (("feminina", "pt-BR-FranciscaNeural"), ("masculina", "pt-BR-AntonioNeural")):
         voz = edge.get(genero) or padrao
         mp3 = os.path.join(OUT, f"_ref-{genero}.mp3")
         os.makedirs(OUT, exist_ok=True)
         try:
-            asyncio.run(edge_tts.Communicate(REF_TEXTO, voz).save(mp3))
+            asyncio.run(edge_tts.Communicate(REF_TEXTO, voz, rate="+8%").save(mp3))
         except Exception:
             asyncio.run(edge_tts.Communicate(REF_TEXTO, "pt-BR-FranciscaNeural" if genero == "feminina" else "pt-BR-AntonioNeural").save(mp3))
         wav = os.path.join(ROOT, "marca", f"voz-{genero}.wav")
@@ -170,7 +175,7 @@ def referencia():
 def local():
     cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
     cfg["motor"] = "chatterbox"
-    cfg.setdefault("chatterbox", {"feminina": "marca/voz-feminina.wav", "masculina": "marca/voz-masculina.wav", "emocao": 0.55, "ritmo": 0.45})
+    cfg.setdefault("chatterbox", {"feminina": "marca/voz-feminina.wav", "masculina": "marca/voz-masculina.wav", "emocao": 0.65, "ritmo": 0.4})
     json.dump(cfg, open(VOZ_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     open(VOZ_JSON, "a").write("\n")
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -185,6 +190,47 @@ def local():
         sf.write(os.path.join(OUT, f"local-{g}.wav"), a, narrar.SR)
         print(f"ok → out/vozes/local-{g}.wav")
     print("Ouça no painel (npm run baixar). Ajuste no voz.json → chatterbox.emocao (0.3 calmo … 0.8 animado).")
+
+
+def comparar(slug, cenas=3):
+    """Narra o começo de um vídeo real com a voz da Microsoft e com o Chatterbox (GPU), mesmo volume,
+    para decidir pelo ouvido. Não muda o voz.json."""
+    import numpy as np, subprocess
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import narrar
+    cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
+    rot = json.load(open(os.path.join(ROOT, "videos", slug, "roteiro.json"), encoding="utf-8"))
+    genero = (rot.get("voz") or {}).get("principal") or cfg.get("principal") or "masculina"
+    pron = rot.get("pronuncia", {})
+    falas = [narrar.para_tts(c["fala"], pron) for c in rot["cenas"][:cenas]]
+    vel = cfg.get("velocidade", 1.08)
+    motores = [("microsoft", lambda: narrar.Edge(vel))]
+    chat = dict(cfg.get("chatterbox") or {})
+    chat.setdefault("emocao", 0.65)
+    chat.setdefault("ritmo", 0.4)
+    motores.append(("local", lambda: narrar.Chatterbox(chat, vel)))
+    os.makedirs(OUT, exist_ok=True)
+    for nome, fazer in motores:
+        try:
+            m = fazer()
+            pedacos = []
+            for f in falas:
+                a, _ = m.falar(f, genero, (cfg.get("edge") or {}).get(genero) if nome == "microsoft" else None)
+                if nome == "microsoft":
+                    a, _ = narrar.encurtar_pausas(a)
+                a, _ = narrar.aparar(a)
+                pedacos += [a, np.zeros(int(0.1 * narrar.SR), dtype=np.float32)]
+            audio = np.concatenate(pedacos)
+            arq = os.path.join(OUT, f"comparar-{slug}-{nome}.wav")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(narrar.SR), "-ac", "1", "-i", "pipe:0",
+                            "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-14:TP=-1.2",
+                            "-ar", "48000", arq], input=audio.tobytes(), check=True)
+            print(f"ok → out/vozes/comparar-{slug}-{nome}.wav")
+        except Exception as e:
+            print(f"{nome}: não deu ({type(e).__name__}: {e})")
+            if nome == "local":
+                print("  instale a voz local: bash scripts/setup-voz-local.sh  ·  referência: npm run vozes -- referencia")
+    print("Ouça os dois (npm run baixar → porta 8080 → Vozes). Gostou do local? npm run vozes -- local fixa o Chatterbox.")
 
 
 def usar(vid, genero):
@@ -248,6 +294,10 @@ if __name__ == "__main__":
         referencia()
     elif a[0] == "local":
         local()
+    elif a[0] == "comparar":
+        if len(a) < 2:
+            sys.exit("Use: npm run vozes -- comparar <slug>")
+        comparar(a[1])
     elif a[0] == "testar" and len(a) > 1:
         testar(a[1])
     elif a[0] == "usar" and len(a) > 2:

@@ -25,7 +25,8 @@ O algoritmo mede duas coisas: **quantos passam dos 3 primeiros segundos** e **qu
 - Uma virada a cada 4–8 s (nova cena, novo número, "Mas calma:", "E tem mais:", "Só que…").
 - Responda a pergunta do gancho só na ÚLTIMA ou penúltima cena (quem quer a resposta fica).
 - A última frase fecha o loop e de preferência ecoa a primeira, para o vídeo emendar no replay.
-- Nada de despedida, "deixa o like" ou resumo longo: o encerramento da marca já faz o CTA.
+- Nada de despedida, "deixa o like", "comenta", "salva" ou resumo longo: depois da última fala vem só o
+  encerramento da marca (regra do usuário). Fontes vão na descrição do post.
 
 ## Som a serviço da retenção
 - O impacto da abertura (automático) bate com a 1ª palavra: não comece a fala com silêncio.

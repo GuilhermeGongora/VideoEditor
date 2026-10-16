@@ -5,7 +5,7 @@
   "voz": {
     "principal": "masculina",
     "alternar": "nao",
-    "velocidade": 1.05
+    "velocidade": 1.08
   },
   "pronuncia": {
     "1.000": "mil",
@@ -82,7 +82,6 @@
       "fala": "Então não confunda: entre milhão e bilhão, é a diferença de 11 dias para 31 anos."
     }
   ],
-  "cta": "comenta o que você faria com 1 bilhão",
   "sons": {
     "acentos": [
       {

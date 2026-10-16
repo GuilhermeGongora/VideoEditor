@@ -5,7 +5,7 @@
   "voz": {
     "principal": "masculina",
     "alternar": "nao",
-    "velocidade": 1.05
+    "velocidade": 1.08
   },
   "pronuncia": {
     "6x1": "seis por um",
@@ -88,7 +88,6 @@
       "scientia"
     ]
   },
-  "cta": "segue pra saber quando muda",
   "sons": {
     "acentos": [
       {

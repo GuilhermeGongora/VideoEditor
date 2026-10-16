@@ -31,7 +31,7 @@ Depois `references/ganchos.md` (antes do roteiro) e `references/estilo.md` + `re
 som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título só no fim.
 - **75–90 s, 9–11 cenas** (padrão Ludificando), UMA ideia por cena, cenas de 5–9 s. `chip` = nome curto
   do capítulo em maiúsculas. Siga a estrutura de capítulos de `references/ludificando.md`
-  (gancho → hoje → o que muda → quando → exceções → os dois lados → o que falta → cuidado → sua vez),
+  (gancho → hoje → o que muda → quando → exceções → os dois lados → o que falta → cuidado → fecho),
   adaptando ao tema (assunto de ciência/tecnologia troca "os dois lados"/"votação" por "mito × fato",
   "por dentro", "na prática").
 - 1ª frase = o gancho, **SEMPRE uma pergunta** (regra do usuário) que a pessoa quer ver respondida, com o
@@ -39,12 +39,13 @@ som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título 
 - Frases curtas, como se falasse com um amigo. Número escrito com dígitos ("75 votos").
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
 - Penúltima cena: **CUIDADO** (golpe, fake news ou erro comum ligado ao tema), quando fizer sentido.
-- Última cena: **SUA VEZ** — uma pergunta para o público responder nos comentários + o CTA falado
-  ("Comenta X que eu te mando as fontes" / "Salva pra conferir depois").
+- Última cena: **FECHO** — responde a pergunta do gancho e fecha o loop (ecoa a 1ª frase).
+  **Proibido (regra do usuário): pedir comentário, like, "salva", "segue", "comenta X que eu te mando…"**
+  — nem na fala nem na tela. As fontes ficam só na descrição do post. Depois da última fala vem só o
+  encerramento da marca (automático).
 - 1ª cena com no máximo ~3 s de fala. Pergunta retórica a cada 2–3 cenas ("E quem já pagou?"). Frases de 6–14 palavras, emendadas
   ("Mas calma:", "E tem mais:", "Só que…") para a narração fluir sem pausas longas.
-- `cta` = chamada curta que aparece no encerramento, de preferência pedindo COMENTÁRIO
-  (ex.: "comenta PIX que eu te mando as fontes", "segue pra saber quando muda").
+- NÃO existe mais `cta` no roteiro: o encerramento mostra só a marca.
 - `sons`: o padrão já faz sozinho trilha (abaixa sob a voz), impacto no 1º frame, swoosh/whoosh
   alternados nas trocas de cena, "pop" quando o cartão de número aparece, "tick" em anotações/pílulas e
   uma subida (riser) entrando no encerramento. **Sempre escreva 2–4 `acentos`** nas palavras-chave:
@@ -57,7 +58,7 @@ som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título 
   `transicao` (lista alterna), `aparecer`, `dado`, `abertura`, `final`; `null` desliga.
 - `composicao` = nome do componente (ex.: `Escala6x1`).
 - `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
-- `voz` = `{ "principal": "...", "alternar": "nao", "velocidade": 1.05 }` (ver passo 3).
+- `voz` = `{ "principal": "masculina", "alternar": "nao" }` — NÃO ponha `velocidade` no roteiro (vem do `voz.json`, hoje 1.08).
 - `post` = legenda do Instagram/TikTok (vira `out/<slug>-legenda.txt`):
   `{ "gancho": "<fato forte + pergunta> 📌", "pontos": [3 frases curtas, sem ponto final, com números],
   "fontes": ["Agência Senado", "IBGE", …só os nomes], "hashtags": ["tema", "assunto", …até 5, sem #] }`
@@ -76,8 +77,14 @@ só define:
 - `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (dupla). Padrão: `"nao"`.
 - Se o usuário reclamar da voz: mostre `npm run vozes` (Microsoft) / `npm run vozes -- eleven` e
   `npm run vozes -- usar <id> feminina|masculina`.
-- Escreva a fala para o OUVIDO: frases curtas, vírgulas onde se respira, nada de parênteses ou siglas
-  sem `pronuncia`.
+- Escreva a fala para o OUVIDO — é o que mais muda a entonação da voz sintética:
+  - frases curtas (6–14 palavras), vírgulas onde se respira, nada de parênteses ou siglas sem `pronuncia`;
+  - pergunta retórica a cada 2–3 cenas ("E quem já pagou?") — a voz sobe no "?" e ganha vida;
+  - contraste e virada: "Só que…", "Mas atenção:", "E tem mais:";
+  - número importante sozinho no fim da frase ("Foram 75 votos a 1.") ou repetido ("Onze dias!");
+  - evite frases longas cheias de vírgulas e listas de 4+ itens (a voz fica monótona).
+- O `narrar` encurta sozinho pausas internas > 0,2 s (meta: < 5 % de silêncio, como o Ludificando).
+- Para testar a voz local mais expressiva (Chatterbox na GPU do usuário): `npm run vozes -- comparar <slug>`.
 
 ## 4. Cenas → `src/explicativo/videos/<Nome>.tsx`
 - Copie a estrutura do `Escala6x1.tsx`: um componente por cena, `CENAS_<NOME>` e, no fim do arquivo,

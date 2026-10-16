@@ -27,8 +27,8 @@ copie a GRAMÁTICA (estrutura, ritmo, acabamento).
 7. **VOTAÇÃO / O QUE FALTA**: plenário que acende até o quórum (`<Hemiciclo>`: 49 de 81, 257 de 513).
 8. **CUIDADO**: golpe ou fake news ligado ao tema — celular com mensagem falsa (`<Celular>`),
    carimbo "GOLPE". Isso gera MUITO compartilhamento.
-9. **SUA VEZ / COMENTA**: pergunta para o público ("…com mais um dia de folga?") + CTA falado
-   ("Comenta X", "Salva pra entender o resultado").
+9. (Eles fecham com "Comenta X" / "Salva pra…". **NÓS NÃO**: regra do usuário — o último capítulo
+   responde a pergunta do gancho e acaba; depois só o encerramento da marca, sem pedir nada.)
 
 ## Cenografia (o que dá "mais vida")
 - **Um cenário-herói por vídeo, que volta várias vezes**: as 6 torres de horas (6x1), o caderninho do
