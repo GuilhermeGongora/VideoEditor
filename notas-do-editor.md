@@ -64,4 +64,8 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   cartão por aproximação** (`references/referencia.md`): fundo escuro, objeto-herói grande e nítido,
   ~60 s / 7 cenas, narração frase a frase com pausas (−16 LUFS), sem trilha. Código voltou a esse padrão
   (Stage escuro, sem acabamento, narrar estilo "referencia", trilha desligada).
+- 16/10/2026 — ElevenLabs (Starter) aprovado como "bem melhor", mas soou robótico/engessado e leu "1 folga"
+  como "um folga". Causas: narração frase a frase (cada vírgula uma chamada isolada) e speed 1.08. Agora:
+  cena inteira por chamada + previous/next_text, speed 1.0, eleven_v4 (reserva multilingual_v2), números por
+  extenso com gênero (scripts/numeros_pt.py), masterização leve (só highpass + loudnorm −16).
 

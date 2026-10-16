@@ -1,26 +1,23 @@
 {
-  "_ajuda": "Voz do canal (vale para todos os vídeos). Padrão aprovado: Microsoft (edge), Antonio, velocidade 1.05 — a voz dos vídeos 6x1 e aproximação. Evite vozes 'Multilingual' (sotaque de Portugal). motor: edge | chatterbox (GPU) | eleven. Ouvir/escolher: npm run vozes · npm run vozes -- usar <id ou arquivo.wav> feminina|masculina",
-  "motor": "edge",
+  "_ajuda": "Voz do canal (vale para todos os vídeos). Desde 16/10/2026: ElevenLabs (plano Starter) com as vozes escolhidas pelo usuário. O narrar manda a cena inteira por vez com o texto das cenas vizinhas (entonação contínua), números por extenso com gênero, velocidade nativa. eleven_modelo: tenta esse e cai no eleven_multilingual_v2 se a API recusar. Testar: npm run vozes -- testar <id> · Trocar: npm run vozes -- usar <id> masculina|feminina · Voltar à Microsoft: motor = edge",
+  "motor": "eleven",
   "principal": "masculina",
   "alternar": "nao",
   "velocidade": 1.08,
+  "eleven": {
+    "masculina": "2CECaLAGTS5NRGxgbcxr",
+    "feminina": "RGymW84CSmfVugnA5tvA"
+  },
+  "eleven_modelo": "eleven_v4",
+  "eleven_ajustes": {
+    "stability": 0.4,
+    "similarity_boost": 0.75,
+    "style": 0.3,
+    "speed": 1.0
+  },
   "edge": {
     "masculina": "pt-BR-AntonioNeural",
     "feminina": "pt-BR-FranciscaNeural"
-  },
-  "eleven": {
-    "feminina": "",
-    "masculina": ""
-  },
-  "eleven_ajustes": {
-    "stability": 0.45,
-    "similarity_boost": 0.8,
-    "style": 0.15
-  },
-  "_eleven_guardado": {
-    "feminina": "RGymW84CSmfVugnA5tvA",
-    "masculina": "2CECaLAGTS5NRGxgbcxr",
-    "obs": "desligado por enquanto (402: plano grátis não usa vozes da biblioteca pela API)"
   },
   "chatterbox": {
     "feminina": "marca/voz-feminina.wav",

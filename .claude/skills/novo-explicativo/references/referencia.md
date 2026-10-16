@@ -42,7 +42,7 @@ desfoque, bonecos no centro, 80–90 s) foram reprovados.
 - Legenda karaokê frase a frase (automática).
 
 ## Voz e som
-- Antonio (Microsoft), velocidade 1.08, narração frase a frase com pausas fixas — é o estilo padrão do
-  `narrar.py` ("referencia"). Volume −16 LUFS.
+- Na referência: Antonio (Microsoft), frase a frase. Desde 16/10/2026 o canal usa ElevenLabs (cena
+  inteira com contexto, números por extenso) — mais humano, mesmo ritmo calmo e volume −16 LUFS.
 - Sem trilha. Efeitos leves (transição, pop no cartão, 2–3 acentos) estão liberados porque o usuário
   pediu, mas sempre discretos: nunca por cima de uma palavra importante.

@@ -5,7 +5,7 @@ Escolher a voz do canal pelo ouvido.
   npm run vozes                         → amostras de todas as vozes em português da Microsoft (grátis)
   npm run vozes -- eleven               → vozes do ElevenLabs em português do Brasil (da sua conta + biblioteca)
                                           baixa a prévia de cada uma (grátis) para ouvir no painel
-  npm run vozes -- testar <id>          → gera a frase de teste com uma voz do ElevenLabs (gasta ~150 créditos)
+  npm run vozes -- testar <id>          → frase de teste com a voz do ElevenLabs, igual ao narrar (gasta ~200 créditos)
   npm run vozes -- referencia           → cria marca/voz-feminina.wav e voz-masculina.wav (Microsoft) para o Chatterbox clonar
   npm run vozes -- local                → liga o Chatterbox (GPU) e gera amostras feminina/masculina para ouvir
   npm run vozes -- comparar lavagem     → narra o começo do vídeo nas duas vozes (Microsoft × local) para comparar
@@ -136,17 +136,26 @@ def eleven():
 
 
 def testar(vid):
+    """Gera a frase de teste com a voz do ElevenLabs usando EXATAMENTE o mesmo caminho do narrar
+    (modelo, ajustes, números por extenso). Gasta ~150 créditos."""
+    import subprocess
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import narrar
+    cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
     os.makedirs(OUT, exist_ok=True)
-    audio = api(f"/v1/text-to-speech/{vid}?output_format=mp3_44100_128",
-                {"text": FRASE, "model_id": "eleven_multilingual_v2",
-                 "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.15, "use_speaker_boost": True}})
-    arq = os.path.join(OUT, f"teste-eleven-{vid}.mp3")
-    open(arq, "wb").write(audio)
-    print(f"ok → out/vozes/teste-eleven-{vid}.mp3 (ouça no painel)")
+    m = narrar.Eleven(1.0, {"teste": vid}, cfg.get("eleven_ajustes"), cfg.get("eleven_modelo"))
+    a, _ = m.falar(narrar.para_tts(FRASE_TESTE, {}), "teste")
+    arq = os.path.join(OUT, f"teste-eleven-{vid}.wav")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(narrar.SR), "-ac", "1", "-i", "pipe:0",
+                    "-af", narrar.TRATAMENTO_ELEVEN, "-ar", "48000", arq], input=a.tobytes(), check=True)
+    print(f"ok → out/vozes/teste-eleven-{vid}.wav (ouça no painel)")
 
 
-# Referência EXPRESSIVA: o Chatterbox copia timbre E jeito de falar da referência. Texto monótono → clone
-# monótono. Por isso perguntas, surpresa, ênfase em número e contraste ("Só que…").
+# frase de teste com o que costuma soar robótico: número com gênero, pergunta, contraste
+FRASE_TESTE = ("Acabou a escala 6x1. Então agora você folga sábado e domingo? Não necessariamente. "
+               "A lei garante 2 folgas por semana, e no máximo 40 horas. Mas quem escolhe os dias, em geral, é a empresa.")
+
+
 REF_TEXTO = ("Sabe quanto tempo leva pra contar até um bilhão? Trinta e um anos! Sem parar, dia e noite. "
              "Parece exagero, né? Só que não é. E tem mais: um milhão você conta em onze dias. "
              "Onze dias! Agora pensa nisso da próxima vez que ouvir essas duas palavras.")

@@ -43,6 +43,8 @@ SR = 24000
 PAUSA_REF = {",": 0.12, ";": 0.18, ":": 0.18, ".": 0.32, "!": 0.32, "?": 0.32, "": 0.1}
 FIM_CENA_REF = 0.45
 TRATAMENTO_REF = "highpass=f=70,acompressor=threshold=-18dB:ratio=3:attack=5:release=80,loudnorm=I=-16:TP=-1.5"
+# ElevenLabs já vem masterizado: só tira o grave e acerta o volume (compressão extra deixa a voz "presa").
+TRATAMENTO_ELEVEN = "highpass=f=60,loudnorm=I=-16:TP=-1.5"
 # ESTILO "continuo" (opcional, "voz": {"estilo": "continuo"}): cena inteira numa chamada, pausas curtas.
 PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}
 FIM_CENA = 0.1
@@ -80,10 +82,35 @@ def frases(texto):
     return out
 
 
-def para_tts(s, pron):
+def _pron(s, pron):
     for k in sorted(pron, key=len, reverse=True):
         s = re.sub(rf"(?<!\w){re.escape(k)}(?!\w)", pron[k], s)
     return s
+
+
+def falado_por_palavra(texto, pron):
+    """Para cada palavra da legenda, o que a voz fala (pronúncia + números por extenso com gênero:
+    "1 folga" → "uma folga", "R$ 50 mil" → "cinquenta mil reais"). Pode ser "" (ex.: o "R$")."""
+    import numeros_pt
+    return numeros_pt.falar_tokens([_pron(t, pron) for t in texto.split()])
+
+
+def para_tts(s, pron):
+    return " ".join(x for x in falado_por_palavra(s, pron) if x)
+
+
+def _alinhar(palavras, falado, marcas, t0, corte, dur):
+    """Distribui as marcas da voz pelas palavras da legenda (n marcas por palavra; n = 0 → instantânea)."""
+    out, i = [], 0
+    for w, n in zip(palavras, falado):
+        if n == 0:
+            t = (marcas[i][0] if i < len(marcas) else marcas[-1][1]) - corte
+            out.append({"w": w, "start": round(t0 + max(0, t), 3), "end": round(t0 + max(0, t), 3)})
+            continue
+        ini, fim = marcas[i][0] - corte, marcas[i + n - 1][1] - corte
+        out.append({"w": w, "start": round(t0 + max(0, ini), 3), "end": round(t0 + min(dur, fim), 3)})
+        i += n
+    return out
 
 
 def decode(data_or_path):
@@ -207,50 +234,89 @@ class ErroEleven(Exception):
 
 class Eleven:
     """ElevenLabs (pago, a voz mais humana). Precisa de ELEVENLABS_API_KEY. Tempo das palavras vem do
-    endpoint with-timestamps (alinhamento por caractere)."""
+    endpoint with-timestamps (alinhamento por caractere).
+
+    Para soar humano (lições de 16/10/2026): a CENA INTEIRA vai numa chamada só, com o texto das cenas
+    vizinhas em previous_text/next_text (entonação contínua); números já chegam por extenso com gênero;
+    velocidade nativa 1.0 (o "speed" deixa a voz artificial); modelo mais expressivo primeiro
+    (eleven_v4) e, se a API recusar, cai sozinho no eleven_multilingual_v2."""
     nome = "eleven"
-    def __init__(self, vel, ids=None, ajustes=None):
+    MODELOS_RESERVA = ["eleven_multilingual_v2"]
+
+    def __init__(self, vel, ids=None, ajustes=None, modelo=None):
         self.key = os.environ.get("ELEVENLABS_API_KEY")
         if not self.key:
             raise RuntimeError("sem ELEVENLABS_API_KEY no .env")
         self.ids = {k: v for k, v in (ids or {}).items() if v}
         if not self.ids:
-            raise RuntimeError("nenhuma voz do ElevenLabs escolhida em voz.json (rode: npm run vozes -- eleven)")
-        self.ajustes = {"stability": 0.45, "similarity_boost": 0.8, "style": 0.15, **(ajustes or {})}
-        self.vel = max(0.7, min(1.2, vel))
+            raise RuntimeError("nenhuma voz do ElevenLabs escolhida em voz.json (rode: npm run vozes -- usar <id> masculina)")
+        aj = dict(ajustes or {})
+        self.vel = max(0.7, min(1.2, float(aj.pop("speed", 1.0))))
+        self.ajustes = {"stability": 0.4, "similarity_boost": 0.75, "style": 0.3, **aj}
+        self.modelos = [modelo or "eleven_v4"] + [m for m in self.MODELOS_RESERVA if m != (modelo or "eleven_v4")]
+        self.avisado = False
 
     def voz_de(self, genero, preferida=None):
         # se só uma voz foi escolhida, ela narra tudo (melhor que cair numa voz ruim)
         return self.ids.get(genero) or next(iter(self.ids.values()))
 
-    def falar(self, texto, genero, preferida=None):
+    def _corpo(self, modelo, texto, anterior, seguinte, simples=False):
+        v2 = modelo.startswith("eleven_multilingual") or modelo.startswith("eleven_turbo") or modelo.startswith("eleven_flash")
+        ajustes = {"stability": self.ajustes["stability"], "similarity_boost": self.ajustes["similarity_boost"], "speed": self.vel}
+        if v2:
+            ajustes.update(style=self.ajustes.get("style", 0.3), use_speaker_boost=True)
+        corpo = {"text": texto, "model_id": modelo, "apply_text_normalization": "auto"}
+        if not simples:
+            corpo["voice_settings"] = ajustes
+            if anterior:
+                corpo["previous_text"] = anterior[-400:]
+            if seguinte:
+                corpo["next_text"] = seguinte[:400]
+            if not v2:
+                corpo["language_code"] = "pt"
+        return json.dumps(corpo).encode()
+
+    def falar(self, texto, genero, preferida=None, anterior=None, seguinte=None):
         import base64
-        body = json.dumps({
-            "text": texto,
-            "model_id": "eleven_multilingual_v2",
-            "voice_settings": {**self.ajustes, "use_speaker_boost": True, "speed": self.vel},
-        }).encode()
-        req = urllib.request.Request(
-            f"https://api.elevenlabs.io/v1/text-to-speech/{self.voz_de(genero)}/with-timestamps?output_format=mp3_44100_128",
-            data=body, headers={"xi-api-key": self.key, "Content-Type": "application/json"}, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=120) as r:
-                d = json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            corpo = e.read().decode("utf-8", "ignore")
-            try:
-                det = json.loads(corpo).get("detail", corpo)
-                corpo = det.get("message", det) if isinstance(det, dict) else det
-            except Exception:
-                pass
+        d, ultimo_erro = None, None
+        for modelo in list(self.modelos):
+            for simples in (False, True):  # 2ª tentativa sem ajustes/contexto (se o modelo não aceitar algum campo)
+                req = urllib.request.Request(
+                    f"https://api.elevenlabs.io/v1/text-to-speech/{self.voz_de(genero)}/with-timestamps?output_format=mp3_44100_128",
+                    data=self._corpo(modelo, texto, anterior, seguinte, simples),
+                    headers={"xi-api-key": self.key, "Content-Type": "application/json"}, method="POST")
+                try:
+                    with urllib.request.urlopen(req, timeout=180) as r:
+                        d = json.loads(r.read())
+                    break
+                except urllib.error.HTTPError as e:
+                    corpo = e.read().decode("utf-8", "ignore")
+                    try:
+                        det = json.loads(corpo).get("detail", corpo)
+                        corpo = det.get("message", det) if isinstance(det, dict) else det
+                    except Exception:
+                        pass
+                    ultimo_erro = (e.code, corpo)
+                    if e.code in (400, 404, 422) and not (e.code == 404 and "voice" in str(corpo).lower()):
+                        continue  # campo/modelo não aceito → tenta mais simples / outro modelo
+                    break
+            if d is not None:
+                if modelo != self.modelos[0] or not self.avisado:
+                    print(f"  ElevenLabs: modelo {modelo}")
+                    self.avisado = True
+                self.modelos = [modelo] + [m for m in self.modelos if m != modelo]  # fixa o que funcionou
+                break
+            if ultimo_erro and ultimo_erro[0] not in (400, 404, 422):
+                break
+        if d is None:
+            code, corpo = ultimo_erro or (0, "sem resposta")
             dica = {
-                402: "o plano grátis do ElevenLabs não deixa usar vozes da Voice Library pela API, ou os créditos acabaram. "
-                     "Saídas: assinar o Starter, escolher vozes 'Default'/criadas por você, ou usar a Microsoft (npm run vozes).",
-                401: "a chave não tem permissão de Text to Speech ou está errada (.env).",
+                402: "créditos acabaram ou o plano não libera essa voz pela API (Voice Library exige plano pago).",
+                401: "a chave não tem permissão de Text to Speech / Voices ou está errada (.env).",
                 404: "voice ID não encontrado — adicione a voz à sua conta ('Add to my voices') ou confira o ID no voz.json.",
                 429: "limite de uso por minuto/créditos atingido; tente de novo daqui a pouco.",
-            }.get(e.code, "")
-            raise ErroEleven(f"ElevenLabs HTTP {e.code}: {corpo}\n  → {dica}") from None
+            }.get(code, "")
+            raise ErroEleven(f"ElevenLabs HTTP {code}: {corpo}\n  → {dica}")
         audio = decode(base64.b64decode(d["audio_base64"]))
         al = d.get("alignment") or {}
         chars, ini, fim = al.get("characters", []), al.get("character_start_times_seconds", []), al.get("character_end_times_seconds", [])
@@ -391,33 +457,25 @@ def tempos_da_voz(frase, pron, marcas, t0, corte, dur):
     """Usa os tempos reais que a voz informou (WordBoundary). Cada palavra exibida pode virar várias
     palavras faladas (ex.: "26,8" → "vinte e seis vírgula oito"). Se não bater, cai no proporcional."""
     palavras = frase.split()
-    falado = [len(para_tts(re.sub(r"[.,;:!?]+$", "", w), pron).split()) or 1 for w in palavras]
+    falado = [len(x.split()) for x in falado_por_palavra(frase, pron)]
     marcas = [m for m in marcas if _limpa(m[2])]
     if not marcas or len(marcas) != sum(falado):
         return tempos_proporcionais(palavras, t0, dur)
-    out, i = [], 0
-    for w, n in zip(palavras, falado):
-        ini, fim = marcas[i][0] - corte, marcas[i + n - 1][1] - corte
-        out.append({"w": w, "start": round(t0 + max(0, ini), 3), "end": round(t0 + min(dur, fim), 3)})
-        i += n
-    return out
+    return _alinhar(palavras, falado, marcas, t0, corte, dur)
 
 
 def tempos_cena(fala, pron, marcas, t0, corte, dur):
     """Tempos de todas as palavras da cena a partir das marcas da voz. None se não bater (aí vai frase a frase)."""
     palavras = fala.split()
-    falado = [len(para_tts(re.sub(r"[.,;:!?]+$", "", w), pron).split()) or 1 for w in palavras]
+    falado = [len(x.split()) for x in falado_por_palavra(fala, pron)]
     marcas = [m for m in marcas if _limpa(m[2])]
     if not marcas or len(marcas) != sum(falado):
+        print(f"    (aviso: {len(marcas)} marcas da voz × {sum(falado)} palavras faladas — legenda vai frase a frase)")
         return None
-    out, i = [], 0
-    for w, n in zip(palavras, falado):
-        ini, fim = marcas[i][0] - corte, marcas[i + n - 1][1] - corte
-        item = {"w": w, "start": round(t0 + max(0, ini), 3), "end": round(t0 + min(dur, fim), 3)}
-        if re.search(r"[.!?;:]$", w):
+    out = _alinhar(palavras, falado, marcas, t0, corte, dur)
+    for item in out:
+        if re.search(r"[.!?;:,]$", item["w"]):
             item["fimFrase"] = True
-        out.append(item)
-        i += n
     out[-1]["fimFrase"] = True
     return out
 
@@ -456,7 +514,7 @@ def main():
             motor = None
     if motor is None and voz.get("motor") == "eleven" and "--kokoro" not in sys.argv:
         try:
-            motor = Eleven(vel, voz.get("eleven"), voz.get("eleven_ajustes"))
+            motor = Eleven(vel, voz.get("eleven"), voz.get("eleven_ajustes"), voz.get("eleven_modelo"))
         except Exception as e:
             print(f"ElevenLabs indisponível ({e}); usando edge-tts.")
             motor = None
@@ -473,7 +531,8 @@ def main():
     print(f"motor: {motor.nome} · voz principal: {principal}" + (" · alternando por cena" if voz.get("alternar") == "cenas" else ""))
 
     continuo = voz.get("estilo") == "continuo"
-    print("estilo da narração: " + ("contínuo" if continuo else "referência (frase a frase, como o vídeo da aproximação)"))
+    print("estilo da narração: " + ("ElevenLabs: cena inteira com contexto, números por extenso" if motor.nome == "eleven"
+                                    else "contínuo" if continuo else "referência (frase a frase, como o vídeo da aproximação)"))
 
     def gerar(motor, preferida_edge):
         pedacos, cenas = [np.zeros(int(0.25 * SR), dtype=np.float32)], []
@@ -482,11 +541,17 @@ def main():
             genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
             c0 = t
             palavras = None
-            if continuo and motor.nome in ("edge", "eleven"):
-                # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
-                bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
-                bruto, remap = encurtar_pausas(bruto)
-                marcas = [(remap(m[0]), remap(m[1]), *m[2:]) for m in marcas]
+            if motor.nome == "eleven" or (continuo and motor.nome == "edge"):
+                # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural).
+                # No ElevenLabs vai junto o texto das cenas vizinhas, para a entonação continuar entre cenas.
+                if motor.nome == "eleven":
+                    ant = " ".join(para_tts(c["fala"], pron) for c in rot["cenas"][max(0, ci - 2):ci])
+                    seg = para_tts(rot["cenas"][ci + 1]["fala"], pron) if ci + 1 < len(rot["cenas"]) else ""
+                    bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, None, anterior=ant, seguinte=seg)
+                else:
+                    bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
+                    bruto, remap = encurtar_pausas(bruto)
+                    marcas = [(remap(m[0]), remap(m[1]), *m[2:]) for m in marcas]
                 a, corte = aparar(bruto)
                 dur = len(a) / SR
                 palavras = tempos_cena(cena["fala"], pron, marcas, t, corte, dur)
@@ -531,7 +596,7 @@ def main():
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
                     # mesmo tratamento dos primeiros vídeos (6x1, aproximação), aprovado pelo usuário.
                     # NÃO adicione eco/ambiência nem EQ pesado: deixou a voz pior.
-                    "-af", TRATAMENTO_CONTINUO if continuo else TRATAMENTO_REF,
+                    "-af", TRATAMENTO_ELEVEN if motor.nome == "eleven" else TRATAMENTO_CONTINUO if continuo else TRATAMENTO_REF,
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

@@ -68,9 +68,12 @@ palavra, vindo da própria voz). Voz neural do edge-tts (internet); sem internet
 A VOZ DO CANAL fica em `voz.json` (motor, vozes escolhidas pelo usuário, velocidade). **Nunca escolha
 ou troque vozes, motor ou IDs por conta própria** — isso é gosto do usuário. No roteiro, o campo `voz`
 só define:
-- `"principal": "masculina"` — **sempre**. A voz aprovada do canal é o Antonio (Microsoft), a dos
-  vídeos 6x1 e aproximação. A feminina Thalita Multilingual soou como português de Portugal (vídeo da
-  urna) e foi tirada. Nunca use vozes "Multilingual". Só use feminina se o usuário pedir.
+- **Motor do canal: ElevenLabs** (o usuário assinou o Starter em 16/10/2026; vozes no `voz.json`).
+  O narrar manda a CENA INTEIRA por chamada com o texto das cenas vizinhas (previous/next_text), velocidade
+  nativa e números por extenso com gênero ("1 folga" → "uma folga", "R$ 50 mil" → "cinquenta mil reais").
+  Pode escrever números com dígitos na `fala` (a legenda mostra dígitos; a voz fala por extenso). Quando o
+  número se refere a um substantivo que não vem logo depois ("passam a ser 2, e…"), escreva por extenso.
+- `"principal": "masculina"` — padrão. Só use feminina se o usuário pedir. Nunca vozes "Multilingual" da Microsoft.
 - `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (dupla). Padrão: `"nao"`.
 - Se o usuário reclamar da voz: mostre `npm run vozes` (Microsoft) / `npm run vozes -- eleven` e
   `npm run vozes -- usar <id> feminina|masculina`.
@@ -80,8 +83,8 @@ só define:
   - contraste e virada: "Só que…", "Mas atenção:", "E tem mais:";
   - número importante sozinho no fim da frase ("Foram 75 votos a 1.") ou repetido ("Onze dias!");
   - evite frases longas cheias de vírgulas e listas de 4+ itens (a voz fica monótona).
-- A narração padrão é a da referência: frase a frase, pausa de 0,12 s na vírgula e 0,32 s no ponto,
-  0,45 s entre cenas, Antonio a 1.08. NÃO mude para `"estilo": "continuo"` sem o usuário pedir.
+- Com a Microsoft (motor edge) a narração é frase a frase como na referência; com o ElevenLabs é por cena
+  (mais humano). Em ambos há 0,45 s de respiro entre cenas.
 - Para testar a voz local mais expressiva (Chatterbox na GPU do usuário): `npm run vozes -- comparar <slug>`.
 
 ## 4. Cenas → `src/explicativo/videos/<Nome>.tsx`
