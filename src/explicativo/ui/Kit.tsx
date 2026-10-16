@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { interpolate, OffthreadVideo, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { Img, interpolate, OffthreadVideo, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { C, MONO, SANS } from "../theme";
 import { clamp, pop } from "../anim";
 import { SemOverlays } from "./Overlays";
@@ -143,7 +143,7 @@ export const Contexto: React.FC<{ itens: { texto: string; at: number; on?: boole
 };
 
 /**
- * Vídeo real em TELA CHEIA por alguns segundos (passagem rápida, como abrir com a imagem da notícia),
+ * Vídeo (ou imagem .png/.jpg) real em TELA CHEIA por alguns segundos (passagem rápida, como abrir com a imagem da notícia),
  * com fade de entrada/saída e crédito. Mudo por padrão (a narração fala por cima).
  *   <VideoTelaCheia src="explicativo/roadster/clipes/demo.mp4" at={0} dur={75} inicio={3} credito="IMAGENS: TESLA" />
  */
@@ -163,12 +163,16 @@ export const VideoTelaCheia: React.FC<{
   return (
     <Sequence from={at} durationInFrames={dur} layout="none">
       <div style={{ position: "absolute", inset: 0, opacity: o, background: "#000", overflow: "hidden" }}>
-        <OffthreadVideo
-          src={staticFile(src)}
-          startFrom={Math.round(inicio * 30)}
-          volume={volume}
-          style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${zoom})` }}
-        />
+        {/\.(png|jpe?g|webp)$/i.test(src) ? (
+          <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${zoom})` }} />
+        ) : (
+          <OffthreadVideo
+            src={staticFile(src)}
+            startFrom={Math.round(inicio * 30)}
+            volume={volume}
+            style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${zoom})` }}
+          />
+        )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.7) 100%)" }} />
         {credito ? (
           <div style={{ position: "absolute", right: 64, top: 1180, fontFamily: MONO, fontWeight: 700, fontSize: 20, letterSpacing: 2, color: C.text, padding: "6px 14px", borderRadius: 999, background: "rgba(20,20,20,0.85)" }}>

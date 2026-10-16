@@ -1,13 +1,13 @@
-import React, { useLayoutEffect, useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import * as THREE from "three";
-import { Sequence, staticFile, useRemotionEnvironment } from "remotion";
+import { continueRender, delayRender, Sequence, staticFile, useRemotionEnvironment } from "remotion";
 import { useOffthreadVideoTexture } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
 import { C, MONO } from "../theme";
 import { RoundBox } from "./Objetos";
 
 /**
- * Vídeo REAL dentro da cena 3D, num monitor flutuante (estilo Ludificando: imagens da notícia num
+ * Vídeo REAL (ou imagem: .png/.jpg/.webp) dentro da cena 3D, num monitor flutuante (estilo Ludificando: imagens da notícia num
  * telão com moldura escura e o crédito no canto).
  *
  *   <TelaVideo src="explicativo/roadster/clipes/demo.mp4" at={0} inicio={12} credito="IMAGENS: TESLA" />
@@ -38,6 +38,36 @@ const TexturaVideo: React.FC<{ src: string; largura: number; altura: number }> =
     </mesh>
   );
 };
+
+/** Imagem parada (foto, print de notícia, gráfico) na tela. */
+const TexturaImagem: React.FC<{ src: string; largura: number; altura: number }> = ({ src, largura, altura }) => {
+  const advance = useThree((st) => st.advance);
+  const [tex, setTex] = useState<THREE.Texture | null>(null);
+  useLayoutEffect(() => {
+    const h = delayRender("imagem da tela");
+    new THREE.TextureLoader().load(
+      staticFile(src),
+      (t) => {
+        t.colorSpace = THREE.SRGBColorSpace;
+        setTex(t);
+        continueRender(h);
+      },
+      undefined,
+      () => continueRender(h),
+    );
+  }, [src]);
+  useLayoutEffect(() => {
+    if (tex) advance(performance.now());
+  }, [tex, advance]);
+  return (
+    <mesh position={[0, 0, 0.032]}>
+      <planeGeometry args={[largura, altura]} />
+      <meshBasicMaterial key={tex ? tex.uuid : "vazio"} map={tex ?? undefined} color={tex ? BRILHO_TELA : "#111"} toneMapped={false} />
+    </mesh>
+  );
+};
+
+const eImagem = (src: string) => /\.(png|jpe?g|webp)$/i.test(src);
 
 /** Texto pequeno desenhado numa textura (crédito no canto da moldura). */
 const useTextoTextura = (texto: string) =>
@@ -84,7 +114,9 @@ export const TelaVideo: React.FC<{
       {/* moldura */}
       <RoundBox size={[largura + borda * 2, altura + borda * 2, 0.06]} radius={0.05} color="#2a2927" />
       <RoundBox size={[largura + borda * 2 + 0.02, 0.012, 0.062]} radius={0.004} position={[0, -(altura / 2 + borda) + 0.006, 0]} color={C.accent} glow={0.4} />
-      {isRendering ? (
+      {eImagem(src) ? (
+        <TexturaImagem src={src} largura={largura} altura={altura} />
+      ) : isRendering ? (
         // Sequence negativo: o clipe começa no segundo `inicio` quando a cena chega no frame `at`
         <Sequence from={Math.round(at - inicio * 30)} layout="none">
           <TexturaVideo src={src} largura={largura} altura={altura} />

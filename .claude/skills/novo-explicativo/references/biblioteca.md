@@ -29,7 +29,9 @@
   `at` = frame da cena em que começa; `inicio` = segundo do clipe. Use `escala={pop(f, at)}` para entrar.
 - `VideoTelaCheia({src, at, dur, inicio?, credito?, volume?})` (overlay) — o clipe ocupa a tela por
   `dur` frames com fade e zoom lento; bom para abrir o vídeo com a imagem da notícia (2–3 s).
-- Os clipes ficam em `public/explicativo/<slug>/clipes/*.mp4` (fora do Git; o USUÁRIO coloca). Se a
+- As duas peças aceitam IMAGEM também (`.png`, `.jpg`, `.webp`: foto, print de manchete, gráfico oficial).
+- Os clipes/imagens ficam em `public/explicativo/<slug>/clipes/` (fora do Git; o USUÁRIO coloca).
+  Antes de usar, OLHE cada arquivo (extraia quadros dos vídeos) para escolher trechos e conferir o conteúdo. Se a
   pasta estiver vazia, NÃO invente: faça a cena só em 3D e avise o usuário de quais clipes faltaram.
 - Sempre com crédito da fonte. Prefira material oficial de imprensa (site/canal da empresa ou órgão);
   imagem de agência (AFP, Reuters, Getty) é paga — só se o usuário disser que tem direito.
