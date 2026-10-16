@@ -50,10 +50,12 @@ export const DataCard: React.FC<{
   rightValue?: React.ReactNode;
   top?: number;
   out?: number;
-}> = ({ at, label, value, unit, rightLabel, rightValue, top = 300, out }) => {
+  /** true = o cartão já vem da cena anterior (sem animação nem som): placar que atravessa o vídeo */
+  fixo?: boolean;
+}> = ({ at, label, value, unit, rightLabel, rightValue, top = 300, out, fixo }) => {
   if (useContext(SemOverlays)) return null;
   const f = useCurrentFrame();
-  const s = pop(f, at);
+  const s = fixo ? 1 : pop(f, at);
   const o = out !== undefined ? interpolate(f, [out, out + 8], [1, 0], clamp) : 1;
   return (
     <div
@@ -73,7 +75,7 @@ export const DataCard: React.FC<{
         transform: `translateY(${(1 - s) * 30}px)`,
       }}
     >
-      <SomAparecer at={at} tipo="dado" />
+      {fixo ? null : <SomAparecer at={at} tipo="dado" />}
       <div>
         <div style={{ fontFamily: MONO, fontSize: 20, letterSpacing: 3, color: "rgba(244,244,240,0.55)" }}>{label}</div>
         <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 88, color: C.text, lineHeight: 1.05, letterSpacing: -2 }}>

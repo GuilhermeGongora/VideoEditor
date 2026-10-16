@@ -38,7 +38,7 @@ if os.path.exists(_env):
             os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
 SR = 24000
 PAUSA_FRASE = {".": 0.2, "!": 0.22, "?": 0.24, ":": 0.15, ";": 0.15, "": 0.12}  # só no modo frase a frase
-FIM_CENA = 0.18  # respiro entre cenas (a trilha cobre, nunca fica silêncio morto)
+FIM_CENA = 0.1  # respiro entre cenas (a trilha cobre, nunca fica silêncio morto)
 KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
 KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 
@@ -74,6 +74,54 @@ def decode(data_or_path):
             "-f", "f32le", "-ac", "1", "-ar", str(SR), "pipe:1"]
     r = subprocess.run(args, input=data_or_path if isinstance(data_or_path, bytes) else None, capture_output=True, check=True)
     return np.frombuffer(r.stdout, dtype=np.float32).copy()
+
+
+PAUSA_MAX = 0.2  # pausas internas mais longas que isso são encurtadas (Ludificando: < 5% de silêncio)
+
+
+def encurtar_pausas(a, maximo=PAUSA_MAX, limiar=0.012):
+    """Encurta silêncios internos longos (a voz da Microsoft respira demais entre frases).
+    Devolve (áudio, remap) — remap(t) converte um tempo do áudio original para o encurtado,
+    para as marcas de palavra continuarem batendo com a fala."""
+    win = int(0.01 * SR)
+    n = len(a) // win
+    if n < 3:
+        return a, (lambda t: t)
+    env = np.abs(a[: n * win]).reshape(n, win).max(axis=1)
+    mudo = env < limiar
+    cortes = []  # (início_em_amostras, tamanho_removido)
+    i = 0
+    while i < n:
+        if mudo[i]:
+            j = i
+            while j < n and mudo[j]:
+                j += 1
+            if i > 0 and j < n and (j - i) * win > (maximo + 0.04) * SR:  # só pausas internas
+                manter = int(maximo * SR)
+                ini = i * win + manter // 2
+                cortes.append((ini, (j - i) * win - manter))
+            i = j
+        else:
+            i += 1
+    if not cortes:
+        return a, (lambda t: t)
+    partes, pos = [], 0
+    for ini, tam in cortes:
+        partes.append(a[pos:ini])
+        pos = ini + tam
+    partes.append(a[pos:])
+
+    def remap(t):
+        x = t * SR
+        tirado = 0
+        for ini, tam in cortes:
+            if x >= ini + tam:
+                tirado += tam
+            elif x > ini:
+                tirado += x - ini
+        return (x - tirado) / SR
+
+    return np.concatenate(partes), remap
 
 
 def aparar(a, limiar=0.012, folga=0.03):
@@ -416,6 +464,8 @@ def main():
             if motor.nome in ("edge", "eleven"):
                 # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
                 bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
+                bruto, remap = encurtar_pausas(bruto)
+                marcas = [(remap(m[0]), remap(m[1]), *m[2:]) for m in marcas]
                 a, corte = aparar(bruto)
                 dur = len(a) / SR
                 palavras = tempos_cena(cena["fala"], pron, marcas, t, corte, dur)

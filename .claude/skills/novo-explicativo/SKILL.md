@@ -15,8 +15,10 @@ O usuário só digita o tema; não pare no meio para perguntar o que dá para de
 Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de
 destaque (`C.accent`), poeira no ar, câmera sempre se mexendo devagar, legenda karaokê, cartões de
 dado e anotações com fonte. Exemplo pronto: `videos/6x1/roteiro.json` + `src/explicativo/videos/Escala6x1.tsx`.
-Leia `references/ganchos.md` ANTES de escrever o roteiro (gancho viral e retenção), e
-`references/estilo.md` e `references/biblioteca.md` antes de montar as cenas.
+**Régua de qualidade: `references/ludificando.md`** (estrutura de capítulos, cenário-herói, HUD que
+atravessa o vídeo, os dois lados, cuidado/golpe, números medidos). Leia ANTES de tudo.
+Depois `references/ganchos.md` (antes do roteiro) e `references/estilo.md` + `references/biblioteca.md`
+(antes das cenas).
 
 ## 1. Pesquisar (obrigatório)
 - Tudo que é atual (lei, número, cargo, prazo) vem de busca na web feita AGORA, em 2+ fontes
@@ -27,13 +29,19 @@ Leia `references/ganchos.md` ANTES de escrever o roteiro (gancho viral e retenç
 ## 2. Roteiro → `videos/<slug>/roteiro.json`
 **Ritmo de vídeo viral (referência: Ludificando):** a voz quase nunca para (≥ 90% do tempo com fala ou
 som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título só no fim.
-- 45–60 s, 5–7 cenas, UMA ideia por cena. `chip` = nome curto do capítulo em maiúsculas.
+- **75–90 s, 9–11 cenas** (padrão Ludificando), UMA ideia por cena, cenas de 5–9 s. `chip` = nome curto
+  do capítulo em maiúsculas. Siga a estrutura de capítulos de `references/ludificando.md`
+  (gancho → hoje → o que muda → quando → exceções → os dois lados → o que falta → cuidado → sua vez),
+  adaptando ao tema (assunto de ciência/tecnologia troca "os dois lados"/"votação" por "mito × fato",
+  "por dentro", "na prática").
 - 1ª frase = o gancho, **SEMPRE uma pergunta** (regra do usuário) que a pessoa quer ver respondida, com o
   fato forte dentro ou logo depois. Ex.: "Como um cartão sem bateria consegue pagar?". Nada de "olá".
 - Frases curtas, como se falasse com um amigo. Número escrito com dígitos ("75 votos").
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
-- Última cena: o que acontece agora / o que a pessoa deve saber. Sem pedir like.
-- 1ª cena com no máximo ~3 s de fala. Cenas de 4–8 s. Frases de 6–14 palavras, emendadas
+- Penúltima cena: **CUIDADO** (golpe, fake news ou erro comum ligado ao tema), quando fizer sentido.
+- Última cena: **SUA VEZ** — uma pergunta para o público responder nos comentários + o CTA falado
+  ("Comenta X que eu te mando as fontes" / "Salva pra conferir depois").
+- 1ª cena com no máximo ~3 s de fala. Pergunta retórica a cada 2–3 cenas ("E quem já pagou?"). Frases de 6–14 palavras, emendadas
   ("Mas calma:", "E tem mais:", "Só que…") para a narração fluir sem pausas longas.
 - `cta` = chamada curta que aparece no encerramento, de preferência pedindo COMENTÁRIO
   (ex.: "comenta PIX que eu te mando as fontes", "segue pra saber quando muda").
@@ -78,6 +86,14 @@ só define:
   **NÃO edite `Composicoes.tsx`** (editar ele causa conflito no `git pull`).
 - Ao terminar o vídeo, salve no GitHub: `git add videos/<slug> src/explicativo/videos/<Nome>.tsx` +
   commit + push (assim o próximo `git pull` do usuário não trava).
+- **Cenário-herói:** escolha UM conjunto de objetos que representa o tema (a mesa com botões, a esteira,
+  o caderninho, a máquina de lavar) e faça a maioria das cenas como variações dele (câmera perto de uma
+  parte, um item acende). A última cena volta ao enquadramento da primeira.
+- **HUD contínuo:** o cartão de número principal e a régua `<Etapas>` aparecem em várias cenas na MESMA
+  posição; a partir da 2ª aparição use `DataCard fixo` / `Etapas at={0}` para não "pular" de novo.
+- Use o kit pronto (`three/Kit.tsx`, `ui/Kit.tsx`, ver `references/biblioteca.md`): `Pergunta` no gancho,
+  `Contexto` (pílulas empilhando), `Etapas`, `Balanca` nos dois lados, `Hemiciclo` em votação,
+  `Celular` no cuidado, `AnelPrazo` em prazos.
 - Para cada cena, escolha UMA metáfora visual do dado (ver `references/estilo.md`):
   votos → cadeiras acendendo; horas → cubos sumindo; pessoas → bonecos (1 boneco = X); dinheiro →
   moedas/holerite; prazo → placas numa linha do tempo; regra/lei → papel + checklist.

@@ -1,10 +1,11 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useMemo } from "react";
 import { ThreeCanvas } from "@remotion/three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import * as THREE from "three";
 import { C } from "../theme";
 import { rand } from "../anim";
+import { BloomEffect, DepthOfFieldEffect, EffectComposer, EffectPass, RenderPass, ToneMappingEffect, ToneMappingMode } from "postprocessing";
 
 export type Cam = { pos: [number, number, number]; look: [number, number, number]; fov?: number };
 
@@ -58,6 +59,9 @@ const SceneSetup: React.FC<{ claro: boolean }> = ({ claro }) => {
 };
 
 const FUNDO_CLARO = "#34322E";
+/** Desligue com REMOTION_SEM_ACABAMENTO=1 no .env se o render ficar lento demais sem GPU. */
+declare const process: { env: Record<string, string | undefined> };
+const ACABAMENTO = process.env.REMOTION_SEM_ACABAMENTO !== "1";
 
 /** Cenário de estúdio: parede ao fundo com prateleiras e potes/caixas (dá contexto e profundidade). */
 const Estudio: React.FC = () => {
@@ -105,6 +109,36 @@ const Estudio: React.FC = () => {
 };
 
 /**
+ * Acabamento de cinema (estilo Ludificando): profundidade de campo (fundo e poeira da frente desfocados,
+ * foco no ponto para onde a câmera olha) + bloom (o que é cor de destaque/emissivo "brilha").
+ * O tone mapping passa para cá porque o composer desenha num buffer intermediário.
+ */
+const Acabamento: React.FC<{ cam: Cam; claro: boolean; foco?: number; desfoque: number; brilho: number }> = ({ cam, claro, foco, desfoque, brilho }) => {
+  const { gl, scene, camera, size } = useThree();
+  const dist = foco ?? Math.hypot(cam.pos[0] - cam.look[0], cam.pos[1] - cam.look[1], cam.pos[2] - cam.look[2]);
+  const fx = useMemo(() => {
+    const composer = new EffectComposer(gl, { frameBufferType: THREE.HalfFloatType, multisampling: 4 });
+    const dof = new DepthOfFieldEffect(camera, { worldFocusDistance: dist, worldFocusRange: Math.max(1.5, dist * 0.35), bokehScale: desfoque });
+    const bloom = new BloomEffect({ intensity: brilho, luminanceThreshold: claro ? 0.82 : 0.7, luminanceSmoothing: 0.25, mipmapBlur: true, radius: 0.7 });
+    const tone = new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC });
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new EffectPass(camera, dof, bloom, tone));
+    return { composer, dof };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gl, scene, camera]);
+  useLayoutEffect(() => fx.composer.setSize(size.width, size.height), [fx, size.width, size.height]);
+  useLayoutEffect(() => {
+    fx.dof.cocMaterial.worldFocusDistance = dist;
+    fx.dof.cocMaterial.worldFocusRange = Math.max(1.5, dist * 0.35);
+    fx.dof.bokehScale = desfoque;
+  }, [fx, dist, desfoque]);
+  useEffect(() => () => fx.composer.dispose(), [fx]);
+  // prioridade 1: o r3f deixa de desenhar sozinho e o quadro sai daqui (o Remotion chama advance a cada frame)
+  useFrame(() => fx.composer.render(), 1);
+  return null;
+};
+
+/**
  * Palco padrão: fundo escuro, chão com pouca reflexão, luz de cima suave, poeira.
  * Coloque os objetos da cena como filhos.
  */
@@ -114,7 +148,15 @@ export const Stage: React.FC<{
   dust?: boolean;
   /** "estudio" (padrão): mais claro, parede com prateleiras · "escuro": fundo preto (cenas dramáticas) */
   cenario?: "estudio" | "escuro";
-}> = ({ cam, children, dust = true, cenario = "estudio" }) => {
+  /** distância de foco (padrão: até o ponto para onde a câmera olha) */
+  foco?: number;
+  /** força do desfoque fora do foco (0 = sem; padrão 5) */
+  desfoque?: number;
+  /** força do brilho nas cores de destaque (padrão 0.8) */
+  brilho?: number;
+  /** false = sem acabamento (render mais rápido em máquina fraca) */
+  acabamento?: boolean;
+}> = ({ cam, children, dust = true, cenario = "estudio", foco, desfoque = 5, brilho = 0.8, acabamento = ACABAMENTO }) => {
   const claro = cenario === "estudio";
   const { width, height } = useVideoConfig();
   return (
@@ -149,6 +191,7 @@ export const Stage: React.FC<{
       {claro ? <Estudio /> : null}
       {dust ? <Dust /> : null}
       {children}
+      {acabamento ? <Acabamento cam={cam} claro={claro} foco={foco} desfoque={desfoque} brilho={brilho} /> : null}
     </ThreeCanvas>
   );
 };

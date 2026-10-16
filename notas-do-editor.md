@@ -47,3 +47,11 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   com eco/ambiência e EQ extra foi revertida (piorou).
 - 15/10/2026 — Pediu mais efeitos sonoros e ganchos virais: impacto na abertura, pop no cartão de número,
   transições alternadas, riser no encerramento e 2–4 `acentos` por roteiro (ver `references/ganchos.md`).
+- 16/10/2026 — Pediu para chegar no nível do Ludificando (analisados 4 vídeos; ver
+  `.claude/skills/novo-explicativo/references/ludificando.md`). O que faltava: vídeos de 75–90 s com 9–11
+  capítulos, cenário-herói que volta, HUD contínuo (cartão/etapas), "os dois lados" com balança,
+  "cuidado" (golpe), "sua vez" (pergunta + CTA falado), profundidade de campo + bloom, voz com menos
+  respiro (narrar.py encurta pausas > 0,2 s). Regra do usuário: todo vídeo abre com uma pergunta.
+- 16/10/2026 — Usuário vai gerar os vídeos no Claude do PC dele; aqui ele só quer o prompt pronto
+  ("/novo-explicativo …") quando pedir um vídeo.
+
