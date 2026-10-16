@@ -4,6 +4,8 @@ O algoritmo mede duas coisas: **quantos passam dos 3 primeiros segundos** e **qu
 (ou reassistem)**. Tudo aqui serve a isso. Escreva o gancho PRIMEIRO e o resto do roteiro depois.
 
 ## Os 3 primeiros segundos
+- **Regra do usuário: o vídeo SEMPRE começa com uma pergunta.** Escolha a fórmula abaixo, mas a 1ª frase
+  termina em "?" (ex.: "Como o dinheiro do crime vira dinheiro limpo?").
 - 1ª frase com no máximo ~12 palavras (≤ 3 s de fala). O assunto e a tensão aparecem juntos.
 - A 1ª imagem já está em movimento e mostra o objeto do tema (nada de tela vazia ou logo).
 - Abra um LOOP: uma pergunta ou uma afirmação incompleta que só se resolve mais tarde no vídeo.

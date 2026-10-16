@@ -28,7 +28,8 @@ Leia `references/ganchos.md` ANTES de escrever o roteiro (gancho viral e retenç
 **Ritmo de vídeo viral (referência: Ludificando):** a voz quase nunca para (≥ 90% do tempo com fala ou
 som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título só no fim.
 - 45–60 s, 5–7 cenas, UMA ideia por cena. `chip` = nome curto do capítulo em maiúsculas.
-- 1ª frase = o gancho (a notícia ou o número mais forte). Nada de "olá, hoje vamos falar".
+- 1ª frase = o gancho, **SEMPRE uma pergunta** (regra do usuário) que a pessoa quer ver respondida, com o
+  fato forte dentro ou logo depois. Ex.: "Como um cartão sem bateria consegue pagar?". Nada de "olá".
 - Frases curtas, como se falasse com um amigo. Número escrito com dígitos ("75 votos").
 - `pronuncia` para o que a voz pode ler errado (siglas, "6x1", decimais "26,8").
 - Última cena: o que acontece agora / o que a pessoa deve saber. Sem pedir like.
