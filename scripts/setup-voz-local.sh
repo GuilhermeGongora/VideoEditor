@@ -8,6 +8,7 @@ sudo apt-get install -y python3-venv python3-dev ffmpeg >/dev/null
 python3 -m venv "$HOME/.venvs/scientia"
 PIP="$HOME/.venvs/scientia/bin/pip"
 "$PIP" install -q --upgrade pip
+"$PIP" install -q "setuptools<81" wheel
 "$PIP" install -q chatterbox-tts edge-tts kokoro-onnx soundfile numpy
 "$HOME/.venvs/scientia/bin/python" -c "import torch; print('PyTorch', torch.__version__, '· GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NÃO (CPU)')"
 echo

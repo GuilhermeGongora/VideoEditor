@@ -210,6 +210,12 @@ class Chatterbox:
 
     def __init__(self, cfg, vel):
         import torch
+        import perth
+        if getattr(perth, "PerthImplicitWatermarker", None) is None:
+            # a marca d'água (perth) não carregou — quase sempre falta o setuptools/pkg_resources no venv.
+            # Corrija com: ~/.venvs/scientia/bin/pip install "setuptools<81"
+            print("aviso: marca d'água do Chatterbox indisponível (falta setuptools); seguindo sem ela.")
+            perth.PerthImplicitWatermarker = getattr(perth, "DummyWatermarker", None) or (lambda: type("W", (), {"apply_watermark": lambda self, w, sample_rate=None: w})())
         from chatterbox.mtl_tts import ChatterboxMultilingualTTS
         self.refs = {}
         for g in ("feminina", "masculina"):
