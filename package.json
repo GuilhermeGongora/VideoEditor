@@ -18,11 +18,11 @@
     "sfx:find": "node scripts/sfx-find.mjs",
     "baixar": "node scripts/painel.mjs",
     "sons": "node scripts/painel.mjs",
-    "narrar": "python3 scripts/narrar.py",
+    "narrar": "bash scripts/py.sh scripts/narrar.py",
     "quadros": "node scripts/explicativo.mjs quadros",
     "explicar": "node scripts/explicativo.mjs render",
     "thumb": "node scripts/explicativo.mjs thumb",
-    "vozes": "python3 scripts/vozes.py",
+    "vozes": "bash scripts/py.sh scripts/vozes.py",
     "legenda": "node scripts/legenda.mjs"
   },
   "dependencies": {

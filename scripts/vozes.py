@@ -6,7 +6,10 @@ Escolher a voz do canal pelo ouvido.
   npm run vozes -- eleven               → vozes do ElevenLabs em português do Brasil (da sua conta + biblioteca)
                                           baixa a prévia de cada uma (grátis) para ouvir no painel
   npm run vozes -- testar <id>          → gera a frase de teste com uma voz do ElevenLabs (gasta ~150 créditos)
+  npm run vozes -- referencia           → cria marca/voz-feminina.wav e voz-masculina.wav (Microsoft) para o Chatterbox clonar
+  npm run vozes -- local                → liga o Chatterbox (GPU) e gera amostras feminina/masculina para ouvir
   npm run vozes -- usar <id> feminina   → fixa essa voz no voz.json (vale para todos os vídeos)
+  npm run vozes -- usar marca/voz-minha.wav masculina  → clona a SUA gravação (Chatterbox)
   npm run vozes -- usar <id> masculina
 
 Ouça em: npm run baixar → porta 8080 → seção "Vozes".
@@ -141,10 +144,61 @@ def testar(vid):
     print(f"ok → out/vozes/teste-eleven-{vid}.mp3 (ouça no painel)")
 
 
+REF_TEXTO = ("Sabe aquela notícia que todo mundo comenta, mas ninguém explica direito? Então. "
+             "Aqui a gente pega o assunto, separa o que importa, e mostra com calma: o que muda, pra quem, e quando. "
+             "Sem enrolação, e sempre com fonte.")
+
+
+def referencia():
+    import edge_tts
+    cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
+    edge = cfg.get("edge", {})
+    for genero, padrao in (("feminina", "pt-BR-ThalitaMultilingualNeural"), ("masculina", "pt-BR-AntonioNeural")):
+        voz = edge.get(genero) or padrao
+        mp3 = os.path.join(OUT, f"_ref-{genero}.mp3")
+        os.makedirs(OUT, exist_ok=True)
+        try:
+            asyncio.run(edge_tts.Communicate(REF_TEXTO, voz).save(mp3))
+        except Exception:
+            asyncio.run(edge_tts.Communicate(REF_TEXTO, "pt-BR-FranciscaNeural" if genero == "feminina" else "pt-BR-AntonioNeural").save(mp3))
+        wav = os.path.join(ROOT, "marca", f"voz-{genero}.wav")
+        os.system(f'ffmpeg -v error -y -i "{mp3}" -ac 1 -ar 24000 "{wav}"')
+        print(f"ok → marca/voz-{genero}.wav ({voz})")
+    print("Agora: npm run vozes -- local")
+
+
+def local():
+    cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
+    cfg["motor"] = "chatterbox"
+    cfg.setdefault("chatterbox", {"feminina": "marca/voz-feminina.wav", "masculina": "marca/voz-masculina.wav", "emocao": 0.55, "ritmo": 0.45})
+    json.dump(cfg, open(VOZ_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    open(VOZ_JSON, "a").write("\n")
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import narrar
+    import soundfile as sf
+    m = narrar.Chatterbox(cfg["chatterbox"], cfg.get("velocidade", 1.05))
+    os.makedirs(OUT, exist_ok=True)
+    for g in ("feminina", "masculina"):
+        a, _ = m.falar(FRASE, g)
+        sf.write(os.path.join(OUT, f"local-{g}.wav"), a, narrar.SR)
+        print(f"ok → out/vozes/local-{g}.wav")
+    print("Ouça no painel (npm run baixar). Ajuste no voz.json → chatterbox.emocao (0.3 calmo … 0.8 animado).")
+
+
 def usar(vid, genero):
     if genero not in ("feminina", "masculina"):
         sys.exit("Use: npm run vozes -- usar <id> feminina|masculina")
     cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
+    if vid.lower().endswith((".wav", ".mp3", ".m4a", ".flac")):  # gravação para o Chatterbox clonar
+        caminho = os.path.relpath(os.path.abspath(vid), ROOT)
+        if not os.path.exists(os.path.join(ROOT, caminho)):
+            sys.exit(f"arquivo não encontrado: {vid}")
+        cfg.setdefault("chatterbox", {})[genero] = caminho
+        cfg["motor"] = "chatterbox"
+        json.dump(cfg, open(VOZ_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        open(VOZ_JSON, "a").write("\n")
+        print(f"voz.json: Chatterbox {genero} = {caminho}")
+        return
     if vid.startswith("pt-"):  # voz da Microsoft
         cfg.setdefault("edge", {})[genero] = vid
         if cfg.get("motor") != "eleven":
@@ -188,6 +242,10 @@ if __name__ == "__main__":
         asyncio.run(edge())
     elif a[0] == "eleven":
         eleven()
+    elif a[0] == "referencia":
+        referencia()
+    elif a[0] == "local":
+        local()
     elif a[0] == "testar" and len(a) > 1:
         testar(a[1])
     elif a[0] == "usar" and len(a) > 2:

@@ -27,6 +27,11 @@ Assunto explicado com bonecos e objetos 3D, narração e legenda palavra por pal
    Thumbnails: `npm run thumb -- 6x1` → pasta `thumbs/` (o `explicar` já gera junto).
 3. Baixar vídeos e thumbs: `npm run baixar` (porta 8080). O 3D renderiza sem placa de vídeo: ~10 min por minuto.
 
+## Rodar no seu PC (WSL2 + GPU NVIDIA)
+1. `bash .devcontainer/setup.sh` (o mesmo setup do Codespace).
+2. Voz local na GPU: `bash scripts/setup-voz-local.sh` → `npm run vozes -- referencia` → `npm run vozes -- local`.
+   Para usar a sua voz: grave 15–20 s em `marca/voz-minha.wav` e `npm run vozes -- usar marca/voz-minha.wav masculina`.
+
 ## Sua biblioteca de sons
 1. Arraste seus sons para `public/soundeffects/` (subpastas ajudam: `impacts/`, `memes/`, `whoosh/`…).
 2. `npm run sfx:index` — cataloga, deduz o tipo de cada som e cria versões com volume igualado.

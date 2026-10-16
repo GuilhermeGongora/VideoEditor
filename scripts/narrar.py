@@ -13,6 +13,7 @@ Voz (campo "voz" do roteiro.json):
   Cada cena também aceita "voz": "masculina" | "feminina".
 
 Motores:
+  chatterbox → voz local na GPU (MIT), clona uma voz de referência; bash scripts/setup-voz-local.sh
   eleven → ElevenLabs, a mais humana (paga; "motor": "eleven" + ELEVENLABS_API_KEY; vozes em "eleven": {"feminina": "<id>", "masculina": "<id>"})
   edge   → vozes neurais da Microsoft (grátis, naturais; precisa de internet). pip: edge-tts
   kokoro → voz local, offline (pip: kokoro-onnx soundfile; baixa o modelo do GitHub sozinho)
@@ -201,6 +202,49 @@ class Eleven:
         return audio, marcas
 
 
+class Chatterbox:
+    """Chatterbox Multilingual (Resemble AI, licença MIT) rodando na SUA GPU. Clona a voz de um áudio de
+    referência de ~10–20 s (marca/voz-feminina.wav, marca/voz-masculina.wav ou a sua própria gravação).
+    Instalação: bash scripts/setup-voz-local.sh"""
+    nome = "chatterbox"
+
+    def __init__(self, cfg, vel):
+        import torch
+        from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+        self.refs = {}
+        for g in ("feminina", "masculina"):
+            ref = (cfg or {}).get(g)
+            if ref:
+                ref = ref if os.path.isabs(ref) else os.path.join(ROOT, ref)
+                if os.path.exists(ref):
+                    self.refs[g] = ref
+        if not self.refs:
+            raise RuntimeError("sem áudio de referência (rode: npm run vozes -- referencia, ou grave a sua voz)")
+        dev = "cuda" if torch.cuda.is_available() else "cpu"
+        if dev == "cpu":
+            print("aviso: sem GPU — o Chatterbox vai ficar bem lento")
+        self.torch = torch
+        self.model = ChatterboxMultilingualTTS.from_pretrained(device=dev)
+        self.emocao = float((cfg or {}).get("emocao", 0.55))   # 0.25 calmo · 0.5 natural · 0.8+ animado
+        self.ritmo = float((cfg or {}).get("ritmo", 0.45))     # cfg_weight: menor = fala mais solta
+        self.vel = vel
+
+    def voz_de(self, genero, preferida=None):
+        return self.refs.get(genero) or next(iter(self.refs.values()))
+
+    def falar(self, texto, genero, preferida=None):
+        with self.torch.inference_mode():
+            wav = self.model.generate(texto, language_id="pt", audio_prompt_path=self.voz_de(genero),
+                                      exaggeration=self.emocao, cfg_weight=self.ritmo)
+        a = wav.squeeze().detach().cpu().numpy().astype(np.float32)
+        a = decode(_wav_bytes(a, self.model.sr))
+        if abs(self.vel - 1) > 0.01:  # acelera sem mudar o tom
+            r = subprocess.run(["ffmpeg", "-v", "error", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
+                                "-af", f"atempo={self.vel:.3f}", "-f", "f32le", "pipe:1"], input=a.tobytes(), capture_output=True, check=True)
+            a = np.frombuffer(r.stdout, dtype=np.float32).copy()
+        return a, []
+
+
 class Kokoro:
     nome = "kokoro"
 
@@ -306,7 +350,13 @@ def main():
         preferida_edge[principal] = preferida_edge[principal] or voz["edge"]
 
     motor = None
-    if voz.get("motor") == "eleven" and "--kokoro" not in sys.argv:
+    if voz.get("motor") == "chatterbox" and "--kokoro" not in sys.argv:
+        try:
+            motor = Chatterbox(voz.get("chatterbox"), vel)
+        except Exception as e:
+            print(f"Chatterbox indisponível ({e}); usando a voz da Microsoft. Instale com: bash scripts/setup-voz-local.sh")
+            motor = None
+    if motor is None and voz.get("motor") == "eleven" and "--kokoro" not in sys.argv:
         try:
             motor = Eleven(vel, voz.get("eleven"), voz.get("eleven_ajustes"))
         except Exception as e:
@@ -331,7 +381,7 @@ def main():
             genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
             c0 = t
             palavras = None
-            if motor.nome != "kokoro":
+            if motor.nome in ("edge", "eleven"):
                 # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
                 bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
                 a, corte = aparar(bruto)
