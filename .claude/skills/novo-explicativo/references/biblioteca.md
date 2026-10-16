@@ -23,6 +23,18 @@
   acesa (golpe, fake news, notificação).
 - `AnelPrazo({f, at, duracao?, raio?, position?, rotation?})` — anel que se fecha em volta de um objeto (prazo).
 
+## Vídeo real dentro do 3D — `three/TelaVideo.tsx` e `ui/Kit.tsx`
+- `TelaVideo({src, at?, inicio?, position?, rotation?, largura?, proporcao?, credito?, escala?})` — monitor
+  flutuante com moldura escura passando um clipe REAL (mudo) e o crédito no canto ("IMAGENS: TESLA").
+  `at` = frame da cena em que começa; `inicio` = segundo do clipe. Use `escala={pop(f, at)}` para entrar.
+- `VideoTelaCheia({src, at, dur, inicio?, credito?, volume?})` (overlay) — o clipe ocupa a tela por
+  `dur` frames com fade e zoom lento; bom para abrir o vídeo com a imagem da notícia (2–3 s).
+- Os clipes ficam em `public/explicativo/<slug>/clipes/*.mp4` (fora do Git; o USUÁRIO coloca). Se a
+  pasta estiver vazia, NÃO invente: faça a cena só em 3D e avise o usuário de quais clipes faltaram.
+- Sempre com crédito da fonte. Prefira material oficial de imprensa (site/canal da empresa ou órgão);
+  imagem de agência (AFP, Reuters, Getty) é paga — só se o usuário disser que tem direito.
+- No Studio (prévia) a tela fica escura; a imagem real aparece no `npm run quadros` e no render.
+
 ## Acabamento do `Stage`
 Brilho neon (bloom) LIGADO por padrão; desfoque DESLIGADO (`desfoque` > 0 só se o usuário pedir).
 `brilho` (padrão 0.95) controla o halo; `acabamento={false}` desliga tudo. A cor `C.accent` é sempre

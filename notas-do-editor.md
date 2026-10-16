@@ -72,4 +72,7 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   chamativo: cor, neon, brilho, luminosidade" (exemplo: Ludificando "folga"). Feito sem mudar a modelagem:
   bloom ligado (limiar 0.55), fundo grafite quente #1c1b19 em vez de preto, chão #3b3935, exposição 1.32,
   luz mais forte, `C.accent` sempre emissiva. Sem desfoque e sem estúdio (continuam reprovados).
+- 16/10/2026 — Pediu vídeo real dentro do 3D (exemplo: Ludificando.tec, carro de cabeça pra baixo da Tesla:
+  imagens da notícia num telão 3D com crédito + passagem em tela cheia). Criados `TelaVideo` e
+  `VideoTelaCheia`; clipes em public/explicativo/<slug>/clipes/.
 

@@ -97,6 +97,9 @@ só define:
 - **Objeto-herói (como a maquininha + cartão):** UM ou dois objetos do tema, bem feitos e GRANDES, que
   aparecem em quase todas as cenas; cada cena mostra uma parte/estado deles (campo acendendo, código na
   tela, chave saindo). Boneco só como coadjuvante (0–1 por cena, nunca o centro).
+- **Vídeo real** (notícia, lançamento, produto): se houver clipes em `public/explicativo/<slug>/clipes/`,
+  abra com `VideoTelaCheia` (2–3 s) ou mostre num `TelaVideo` dentro do 3D, sempre com crédito; depois
+  explique em 3D. Liste os clipes usados em `"clipes"` no roteiro. Ver `references/biblioteca.md`.
 - O kit (`three/Kit.tsx`, `ui/Kit.tsx`) é opcional: use uma peça só quando a cena pedir (ex.: `Hemiciclo`
   numa votação). Não encha a cena de pílulas/réguas.
 - Para cada cena, escolha UMA metáfora visual do dado (ver `references/estilo.md`):
