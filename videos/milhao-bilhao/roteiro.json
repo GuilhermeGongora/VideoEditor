@@ -5,8 +5,7 @@
   "voz": {
     "principal": "masculina",
     "alternar": "nao",
-    "velocidade": 1.05,
-    "motor": "eleven"
+    "velocidade": 1.05
   },
   "pronuncia": {
     "1.000": "mil",

@@ -1,0 +1,8 @@
+{
+  "_ajuda": "Voz do canal (vale para todos os vídeos). O roteiro.json só escolhe 'principal' (feminina/masculina) e 'alternar'. Para escolher vozes: npm run vozes (Microsoft, grátis) ou npm run vozes -- eleven (ElevenLabs). Para fixar uma: npm run vozes -- usar <id> feminina|masculina",
+  "motor": "edge",
+  "velocidade": 1.05,
+  "edge": { "feminina": "pt-BR-ThalitaMultilingualNeural", "masculina": "pt-BR-AntonioNeural" },
+  "eleven": { "feminina": "", "masculina": "" },
+  "eleven_ajustes": { "stability": 0.45, "similarity_boost": 0.8, "style": 0.15 }
+}

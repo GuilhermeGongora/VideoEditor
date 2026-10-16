@@ -137,27 +137,29 @@ class Eleven:
     """ElevenLabs (pago, a voz mais humana). Precisa de ELEVENLABS_API_KEY. Tempo das palavras vem do
     endpoint with-timestamps (alinhamento por caractere)."""
     nome = "eleven"
-    PADRAO = {"feminina": "21m00Tcm4TlvDq8ikWAM", "masculina": "pNInz6obpgDQGcFmaJgB"}  # Rachel / Adam (troque por vozes pt-BR)
-
-    def __init__(self, vel, ids=None):
+    def __init__(self, vel, ids=None, ajustes=None):
         self.key = os.environ.get("ELEVENLABS_API_KEY")
         if not self.key:
-            raise RuntimeError("sem ELEVENLABS_API_KEY")
-        self.ids = {**self.PADRAO, **(ids or {})}
+            raise RuntimeError("sem ELEVENLABS_API_KEY no .env")
+        self.ids = {k: v for k, v in (ids or {}).items() if v}
+        if not self.ids:
+            raise RuntimeError("nenhuma voz do ElevenLabs escolhida em voz.json (rode: npm run vozes -- eleven)")
+        self.ajustes = {"stability": 0.45, "similarity_boost": 0.8, "style": 0.15, **(ajustes or {})}
         self.vel = max(0.7, min(1.2, vel))
 
     def voz_de(self, genero, preferida=None):
-        return self.ids[genero]
+        # se só uma voz foi escolhida, ela narra tudo (melhor que cair numa voz ruim)
+        return self.ids.get(genero) or next(iter(self.ids.values()))
 
     def falar(self, texto, genero, preferida=None):
         import base64
         body = json.dumps({
             "text": texto,
             "model_id": "eleven_multilingual_v2",
-            "voice_settings": {"stability": 0.4, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": True, "speed": self.vel},
+            "voice_settings": {**self.ajustes, "use_speaker_boost": True, "speed": self.vel},
         }).encode()
         req = urllib.request.Request(
-            f"https://api.elevenlabs.io/v1/text-to-speech/{self.ids[genero]}/with-timestamps?output_format=mp3_44100_128",
+            f"https://api.elevenlabs.io/v1/text-to-speech/{self.voz_de(genero)}/with-timestamps?output_format=mp3_44100_128",
             data=body, headers={"xi-api-key": self.key, "Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=120) as r:
             d = json.loads(r.read())
@@ -264,7 +266,9 @@ def main():
         sys.exit("Uso: npm run narrar -- <slug>")
     slug = args[0]
     rot = json.load(open(os.path.join(ROOT, "videos", slug, "roteiro.json"), encoding="utf-8"))
-    voz = rot.get("voz", {})
+    # voz do canal (voz.json) + o que o roteiro escolher por cima (principal, alternar…)
+    canal = json.load(open(os.path.join(ROOT, "voz.json"), encoding="utf-8")) if os.path.exists(os.path.join(ROOT, "voz.json")) else {}
+    voz = {**canal, **rot.get("voz", {})}
     vel = voz.get("velocidade", 1.05)
     pron = rot.get("pronuncia", {})
     out_dir = os.path.join(ROOT, "public", "explicativo", slug)
@@ -273,17 +277,18 @@ def main():
     # gênero principal (compatível com roteiros antigos que só tinham "edge": "<voz>")
     principal = voz.get("principal")
     if not principal:
-        antiga = voz.get("edge", "")
+        antiga = voz.get("edge", "") if isinstance(voz.get("edge"), str) else ""
         principal = "feminina" if any(n in antiga for n in ["Francisca", "Thalita", "Leila", "Leticia"]) else "masculina"
     outra = "feminina" if principal == "masculina" else "masculina"
-    preferida_edge = {"masculina": voz.get("masculina"), "feminina": voz.get("feminina")}
-    if voz.get("edge"):
+    edge_canal = canal.get("edge", {}) if isinstance(canal.get("edge"), dict) else {}
+    preferida_edge = {"masculina": voz.get("masculina") or edge_canal.get("masculina"), "feminina": voz.get("feminina") or edge_canal.get("feminina")}
+    if isinstance(voz.get("edge"), str):
         preferida_edge[principal] = preferida_edge[principal] or voz["edge"]
 
     motor = None
     if voz.get("motor") == "eleven" and "--kokoro" not in sys.argv:
         try:
-            motor = Eleven(vel, voz.get("eleven"))
+            motor = Eleven(vel, voz.get("eleven"), voz.get("eleven_ajustes"))
         except Exception as e:
             print(f"ElevenLabs indisponível ({e}); usando edge-tts.")
             motor = None

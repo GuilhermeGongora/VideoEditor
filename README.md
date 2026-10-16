@@ -20,7 +20,8 @@ Assunto explicado com bonecos e objetos 3D, narração e legenda palavra por pal
 1. No terminal: `claude` → `/novo-explicativo escala 6x1` (ou qualquer assunto).
    O Claude pesquisa, escreve o roteiro, gera a voz, monta as cenas, confere e renderiza.
 2. Ou na mão: `npm run narrar -- 6x1` → `npm run quadros -- 6x1` (prévia) → `npm run explicar -- 6x1`.
-   Vozes: `npm run vozes` gera uma amostra de cada voz em português (ouça no `npm run baixar`).
+   Voz do canal: fica em `voz.json`. Ouvir opções: `npm run vozes` (Microsoft) ou `npm run vozes -- eleven`
+   (ElevenLabs, precisa de `ELEVENLABS_API_KEY` no `.env`). Fixar: `npm run vozes -- usar <id> feminina|masculina`.
    No roteiro: `"voz": {"principal": "feminina", "alternar": "cenas"}` (alternar = dupla de vozes).
    Legenda do post (com fontes e hashtags): `npm run legenda -- 6x1` → `out/6x1-legenda.txt` (o painel tem botão Copiar).
    Thumbnails: `npm run thumb -- 6x1` → pasta `thumbs/` (o `explicar` já gera junto).

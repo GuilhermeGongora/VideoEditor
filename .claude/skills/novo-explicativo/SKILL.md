@@ -48,15 +48,14 @@ som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título 
 ## 3. Narração
 `npm run narrar -- <slug>` → `public/explicativo/<slug>/narracao.wav` + `tempos.json` (tempo de cada
 palavra, vindo da própria voz). Voz neural do edge-tts (internet); sem internet cai na voz local Kokoro.
-Campo `voz` do roteiro:
+A VOZ DO CANAL fica em `voz.json` (motor, vozes escolhidas pelo usuário, velocidade). **Nunca escolha
+ou troque vozes, motor ou IDs por conta própria** — isso é gosto do usuário. No roteiro, o campo `voz`
+só define:
 - `"principal": "feminina" | "masculina"` — **alterne entre vídeos**: olhe o `roteiro.json` mais recente
-  em `videos/` (o de data mais nova) e use o gênero oposto ao dele.
-- `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (fica com cara de dupla conversando).
-  Bom para assuntos com pergunta e resposta ou vídeos acima de 50 s. Padrão: `"nao"`.
-- `"velocidade": 1.05` (1.0 normal). Uma cena pode forçar a voz com `"voz": "feminina"`.
-- Vozes padrão: feminina `pt-BR-ThalitaMultilingualNeural` (cai para Francisca), masculina
-  `pt-BR-AntonioNeural`. Para trocar: `"feminina": "<voz>"` / `"masculina": "<voz>"`; o usuário ouve as
-  opções com `npm run vozes`.
+  em `videos/` e use o gênero oposto ao dele.
+- `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (dupla). Padrão: `"nao"`.
+- Se o usuário reclamar da voz: mostre `npm run vozes` (Microsoft) / `npm run vozes -- eleven` e
+  `npm run vozes -- usar <id> feminina|masculina`.
 - Escreva a fala para o OUVIDO: frases curtas, vírgulas onde se respira, nada de parênteses ou siglas
   sem `pronuncia`.
 
