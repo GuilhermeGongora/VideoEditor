@@ -50,8 +50,8 @@ const SceneSetup: React.FC<{ claro: boolean }> = ({ claro }) => {
     gl.shadowMap.enabled = true;
     gl.shadowMap.type = THREE.PCFSoftShadowMap;
     gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = claro ? 1.25 : 1.05;
-    const fundo = claro ? FUNDO_CLARO : C.bg;
+    gl.toneMappingExposure = claro ? 1.25 : 1.32;
+    const fundo = claro ? FUNDO_CLARO : FUNDO_ESCURO;
     scene.background = new THREE.Color(fundo);
     scene.fog = new THREE.Fog(fundo, claro ? 14 : 9, claro ? 36 : 26);
   }, [gl, scene, claro]);
@@ -59,10 +59,14 @@ const SceneSetup: React.FC<{ claro: boolean }> = ({ claro }) => {
 };
 
 const FUNDO_CLARO = "#34322E";
-/** Liga com acabamento={true} na cena (ou REMOTION_ACABAMENTO=1 no .env para todas). */
+/** Fundo escuro levemente quente (não preto puro): a cena "respira" e a luz aparece (pedido dos designers, 16/10/2026). */
+const FUNDO_ESCURO = "#1c1b19";
+const CHAO_ESCURO = "#3b3935";
+
 declare const process: { env: Record<string, string | undefined> };
-// Desligado por padrão: o vídeo de referência (cartão por aproximação) é nítido, sem desfoque nem bloom.
-const ACABAMENTO = process.env.REMOTION_ACABAMENTO === "1";
+// Brilho (bloom) LIGADO por padrão desde 16/10/2026 (designers pediram mais luz/neon); desfoque continua
+// desligado. Máquina sem GPU muito lenta: REMOTION_SEM_BRILHO=1 no .env.
+const ACABAMENTO = process.env.REMOTION_SEM_BRILHO !== "1";
 
 /** Cenário de estúdio: parede ao fundo com prateleiras e potes/caixas (dá contexto e profundidade). */
 const Estudio: React.FC = () => {
@@ -120,10 +124,12 @@ const Acabamento: React.FC<{ cam: Cam; claro: boolean; foco?: number; desfoque: 
   const fx = useMemo(() => {
     const composer = new EffectComposer(gl, { frameBufferType: THREE.HalfFloatType, multisampling: 4 });
     const dof = new DepthOfFieldEffect(camera, { worldFocusDistance: dist, worldFocusRange: Math.max(1.5, dist * 0.35), bokehScale: desfoque });
-    const bloom = new BloomEffect({ intensity: brilho, luminanceThreshold: claro ? 0.82 : 0.7, luminanceSmoothing: 0.25, mipmapBlur: true, radius: 0.7 });
+    // brilho estilo neon: branco e cor de destaque soltam um halo suave (limiar baixo, raio largo)
+    const bloom = new BloomEffect({ intensity: brilho, luminanceThreshold: claro ? 0.82 : 0.55, luminanceSmoothing: 0.3, mipmapBlur: true, radius: 0.78 });
     const tone = new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC });
     composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(new EffectPass(camera, dof, bloom, tone));
+    // desfoque só se pedirem (o usuário reprovou o fundo borrado)
+    composer.addPass(desfoque > 0 ? new EffectPass(camera, dof, bloom, tone) : new EffectPass(camera, bloom, tone));
     return { composer, dof };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gl, scene, camera]);
@@ -151,13 +157,13 @@ export const Stage: React.FC<{
   cenario?: "estudio" | "escuro";
   /** distância de foco (padrão: até o ponto para onde a câmera olha) */
   foco?: number;
-  /** força do desfoque fora do foco (0 = sem; padrão 5) */
+  /** desfoque fora do foco (padrão 0 = nítido, como a referência; só use se o usuário pedir) */
   desfoque?: number;
-  /** força do brilho nas cores de destaque (padrão 0.8) */
+  /** força do brilho/neon (bloom) — padrão 0.95 */
   brilho?: number;
-  /** false = sem acabamento (render mais rápido em máquina fraca) */
+  /** false = sem brilho (render mais rápido em máquina fraca) */
   acabamento?: boolean;
-}> = ({ cam, children, dust = true, cenario = "escuro", foco, desfoque = 5, brilho = 0.8, acabamento = ACABAMENTO }) => {
+}> = ({ cam, children, dust = true, cenario = "escuro", foco, desfoque = 0, brilho = 0.95, acabamento = ACABAMENTO }) => {
   const claro = cenario === "estudio";
   const { width, height } = useVideoConfig();
   return (
@@ -170,13 +176,13 @@ export const Stage: React.FC<{
     >
       <SceneSetup claro={claro} />
       <CameraRig cam={cam} />
-      <hemisphereLight args={["#fff8ef", claro ? "#3a3733" : "#1a1a1a", claro ? 0.95 : 0.55]} />
-      <ambientLight intensity={claro ? 0.32 : 0.18} />
+      <hemisphereLight args={["#fff8ef", claro ? "#3a3733" : "#26241f", claro ? 0.95 : 0.75]} />
+      <ambientLight intensity={claro ? 0.32 : 0.22} />
       <spotLight
         position={[2.5, 11, 6]}
         angle={0.55}
         penumbra={0.9}
-        intensity={claro ? 330 : 260}
+        intensity={claro ? 330 : 360}
         decay={2}
         castShadow
         shadow-mapSize-width={2048}
@@ -187,7 +193,7 @@ export const Stage: React.FC<{
       <directionalLight position={[-6, 4, -4]} intensity={0.35} color="#cfd6ff" />
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[120, 120]} />
-        <meshStandardMaterial color={claro ? "#5B5852" : C.ground} roughness={0.92} metalness={0} />
+        <meshStandardMaterial color={claro ? "#5B5852" : CHAO_ESCURO} roughness={0.85} metalness={0} />
       </mesh>
       {claro ? <Estudio /> : null}
       {dust ? <Dust /> : null}

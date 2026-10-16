@@ -105,8 +105,9 @@ só define:
 - Sincronize com a fala: `w("palavra")` devolve o frame em que a palavra é dita. O visual muda NA
   palavra (ex.: o número do cartão troca quando a voz diz o número).
 - Câmera: `cam(pos, look)` interpolando posição inicial → final durante a cena (`ease(f, 0, dur)`).
-- Cenário: o `Stage` já vem no modo escuro (fundo preto, poeira) — igual à referência. NÃO use
-  `cenario="estudio"` nem `acabamento` (desfoque/bloom) sem o usuário pedir.
+- Cenário: o `Stage` já vem no modo escuro (fundo grafite quente, poeira) com **brilho neon** ligado
+  (bloom: branco e cor de destaque soltam halo; `C.accent` sempre acesa). Use `glow` (0.3–0.8) no que é o
+  foco da cena para ele brilhar mais. NÃO use `cenario="estudio"` nem `desfoque` sem o usuário pedir.
 - Câmera: distância 6–8 do objeto, olhando para y ≈ 1; aproximação lenta de 10–15 % na cena (como na Aproximacao.tsx).
 - Enquadramento: o objeto principal ocupa 40–70% da largura. **Nunca** quadro vazio, objeto minúsculo
   (linha fina) ou um bloco que toma a tela inteira sem referência. Escala sempre com referência humana

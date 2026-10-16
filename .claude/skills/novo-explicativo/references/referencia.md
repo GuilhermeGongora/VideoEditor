@@ -26,7 +26,8 @@ desfoque, bonecos no centro, 80–90 s) foram reprovados.
 - Tom de explicação calma, sem gírias de viral, sem pedir nada no fim.
 
 ## Cena
-- `Stage` padrão (escuro). Sem `cenario="estudio"`, sem `acabamento`.
+- `Stage` padrão (escuro com brilho neon, desde 16/10/2026 a pedido de designers: "mais cor, neon,
+  brilho e luminosidade"). Sem `cenario="estudio"`, sem `desfoque`.
 - Objeto-herói: a maquininha (caixa preta com tela e teclado) e o cartão (placa clara com chip), grandes,
   no centro, presentes em 6 das 7 cenas. Cada cena mostra um estado diferente deles: anéis do campo
   acendendo, bobina dentro do cartão, código "A7·F3·9C" na tela, chave saindo do chip, linha pontilhada

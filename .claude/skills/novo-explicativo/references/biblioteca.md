@@ -24,8 +24,9 @@
 - `AnelPrazo({f, at, duracao?, raio?, position?, rotation?})` — anel que se fecha em volta de um objeto (prazo).
 
 ## Acabamento do `Stage`
-DESLIGADO por padrão (a referência é nítida). `acabamento` liga profundidade de campo + bloom; `cenario`
-padrão é "escuro". Só mude se o usuário pedir.
+Brilho neon (bloom) LIGADO por padrão; desfoque DESLIGADO (`desfoque` > 0 só se o usuário pedir).
+`brilho` (padrão 0.95) controla o halo; `acabamento={false}` desliga tudo. A cor `C.accent` é sempre
+emissiva (acesa); `glow` aumenta. Máquina sem GPU lenta demais: `REMOTION_SEM_BRILHO=1` no `.env`.
 
 ## Overlays — `ui/`
 - `DataCard({at, label, value, unit?, rightLabel?, rightValue?, top?, out?, fixo?})` — `fixo` = já vem da

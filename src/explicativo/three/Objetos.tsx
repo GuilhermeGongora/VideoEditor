@@ -13,8 +13,9 @@ export const Mat: React.FC<{ color?: string; glow?: number; opacity?: number; ro
   <meshStandardMaterial
     key={opacity < 1 ? "t" : "o"}
     color={color}
-    emissive={glow > 0 ? color : "#000"}
-    emissiveIntensity={glow}
+    // cor de destaque sempre "acesa" (neon): brilha mesmo sem glow e brilha mais com glow
+    emissive={glow > 0 || color === C.accent ? color : "#000"}
+    emissiveIntensity={color === C.accent ? 0.3 + glow * 0.75 : glow}
     roughness={rough}
     metalness={0}
     transparent={opacity < 1}

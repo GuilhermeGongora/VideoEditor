@@ -68,4 +68,8 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   como "um folga". Causas: narração frase a frase (cada vírgula uma chamada isolada) e speed 1.08. Agora:
   cena inteira por chamada + previous/next_text, speed 1.0, eleven_v4 (reserva multilingual_v2), números por
   extenso com gênero (scripts/numeros_pt.py), masterização leve (só highpass + loudnorm −16).
+- 16/10/2026 — Vozes do ElevenLabs aprovadas ("corrigidas com sucesso"). Designers pediram o visual "mais
+  chamativo: cor, neon, brilho, luminosidade" (exemplo: Ludificando "folga"). Feito sem mudar a modelagem:
+  bloom ligado (limiar 0.55), fundo grafite quente #1c1b19 em vez de preto, chão #3b3935, exposição 1.32,
+  luz mais forte, `C.accent` sempre emissiva. Sem desfoque e sem estúdio (continuam reprovados).
 
