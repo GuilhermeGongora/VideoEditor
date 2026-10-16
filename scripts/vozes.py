@@ -11,7 +11,7 @@ Escolher a voz do canal pelo ouvido.
 
 Ouça em: npm run baixar → porta 8080 → seção "Vozes".
 """
-import asyncio, json, os, re, sys, urllib.parse, urllib.request
+import asyncio, json, os, re, sys, urllib.error, urllib.parse, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "out", "vozes")
@@ -34,14 +34,38 @@ def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:30]
 
 
+class ErroApi(Exception):
+    pass
+
+
 def api(path, data=None, method=None):
     if not KEY:
         sys.exit("Falta ELEVENLABS_API_KEY no .env")
     req = urllib.request.Request("https://api.elevenlabs.io" + path, data=json.dumps(data).encode() if data is not None else None,
                                  headers={"xi-api-key": KEY, "Content-Type": "application/json"}, method=method or ("POST" if data is not None else "GET"))
-    with urllib.request.urlopen(req, timeout=60) as r:
-        body = r.read()
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            body = r.read()
+    except urllib.error.HTTPError as e:
+        msg = e.read().decode("utf-8", "ignore")
+        try:
+            d = json.loads(msg).get("detail", msg)
+            msg = d.get("message", d) if isinstance(d, dict) else d
+        except Exception:
+            pass
+        raise ErroApi(f"HTTP {e.code}: {msg}")
+    except urllib.error.URLError as e:
+        raise ErroApi(f"sem conexão com o ElevenLabs ({e.reason})")
     return json.loads(body) if body[:1] in (b"{", b"[") else body
+
+
+PERMISSAO = """
+A sua chave do ElevenLabs não tem permissão para LER VOZES (ela só pode gerar fala).
+Arrume em 1 minuto: elevenlabs.io → Developers → API Keys → edite a chave e ligue
+  "Voices: Read" e "Voices: Write"  (ou crie uma chave sem restrições) → cole no .env.
+Ou escolha no site: Voices → Voice Library → filtre Português/Brasil → "Add to my voices",
+copie o Voice ID e rode:  npm run vozes -- usar <voice_id> feminina   (ou masculina)
+"""
 
 
 def baixar(url, arq):
@@ -69,11 +93,25 @@ def eleven():
         if f.startswith("eleven-"):
             os.remove(os.path.join(OUT, f))
     vozes = []
-    for v in api("/v1/voices").get("voices", []):
+    try:
+        conta = api("/v1/voices").get("voices", [])
+    except ErroApi as e:
+        print(f"Não consegui listar as vozes da sua conta ({e}).")
+        if "401" in str(e) or "permission" in str(e).lower():
+            print(PERMISSAO)
+        conta = []
+    for v in conta:
         vozes.append({"id": v["voice_id"], "nome": v["name"], "genero": genero_de(v), "origem": "conta",
                       "br": eh_brasil(v), "preview": v.get("preview_url"), "dono": None})
     q = urllib.parse.urlencode({"page_size": 60, "language": "pt", "sort": "trending"})
-    for v in api(f"/v1/shared-voices?{q}").get("voices", []):
+    try:
+        biblioteca = api(f"/v1/shared-voices?{q}").get("voices", [])
+    except ErroApi as e:
+        print(f"Não consegui buscar na biblioteca ({e}).")
+        biblioteca = []
+    if not conta and not biblioteca:
+        sys.exit(1)
+    for v in biblioteca:
         if not eh_brasil(v):
             continue
         vozes.append({"id": v["voice_id"], "nome": v["name"], "genero": genero_de(v), "origem": "biblioteca",
@@ -119,8 +157,8 @@ def usar(vid, genero):
             try:
                 api(f"/v1/voices/add/{info['dono']}/{vid}", {"new_name": f"Scientia {genero} - {info['nome']}"[:40]})
                 print("voz adicionada à sua conta do ElevenLabs")
-            except Exception as e:
-                print(f"aviso: não consegui adicionar a voz à conta ({e}); se der erro no narrar, adicione pelo site.")
+            except ErroApi as e:
+                print(f"aviso: não consegui adicionar a voz à conta ({e}). Adicione pelo site: Voice Library → 'Add to my voices'.")
         cfg.setdefault("eleven", {})[genero] = vid
         cfg["motor"] = "eleven"
     json.dump(cfg, open(VOZ_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
