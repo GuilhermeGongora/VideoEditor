@@ -22,7 +22,7 @@ cada palavra vem da própria voz (WordBoundary do edge), não de estimativa.
 
 Saídas: public/explicativo/<slug>/narracao.wav e public/explicativo/<slug>/tempos.json
 """
-import asyncio, io, json, os, re, subprocess, sys, urllib.request
+import asyncio, io, json, os, re, subprocess, sys, urllib.error, urllib.request
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,6 +133,10 @@ class Edge:
         return self._gerar(texto, self.voz_de(genero, preferida))
 
 
+class ErroEleven(Exception):
+    pass
+
+
 class Eleven:
     """ElevenLabs (pago, a voz mais humana). Precisa de ELEVENLABS_API_KEY. Tempo das palavras vem do
     endpoint with-timestamps (alinhamento por caractere)."""
@@ -161,8 +165,24 @@ class Eleven:
         req = urllib.request.Request(
             f"https://api.elevenlabs.io/v1/text-to-speech/{self.voz_de(genero)}/with-timestamps?output_format=mp3_44100_128",
             data=body, headers={"xi-api-key": self.key, "Content-Type": "application/json"}, method="POST")
-        with urllib.request.urlopen(req, timeout=120) as r:
-            d = json.loads(r.read())
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                d = json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            corpo = e.read().decode("utf-8", "ignore")
+            try:
+                det = json.loads(corpo).get("detail", corpo)
+                corpo = det.get("message", det) if isinstance(det, dict) else det
+            except Exception:
+                pass
+            dica = {
+                402: "o plano grátis do ElevenLabs não deixa usar vozes da Voice Library pela API, ou os créditos acabaram. "
+                     "Saídas: assinar o Starter, escolher vozes 'Default'/criadas por você, ou usar a Microsoft (npm run vozes).",
+                401: "a chave não tem permissão de Text to Speech ou está errada (.env).",
+                404: "voice ID não encontrado — adicione a voz à sua conta ('Add to my voices') ou confira o ID no voz.json.",
+                429: "limite de uso por minuto/créditos atingido; tente de novo daqui a pouco.",
+            }.get(e.code, "")
+            raise ErroEleven(f"ElevenLabs HTTP {e.code}: {corpo}\n  → {dica}") from None
         audio = decode(base64.b64decode(d["audio_base64"]))
         al = d.get("alignment") or {}
         chars, ini, fim = al.get("characters", []), al.get("character_start_times_seconds", []), al.get("character_end_times_seconds", [])
@@ -304,36 +324,51 @@ def main():
         preferida_edge = {"masculina": None, "feminina": None}
     print(f"motor: {motor.nome} · voz principal: {principal}" + (" · alternando por cena" if voz.get("alternar") == "cenas" else ""))
 
-    pedacos, cenas = [np.zeros(int(0.25 * SR), dtype=np.float32)], []
-    t = 0.25
-    for ci, cena in enumerate(rot["cenas"]):
-        genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
-        c0 = t
-        palavras = None
-        if motor.nome != "kokoro":
-            # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
-            bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
-            a, corte = aparar(bruto)
-            dur = len(a) / SR
-            palavras = tempos_cena(cena["fala"], pron, marcas, t, corte, dur)
-            if palavras:
-                pedacos.append(a)
-                t += dur
-        if not palavras:
-            palavras = []
-            for frase, pont in frases(cena["fala"]):
-                bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
+    def gerar(motor, preferida_edge):
+        pedacos, cenas = [np.zeros(int(0.25 * SR), dtype=np.float32)], []
+        t = 0.25
+        for ci, cena in enumerate(rot["cenas"]):
+            genero = cena.get("voz") or (outra if voz.get("alternar") == "cenas" and ci % 2 else principal)
+            c0 = t
+            palavras = None
+            if motor.nome != "kokoro":
+                # Cena inteira numa chamada só: a voz emenda as frases com a entonação dela (mais natural)
+                bruto, marcas = motor.falar(para_tts(cena["fala"], pron), genero, preferida_edge.get(genero))
                 a, corte = aparar(bruto)
                 dur = len(a) / SR
-                palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
-                palavras[-1]["fimFrase"] = True
-                pausa = PAUSA_FRASE.get(pont, 0.12)
-                pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
-                t += dur + pausa
-        pedacos.append(np.zeros(int(FIM_CENA * SR), dtype=np.float32))
-        t += FIM_CENA
-        cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "voz": genero, "palavras": palavras})
-        print(f"  {cena['id']:<12} {t - c0:5.2f}s  ({genero})")
+                palavras = tempos_cena(cena["fala"], pron, marcas, t, corte, dur)
+                if palavras:
+                    pedacos.append(a)
+                    t += dur
+            if not palavras:
+                palavras = []
+                for frase, pont in frases(cena["fala"]):
+                    bruto, marcas = motor.falar(para_tts(frase, pron), genero, preferida_edge.get(genero))
+                    a, corte = aparar(bruto)
+                    dur = len(a) / SR
+                    palavras += tempos_da_voz(frase, pron, marcas, t, corte, dur)
+                    palavras[-1]["fimFrase"] = True
+                    pausa = PAUSA_FRASE.get(pont, 0.12)
+                    pedacos += [a, np.zeros(int(pausa * SR), dtype=np.float32)]
+                    t += dur + pausa
+            pedacos.append(np.zeros(int(FIM_CENA * SR), dtype=np.float32))
+            t += FIM_CENA
+            cenas.append({"id": cena["id"], "start": round(c0, 3), "end": round(t, 3), "voz": genero, "palavras": palavras})
+            print(f"  {cena['id']:<12} {t - c0:5.2f}s  ({genero})")
+        return pedacos, cenas, t
+
+    try:
+        pedacos, cenas, t = gerar(motor, preferida_edge)
+    except ErroEleven as e:
+        print(f"\n{e}\nRefazendo a narração inteira com a voz da Microsoft (para não misturar vozes)…\n")
+        try:
+            motor = Edge(vel, voz.get("pitch", "+0Hz"))
+            motor.voz_de(principal, preferida_edge[principal])
+        except Exception:
+            motor = Kokoro(vel)
+            preferida_edge = {"masculina": None, "feminina": None}
+        print(f"motor: {motor.nome} · voz principal: {principal}")
+        pedacos, cenas, t = gerar(motor, preferida_edge)
     audio = np.concatenate(pedacos)
     audio = audio / max(1e-6, np.abs(audio).max()) * 0.89
     wav = os.path.join(out_dir, "narracao.wav")
