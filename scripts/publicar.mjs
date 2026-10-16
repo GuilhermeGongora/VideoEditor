@@ -40,10 +40,29 @@ const ajudaMontar = () => {
   console.log("Outro lugar? Coloque no .env:  SCIENTIA_DRIVE=/mnt/g/Meu Drive/Scientia\n");
 };
 
+// Cópia "manual" em blocos: o G: do Google Drive no WSL recusa copyFile (EPERM ao copiar permissões).
+const copiarArquivo = (de, para) => {
+  const buf = Buffer.allocUnsafe(4 * 1024 * 1024);
+  const fi = fs.openSync(de, "r");
+  const fo = fs.openSync(para, "w");
+  try {
+    let n;
+    while ((n = fs.readSync(fi, buf, 0, buf.length, null)) > 0) fs.writeSync(fo, buf, 0, n);
+  } finally {
+    fs.closeSync(fi);
+    fs.closeSync(fo);
+  }
+};
+
 const copiar = (de, para) => {
   if (!fs.existsSync(de)) return false;
-  fs.copyFileSync(de, para);
-  return true;
+  try {
+    copiarArquivo(de, para);
+    return true;
+  } catch (e) {
+    console.log(`  não consegui copiar ${path.basename(de)} (${e.code ?? e.message})`);
+    return false;
+  }
 };
 
 export const publicar = (slug) => {
@@ -80,7 +99,7 @@ const publicarMarca = () => {
   const dir = path.join(DRIVE, "Identidade");
   fs.mkdirSync(dir, { recursive: true });
   for (const f of fs.readdirSync(path.join(ROOT, "marca"))) {
-    if (/\.(png|svg|md)$/i.test(f)) fs.copyFileSync(path.join(ROOT, "marca", f), path.join(dir, f));
+    if (/\.(png|svg|md)$/i.test(f)) copiar(path.join(ROOT, "marca", f), path.join(dir, f));
   }
   console.log(`Drive: ${dir}`);
 };
