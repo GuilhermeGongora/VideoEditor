@@ -1,7 +1,7 @@
 {
   "slug": "aproximacao",
   "composicao": "Aproximacao",
-  "marca": "EXPLICADO · APROXIMAÇÃO",
+  "marca": "SCIENTIA · APROXIMAÇÃO",
   "voz": {
     "edge": "pt-BR-AntonioNeural",
     "kokoro": "pm_alex",
@@ -54,5 +54,37 @@
       "chip": "E A SENHA?",
       "fala": "Até 200 reais, em geral, nem pede senha. Esse teto foi definido pelas empresas de cartão, mas o seu banco pode usar um limite menor."
     }
-  ]
+  ],
+  "thumb": {
+    "titulos": [
+      "Cartão sem\nbateria paga.\n*Como?*",
+      "E se copiarem\nseu cartão?\n*Não adianta.*"
+    ],
+    "cena": "energia",
+    "quadro": 150,
+    "descer": 330,
+    "zoom": 1.45
+  },
+  "post": {
+    "gancho": "Seu cartão não tem bateria. Então como ele paga só de encostar na maquininha? 📌",
+    "pontos": [
+      "A maquininha cria um campo magnético que liga o chip do cartão a poucos centímetros",
+      "Cada compra gera um código único: copiado, ele não serve para a próxima",
+      "Até R$ 200, em geral, nem pede senha (seu banco pode usar um limite menor)"
+    ],
+    "fontes": [
+      "Abecs (Panorama, ago/2026)",
+      "Febraban Tech",
+      "Norma ISO 14443 (NFC)",
+      "Padrão EMV"
+    ],
+    "hashtags": [
+      "cartao",
+      "aproximacao",
+      "nfc",
+      "pagamentos",
+      "educacaofinanceira"
+    ]
+  },
+  "cta": "comenta NFC que eu te mando as fontes"
 }
