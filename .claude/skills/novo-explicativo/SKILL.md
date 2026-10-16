@@ -7,6 +7,9 @@ description: Cria um vídeo educativo vertical (Shorts/TikTok/Reels) no estilo 3
 
 **Entrega completa, sem o usuário pedir:** `out/<slug>.mp4` (já termina com o encerramento da marca) +
 `thumbs/<slug>-1.png` e `-2.png` + `out/<slug>-legenda.txt` (legenda do post com fontes e hashtags).
+No PC do usuário o `npm run explicar` também copia tudo para o Google Drive
+(`G:\Meu Drive\Scientia\Posts\<data> · <slug> · <título>\`: video.mp4, thumb-1/2.png, legenda.txt, fontes.txt).
+Se aparecer "Não achei o Drive", mostre ao usuário os comandos de montagem que o script imprime.
 O usuário só digita o tema; não pare no meio para perguntar o que dá para decidir sozinho.
 
 Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de

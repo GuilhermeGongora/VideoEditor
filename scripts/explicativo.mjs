@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { salvarLegenda } from "./legenda.mjs";
+import { publicar } from "./publicar.mjs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const [modo, slug] = process.argv.slice(2);
@@ -87,6 +88,7 @@ if (modo === "thumb") {
   run(["render", "out/bundle", id, out, "--concurrency=2", `--gl=${gl}`]);
   thumbs(gl);
   const leg = salvarLegenda(slug);
+  publicar(slug);
   console.log(`Legenda do post: ${leg.arq}`);
   console.log(`\nPronto: ${out}  (baixe com: npm run baixar)`);
 } else {

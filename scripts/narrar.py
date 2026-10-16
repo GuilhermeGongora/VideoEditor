@@ -455,7 +455,14 @@ def main():
     wav = os.path.join(out_dir, "narracao.wav")
     # leve "presença" de voz de locução: tira grave embolado, compressão suave, volume padrão de redes
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
-                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-14:TP=-1.2",
+                    "-af", ("highpass=f=80,"                       # tira o grave embolado
+                     "equalizer=f=280:t=q:w=1.0:g=-2,"         # menos som de caixa
+                     "equalizer=f=3200:t=q:w=1.2:g=2,"         # presença (voz na frente)
+                     "highshelf=f=9000:g=2,"                   # um pouco de ar
+                     "deesser=i=0.4,"                          # suaviza os "s"
+                     "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,"
+                     "aecho=0.8:0.88:22|41:0.10|0.06,"         # ambiência mínima: tira o som seco de robô
+                     "loudnorm=I=-14:TP=-1.2"),
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

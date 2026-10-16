@@ -1,7 +1,7 @@
 {
   "_ajuda": "Voz do canal (vale para todos os vídeos). motor: edge (Microsoft) | chatterbox (local na GPU) | eleven. O roteiro.json só escolhe 'principal' e 'alternar'. Ouvir/escolher: npm run vozes · npm run vozes -- local · npm run vozes -- usar <id ou arquivo.wav> feminina|masculina",
   "motor": "edge",
-  "velocidade": 1.07,
+  "velocidade": 1.04,
   "edge": {
     "feminina": "pt-BR-ThalitaMultilingualNeural",
     "masculina": "pt-BR-AntonioNeural"

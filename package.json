@@ -23,7 +23,8 @@
     "explicar": "node scripts/explicativo.mjs render",
     "thumb": "node scripts/explicativo.mjs thumb",
     "vozes": "bash scripts/py.sh scripts/vozes.py",
-    "legenda": "node scripts/legenda.mjs"
+    "legenda": "node scripts/legenda.mjs",
+    "publicar": "node scripts/publicar.mjs"
   },
   "dependencies": {
     "@fontsource/courier-prime": "^5.3.0",
