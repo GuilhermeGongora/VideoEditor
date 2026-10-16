@@ -82,5 +82,27 @@
       "fala": "Então não confunda: entre milhão e bilhão, é a diferença de 11 dias para 31 anos."
     }
   ],
-  "cta": "comenta o que você faria com 1 bilhão"
+  "cta": "comenta o que você faria com 1 bilhão",
+  "sons": {
+    "acentos": [
+      {
+        "palavra": "31",
+        "cena": "gancho",
+        "som": "sfx/boom.wav",
+        "volume": 0.5
+      },
+      {
+        "palavra": "10",
+        "cena": "cubos",
+        "som": "sfx/boom.wav",
+        "volume": 0.45
+      },
+      {
+        "palavra": "anos",
+        "cena": "lembre",
+        "som": "sfx/ding.wav",
+        "volume": 0.45
+      }
+    ]
+  }
 }

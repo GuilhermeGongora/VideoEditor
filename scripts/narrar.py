@@ -42,9 +42,10 @@ FIM_CENA = 0.18  # respiro entre cenas (a trilha cobre, nunca fica silêncio mor
 KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
 KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
 
-# Vozes padrão. Multilingual = geração mais nova da Microsoft, mais natural.
+# Vozes padrão. NÃO use as "Multilingual": em português elas puxam sotaque de Portugal.
+# A voz aprovada do canal é a masculina (Antonio) — a dos vídeos 6x1 e aproximação.
 EDGE = {
-    "feminina": ["pt-BR-ThalitaMultilingualNeural", "pt-BR-FranciscaNeural"],
+    "feminina": ["pt-BR-FranciscaNeural", "pt-BR-ThalitaNeural"],
     "masculina": ["pt-BR-AntonioNeural"],
 }
 KOKORO = {"feminina": "pf_dora", "masculina": "pm_alex"}
@@ -455,14 +456,9 @@ def main():
     wav = os.path.join(out_dir, "narracao.wav")
     # leve "presença" de voz de locução: tira grave embolado, compressão suave, volume padrão de redes
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
-                    "-af", ("highpass=f=80,"                       # tira o grave embolado
-                     "equalizer=f=280:t=q:w=1.0:g=-2,"         # menos som de caixa
-                     "equalizer=f=3200:t=q:w=1.2:g=2,"         # presença (voz na frente)
-                     "highshelf=f=9000:g=2,"                   # um pouco de ar
-                     "deesser=i=0.4,"                          # suaviza os "s"
-                     "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,"
-                     "aecho=0.8:0.88:22|41:0.10|0.06,"         # ambiência mínima: tira o som seco de robô
-                     "loudnorm=I=-14:TP=-1.2"),
+                    # mesmo tratamento dos primeiros vídeos (6x1, aproximação), aprovado pelo usuário.
+                    # NÃO adicione eco/ambiência nem EQ pesado: deixou a voz pior.
+                    "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120,loudnorm=I=-14:TP=-1.2",
                     "-ar", "48000", wav], input=audio.tobytes(), check=True)
     json.dump({"motor": motor.nome, "duracao": round(t + 0.6, 3), "cenas": cenas},
               open(os.path.join(out_dir, "tempos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

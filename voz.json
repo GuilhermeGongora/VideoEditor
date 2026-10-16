@@ -1,10 +1,12 @@
 {
-  "_ajuda": "Voz do canal (vale para todos os vídeos). motor: edge (Microsoft) | chatterbox (local na GPU) | eleven. O roteiro.json só escolhe 'principal' e 'alternar'. Ouvir/escolher: npm run vozes · npm run vozes -- local · npm run vozes -- usar <id ou arquivo.wav> feminina|masculina",
+  "_ajuda": "Voz do canal (vale para todos os vídeos). Padrão aprovado: Microsoft (edge), Antonio, velocidade 1.05 — a voz dos vídeos 6x1 e aproximação. Evite vozes 'Multilingual' (sotaque de Portugal). motor: edge | chatterbox (GPU) | eleven. Ouvir/escolher: npm run vozes · npm run vozes -- usar <id ou arquivo.wav> feminina|masculina",
   "motor": "edge",
-  "velocidade": 1.04,
+  "principal": "masculina",
+  "alternar": "nao",
+  "velocidade": 1.05,
   "edge": {
-    "feminina": "pt-BR-ThalitaMultilingualNeural",
-    "masculina": "pt-BR-AntonioNeural"
+    "masculina": "pt-BR-AntonioNeural",
+    "feminina": "pt-BR-FranciscaNeural"
   },
   "eleven": {
     "feminina": "",

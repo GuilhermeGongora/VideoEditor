@@ -3,7 +3,7 @@
   "composicao": "Urna",
   "marca": "SCIENTIA · URNA ELETRÔNICA",
   "voz": {
-    "principal": "feminina",
+    "principal": "masculina",
     "alternar": "nao",
     "velocidade": 1.05
   },
@@ -59,7 +59,7 @@
     {
       "id": "gancho",
       "chip": "URNA POR DENTRO",
-      "fala": "A urna eletrônica roda Linux. E nem um teclado trocado ela aceita."
+      "fala": "A urna eletrônica roda Linux. E se alguém trocar o teclado dela? Ela recusa."
     },
     {
       "id": "linux",
@@ -91,5 +91,27 @@
       "chip": "ÀS 17H",
       "fala": "Às 17h, ela imprime o boletim de urna, e uma via fica na porta. Os totais seguem numa mídia lacrada, por rede privada."
     }
-  ]
+  ],
+  "sons": {
+    "acentos": [
+      {
+        "palavra": "recusa",
+        "cena": "gancho",
+        "som": "sfx/pop.wav",
+        "volume": 0.7
+      },
+      {
+        "palavra": "desliga",
+        "cena": "liga",
+        "som": "sfx/boom.wav",
+        "volume": 0.5
+      },
+      {
+        "palavra": "vazia",
+        "cena": "votos",
+        "som": "sfx/ding.wav",
+        "volume": 0.45
+      }
+    ]
+  }
 }

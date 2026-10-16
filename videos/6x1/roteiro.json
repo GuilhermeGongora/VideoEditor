@@ -88,5 +88,28 @@
       "scientia"
     ]
   },
-  "cta": "segue pra saber quando muda"
+  "cta": "segue pra saber quando muda",
+  "sons": {
+    "acentos": [
+      {
+        "palavra": "75",
+        "cena": "aprovado",
+        "som": "sfx/ding.wav",
+        "volume": 0.5
+      },
+      {
+        "palavra": "mesmo",
+        "cena": "salario",
+        "som": "sfx/pop.wav",
+        "volume": 0.6
+      },
+      {
+        "palavra": "relógio",
+        "cena": "agora",
+        "som": "sfx/riser.wav",
+        "pico": 1.49,
+        "volume": 0.35
+      }
+    ]
+  }
 }

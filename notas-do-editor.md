@@ -41,3 +41,9 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   - Sempre `npm run quadros` antes do render: 1ª grade quase sempre tem algo cortado ou atrás da legenda.
   - Rótulo sobre fundo de destaque precisa de cor escura (`C.ink`), senão some.
   - Quadro da thumb: escolher o fim da cena (tudo já aceso), longe de objetos que ficam atrás do título.
+- 15/10/2026 — VOZ: o usuário aprovou o áudio do 6x1 e da aproximação (Antonio, Microsoft, 1.05, tratamento
+  simples: highpass + presença 3,2 kHz + compressor + loudnorm). A urna com a feminina Thalita Multilingual
+  "parece português de Portugal" → nunca usar vozes Multilingual; padrão = masculina Antonio. A "melhoria"
+  com eco/ambiência e EQ extra foi revertida (piorou).
+- 15/10/2026 — Pediu mais efeitos sonoros e ganchos virais: impacto na abertura, pop no cartão de número,
+  transições alternadas, riser no encerramento e 2–4 `acentos` por roteiro (ver `references/ganchos.md`).

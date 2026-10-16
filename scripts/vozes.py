@@ -153,7 +153,7 @@ def referencia():
     import edge_tts
     cfg = json.load(open(VOZ_JSON, encoding="utf-8")) if os.path.exists(VOZ_JSON) else {}
     edge = cfg.get("edge", {})
-    for genero, padrao in (("feminina", "pt-BR-ThalitaMultilingualNeural"), ("masculina", "pt-BR-AntonioNeural")):
+    for genero, padrao in (("feminina", "pt-BR-FranciscaNeural"), ("masculina", "pt-BR-AntonioNeural")):
         voz = edge.get(genero) or padrao
         mp3 = os.path.join(OUT, f"_ref-{genero}.mp3")
         os.makedirs(OUT, exist_ok=True)

@@ -15,7 +15,8 @@ O usuário só digita o tema; não pare no meio para perguntar o que dá para de
 Estilo: fundo escuro, bonecos-manequim e objetos simples em 3D, tudo cinza/branco com UMA cor de
 destaque (`C.accent`), poeira no ar, câmera sempre se mexendo devagar, legenda karaokê, cartões de
 dado e anotações com fonte. Exemplo pronto: `videos/6x1/roteiro.json` + `src/explicativo/videos/Escala6x1.tsx`.
-Leia `references/estilo.md` e `references/biblioteca.md` antes de montar as cenas.
+Leia `references/ganchos.md` ANTES de escrever o roteiro (gancho viral e retenção), e
+`references/estilo.md` e `references/biblioteca.md` antes de montar as cenas.
 
 ## 1. Pesquisar (obrigatório)
 - Tudo que é atual (lei, número, cargo, prazo) vem de busca na web feita AGORA, em 2+ fontes
@@ -35,10 +36,16 @@ som), o gancho vem nos 2 primeiros segundos e a resposta da pergunta do título 
   ("Mas calma:", "E tem mais:", "Só que…") para a narração fluir sem pausas longas.
 - `cta` = chamada curta que aparece no encerramento, de preferência pedindo COMENTÁRIO
   (ex.: "comenta PIX que eu te mando as fontes", "segue pra saber quando muda").
-- `sons` (opcional, recomendado se o usuário tem biblioteca): escolha no `public/soundeffects/catalog.md`
-  `{"musica": "<src papel music, calmo e contínuo>", "musicaVolume": 0.5, "aparecer": "<src papel pop/click curto>",
-  "transicao": "<src papel whoosh suave>"}`. Sem isso, usa a trilha e os efeitos padrão do Scientia.
-  A trilha abaixa sozinha enquanto a voz fala; cartões, anotações e pílulas fazem "tick" ao aparecer.
+- `sons`: o padrão já faz sozinho trilha (abaixa sob a voz), impacto no 1º frame, swoosh/whoosh
+  alternados nas trocas de cena, "pop" quando o cartão de número aparece, "tick" em anotações/pílulas e
+  uma subida (riser) entrando no encerramento. **Sempre escreva 2–4 `acentos`** nas palavras-chave:
+  `"sons": {"acentos": [{"palavra": "75", "cena": "aprovado", "som": "sfx/ding.wav", "volume": 0.5},
+  {"palavra": "desliga", "cena": "liga", "som": "sfx/boom.wav", "volume": 0.5},
+  {"palavra": "relógio", "cena": "agora", "som": "sfx/riser.wav", "pico": 1.49, "volume": 0.35}]}`.
+  Sons prontos em `public/sfx/`: boom (choque), ding (número/revelação), pop (estalo), riser (suspense,
+  use `pico`), whoosh/swoosh. A palavra é a que está escrita na `fala` (não a da `pronuncia`).
+  Pode trocar qualquer som pelo da biblioteca do usuário (`public/soundeffects/catalog.md`) — `musica`,
+  `transicao` (lista alterna), `aparecer`, `dado`, `abertura`, `final`; `null` desliga.
 - `composicao` = nome do componente (ex.: `Escala6x1`).
 - `marca` = `"SCIENTIA · <tema curto>"` (o canal se chama Scientia).
 - `voz` = `{ "principal": "...", "alternar": "nao", "velocidade": 1.05 }` (ver passo 3).
@@ -54,8 +61,9 @@ palavra, vindo da própria voz). Voz neural do edge-tts (internet); sem internet
 A VOZ DO CANAL fica em `voz.json` (motor, vozes escolhidas pelo usuário, velocidade). **Nunca escolha
 ou troque vozes, motor ou IDs por conta própria** — isso é gosto do usuário. No roteiro, o campo `voz`
 só define:
-- `"principal": "feminina" | "masculina"` — **alterne entre vídeos**: olhe o `roteiro.json` mais recente
-  em `videos/` e use o gênero oposto ao dele.
+- `"principal": "masculina"` — **sempre**. A voz aprovada do canal é o Antonio (Microsoft), a dos
+  vídeos 6x1 e aproximação. A feminina Thalita Multilingual soou como português de Portugal (vídeo da
+  urna) e foi tirada. Nunca use vozes "Multilingual". Só use feminina se o usuário pedir.
 - `"alternar": "cenas"` — as cenas se revezam entre as duas vozes (dupla). Padrão: `"nao"`.
 - Se o usuário reclamar da voz: mostre `npm run vozes` (Microsoft) / `npm run vozes -- eleven` e
   `npm run vozes -- usar <id> feminina|masculina`.

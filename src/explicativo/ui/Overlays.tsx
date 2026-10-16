@@ -73,7 +73,7 @@ export const DataCard: React.FC<{
         transform: `translateY(${(1 - s) * 30}px)`,
       }}
     >
-      <SomAparecer at={at} />
+      <SomAparecer at={at} tipo="dado" />
       <div>
         <div style={{ fontFamily: MONO, fontSize: 20, letterSpacing: 3, color: "rgba(244,244,240,0.55)" }}>{label}</div>
         <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 88, color: C.text, lineHeight: 1.05, letterSpacing: -2 }}>

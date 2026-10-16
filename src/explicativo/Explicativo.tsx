@@ -57,6 +57,18 @@ export const Explicativo: React.FC<{
   const { fps, durationInFrames } = useVideoConfig();
   const todas = tempos.cenas.flatMap((c) => c.palavras);
   const sons = { ...SONS_PADRAO, ...(roteiro.sons ?? {}) };
+  const transicoes = sons.transicao ? (Array.isArray(sons.transicao) ? sons.transicao : [sons.transicao]) : [];
+  const fimFala = Math.round(tempos.duracao * fps) - 12; // entrada do encerramento
+  // acentos: acha o frame da palavra na narração (a cena opcional desambigua)
+  const acentos = (sons.acentos ?? []).flatMap((a) => {
+    const alvo = limpa(a.palavra);
+    const onde = a.cena ? tempos.cenas.filter((c) => c.id === a.cena) : tempos.cenas;
+    const achadas = onde.flatMap((c) => c.palavras).filter((p) => limpa(p.w).startsWith(alvo));
+    const p = achadas[a.n ?? 0] ?? achadas[0];
+    if (!p) return [];
+    const from = Math.max(0, Math.round((p.start - (a.pico ?? 0)) * fps));
+    return [{ som: a.som, from, dur: Math.round(((a.pico ?? 0) + 2) * fps), volume: a.volume ?? 0.6 }];
+  });
   // trechos com voz (para abaixar a trilha enquanto alguém fala)
   const falas = todas.map((p) => [p.start * fps - 4, p.end * fps + 4] as const);
   const falando = (f: number) => {
@@ -105,16 +117,35 @@ export const Explicativo: React.FC<{
       <Sequence from={Math.round(tempos.duracao * fps) - 12} durationInFrames={ENCERRAMENTO} name="encerramento">
         <Encerramento cta={roteiro.cta} />
       </Sequence>
-      {sons.transicao
-        ? tempos.cenas.slice(1).map((tc) => (
+      {/* impacto no 1º frame: o gancho "bate" junto com a primeira palavra */}
+      {sons.abertura ? (
+        <Sequence from={0} durationInFrames={50} layout="none">
+          <Audio src={staticFile(sons.abertura)} volume={0.42 * sons.volume} />
+        </Sequence>
+      ) : null}
+      {/* troca de cena: alterna os sons da lista para não ficar repetitivo */}
+      {transicoes.length
+        ? tempos.cenas.slice(1).map((tc, i) => (
             <Sequence key={`tr-${tc.id}`} from={Math.max(0, Math.round(tc.start * fps) - TRANS - 4)} durationInFrames={24} layout="none">
-              <Audio src={staticFile(sons.transicao!)} volume={0.5 * sons.volume} />
+              <Audio src={staticFile(transicoes[i % transicoes.length])} volume={0.5 * sons.volume} />
             </Sequence>
           ))
         : null}
-      {sons.transicao ? (
-        <Sequence from={Math.round(tempos.duracao * fps) - 16} durationInFrames={24} layout="none">
-          <Audio src={staticFile(sons.transicao)} volume={0.45 * sons.volume} />
+      {/* acentos em palavras-chave da fala (o número forte, a virada, a resposta) */}
+      {acentos.map((a, i) => (
+        <Sequence key={`ac-${i}`} from={a.from} durationInFrames={a.dur} layout="none">
+          <Audio src={staticFile(a.som)} volume={a.volume * sons.volume} />
+        </Sequence>
+      ))}
+      {/* subida que desemboca no encerramento da marca */}
+      {sons.final ? (
+        <Sequence from={Math.max(0, fimFala - 45)} durationInFrames={60} layout="none">
+          <Audio src={staticFile(sons.final)} volume={(f) => 0.32 * sons.volume * interpolate(f, [0, 30], [0.3, 1], clamp)} />
+        </Sequence>
+      ) : null}
+      {transicoes.length ? (
+        <Sequence from={fimFala - 4} durationInFrames={24} layout="none">
+          <Audio src={staticFile(transicoes[0])} volume={0.45 * sons.volume} />
         </Sequence>
       ) : null}
     </AbsoluteFill>
