@@ -80,3 +80,6 @@ feedback do usuário (skill `/feedback`). Pode editar à vontade.
   2º turno do dia 25). Grande demais para 60 s → série de 4 vídeos (Câmara, Senado, governos + Assembleias,
   Presidência/2º turno). Criado `HemicicloBlocos` (blocos neutros, só o bloco falado acende). Classificação
   ideológica sempre com critério e fonte publicada; dados só do TSE/imprensa, "eleitos" separado de "2º turno".
+- 16/10/2026 — Vídeo do Tesla Roadster VIRALIZOU (18 mil views no 1º dia). Motivo apontado pelo usuário: o
+  vídeo real na abertura (VideoTelaCheia nos primeiros segundos). Regra: tema de tecnologia "uau" com
+  imagem oficial impressionante → abrir com 2–3 s do vídeo real + pergunta; depois o 3D explica.
